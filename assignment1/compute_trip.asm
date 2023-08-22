@@ -1,25 +1,33 @@
-; Name: Kelsey Dang
+; Author: Kelsey Dang
 ; Email: kdangdo2002@csu.fullerton.edu
 ; Due Date: 10/4/23
-; Subject: CPSC 240-03 Assignment 1
+; Subject: CPSC 240-03 Assignment 1 Las Vegas Problem
 ; Filename: compute_trip.asm
 
-global _start
+global las_vegas
+extern printf
+extern scanf
 
 section .data
-  ; constants
-  message: db "Hello World!", 0xA
-  message_length: equ $-message
+  ; Constants
+  prompt db "Please enter the speed for the initial segment of the trip (mph): ", 0
+  prompt_len equ $-prompt
+  floatform db "%lf", 0
 
 section .text
-  _start:                   ; start here
-    mov rax, 0x1            ; use the write syscall
-    mov rdi, 0x1            ; use stdout as the file descriptor
-    mov rsi, message        ; use the message as the buffer
-    mov rdx, message_length ; and supply the message
-    SYSCALL                 ; invoke the syscall
+las_vegas:                ; start here
+  ; Prompt for input of initial distance
+  mov rax, 0              ; rax counts number of float register
+  mov rdi, prompt
+  call printf
+  ; End of block
 
-    ; exit program
-    mov rax, 0x3C
-    mov rdi, 0x0
-    SYSCALL
+  ; Get float number from user
+  mov rax, 0
+  mov rdi, floatform
+  push qword 0            ; push to top of stack
+  mov rsi, rsp
+  call scanf
+  movsd xmm8, [rsp]       ; dereference rsp and copy to xmm8
+  pop rax                 ; restore stack
+  ; End of block

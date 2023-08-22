@@ -1,0 +1,42 @@
+     1                                  ; Author: Kelsey Dang
+     2                                  ; Email: kdangdo2002@csu.fullerton.edu
+     3                                  ; Due Date: 10/4/23
+     4                                  ; Subject: CPSC 240-03 Assignment 1 Las Vegas Problem
+     5                                  ; Filename: compute_trip.asm
+     6                                  
+     7                                  global las_vegas
+     8                                  extern printf
+     9                                  extern scanf
+    10                                  
+    11                                  section .data
+    12                                    ; Constants
+    13 00000000 506C6561736520656E-       prompt db "Please enter the speed for the initial segment of the trip (mph): ", 0
+    13 00000009 746572207468652073-
+    13 00000012 7065656420666F7220-
+    13 0000001B 74686520696E697469-
+    13 00000024 616C207365676D656E-
+    13 0000002D 74206F662074686520-
+    13 00000036 7472697020286D7068-
+    13 0000003F 293A2000           
+    14                                    prompt_len equ $-prompt
+    15 00000043 256C6600                  floatform db "%lf", 0
+    16                                  
+    17                                  section .text
+    18                                  las_vegas:                ; start here
+    19                                    ; Prompt for input of initial distance
+    20 00000000 B800000000                mov rax, 0              ; rax counts number of float register
+    21 00000005 48BF-                     mov rdi, prompt
+    21 00000007 [0000000000000000] 
+    22 0000000F E8(00000000)              call printf
+    23                                    ; End of block
+    24                                  
+    25                                    ; Get float number from user
+    26 00000014 B800000000                mov rax, 0
+    27 00000019 48BF-                     mov rdi, floatform
+    27 0000001B [4300000000000000] 
+    28 00000023 6A00                      push qword 0            ; push to top of stack
+    29 00000025 4889E6                    mov rsi, rsp
+    30 00000028 E8(00000000)              call scanf
+    31 0000002D F2440F100424              movsd xmm8, [rsp]       ; dereference rsp and copy to xmm8
+    32 00000033 58                        pop rax                 ; restore stack
+    33                                    ; End of block
