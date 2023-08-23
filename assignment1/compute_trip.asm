@@ -10,19 +10,27 @@ extern scanf
 
 section .data
   ; Constants
-  prompt db "Please enter the speed for the initial segment of the trip (mph): ", 0
-  prompt_len equ $-prompt
+  initial_msg db "Please enter the speed for the initial segment of the trip (mph): ", 0
+  initial_msg_len equ $-initial_msg
+  miles_msg db "For how many miles will you maintain this average speed: ", 0
+  miles_msg_len equ $-miles_msg
+  final_seg_msg db "What will be your speed during the final segment of the trip (mph): ", 0
+  final_seg_msg_len equ $-final_seg_msg
+  avg_speed_msg db "Your average speed will be %1.18lf mph.", 10, 0
+  avg_speed_msg_len equ $-avg_speed_msg
+  total_msg db "The total travel time will be %1.18lf hours.", 10, 0
+  total_msg_len equ $-total_msg
   floatform db "%lf", 0
 
 section .text
 las_vegas:                ; start here
   ; Prompt for input of initial distance
   mov rax, 0              ; rax counts number of float register
-  mov rdi, prompt
+  mov rdi, initial_msg
   call printf
   ; End of block
 
-  ; Get float number from user
+  ; Get initial from user
   mov rax, 0
   mov rdi, floatform
   push qword 0            ; push to top of stack
@@ -30,4 +38,36 @@ las_vegas:                ; start here
   call scanf
   movsd xmm8, [rsp]       ; dereference rsp and copy to xmm8
   pop rax                 ; restore stack
+  ; End of block
+
+  ; Prompt for input of miles maintained
+  mov rax, 0
+  mov rdi, miles_msg
+  call printf
+  ; End of block
+
+  ; Get miles from user
+  mov rax, 0
+  mov rdi, floatform
+  push qword 0
+  mov rsi, rsp
+  call scanf
+  movsd xmm8, [rsp]
+  pop rax
+  ; End of block
+
+  ; Prompt for input of final speed
+  mov rax, 0
+  mov rdi, final_seg_msg
+  call printf
+  ; End of block
+
+  ; Get final_seg from user
+  mov rax, 0
+  mov rdi, floatform
+  push qword 0
+  mov rsi, rsp
+  call scanf
+  movsd xmm8, [rsp]
+  pop rax
   ; End of block
