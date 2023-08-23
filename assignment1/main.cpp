@@ -14,14 +14,14 @@ extern "C" double las_vegas();
 // Driver Code
 int main() {
   double number;
-  cout << "Welcome to Trip Advisor by Kelsey Dang.\n";
-  cout << "We help you plan your trip.\n";
+  cout << "\nWelcome to Trip Advisor by Kelsey Dang.\n";
+  cout << "We help you plan your trip.\n\n";
 
   // Call assembly module
   number = las_vegas();
 
   // Output number received
-  cout << "The main module received this number " << number << " and will keep it for a while.\n";
+  cout << "\nThe main module received this number " << number << " and will keep it for a while.\n";
   cout << "A zero will be sent to your operating system.\n";
   cout << "Good-bye. Have a great trip.\n";
   return 0;

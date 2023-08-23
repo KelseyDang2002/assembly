@@ -24,6 +24,7 @@ section .data
 
 section .text
 las_vegas:                ; start here
+
   ; Prompt for input of initial distance
   mov rax, 0              ; rax counts number of float register
   mov rdi, initial_msg
@@ -52,7 +53,7 @@ las_vegas:                ; start here
   push qword 0
   mov rsi, rsp
   call scanf
-  movsd xmm8, [rsp]
+  movsd xmm9, [rsp]
   pop rax
   ; End of block
 
@@ -68,6 +69,20 @@ las_vegas:                ; start here
   push qword 0
   mov rsi, rsp
   call scanf
-  movsd xmm8, [rsp]
+  movsd xmm10, [rsp]
   pop rax
+  ; End of block
+
+  ; Block for math instructions
+
+  ; Output avg_speed_msg
+  mov rax, 0
+  mov rdi, avg_speed_msg
+  call printf
+  ; End of block
+
+  ; Output total travel time
+  mov rax, 0
+  mov rdi, total_msg
+  call printf
   ; End of block
