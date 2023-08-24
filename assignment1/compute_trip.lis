@@ -50,76 +50,79 @@
     21 00000118 00                 
     22                                    total_msg_len equ $-total_msg
     23 00000119 256C6600                  floatform db "%lf", 0
-    24                                  
-    25                                  section .text
-    26                                  las_vegas:                ; start here
-    27                                  
-    28                                    ; Prompt for input of initial distance
-    29 00000000 B800000000                mov rax, 0              ; rax counts number of float register
-    30 00000005 48BF-                     mov rdi, initial_msg
-    30 00000007 [0000000000000000] 
-    31 0000000F E8(00000000)              call printf
-    32                                    ; End of block
-    33                                  
-    34                                    ; Get initial from user
-    35 00000014 B800000000                mov rax, 0
-    36 00000019 48BF-                     mov rdi, floatform
-    36 0000001B [1901000000000000] 
-    37 00000023 6A00                      push qword 0            ; push to top of stack
-    38 00000025 4889E6                    mov rsi, rsp
-    39 00000028 E8(00000000)              call scanf
-    40 0000002D F2440F100424              movsd xmm8, [rsp]       ; dereference rsp and copy to xmm8
-    41 00000033 58                        pop rax                 ; restore stack
-    42                                    ; End of block
-    43                                  
-    44                                    ; Prompt for input of miles maintained
-    45 00000034 B800000000                mov rax, 0
-    46 00000039 48BF-                     mov rdi, miles_msg
-    46 0000003B [4300000000000000] 
-    47 00000043 E8(00000000)              call printf
-    48                                    ; End of block
-    49                                  
-    50                                    ; Get miles from user
-    51 00000048 B800000000                mov rax, 0
-    52 0000004D 48BF-                     mov rdi, floatform
-    52 0000004F [1901000000000000] 
-    53 00000057 6A00                      push qword 0
-    54 00000059 4889E6                    mov rsi, rsp
-    55 0000005C E8(00000000)              call scanf
-    56 00000061 F2440F100C24              movsd xmm9, [rsp]
-    57 00000067 58                        pop rax
-    58                                    ; End of block
-    59                                  
-    60                                    ; Prompt for input of final speed
-    61 00000068 B800000000                mov rax, 0
-    62 0000006D 48BF-                     mov rdi, final_seg_msg
-    62 0000006F [7D00000000000000] 
-    63 00000077 E8(00000000)              call printf
-    64                                    ; End of block
-    65                                  
-    66                                    ; Get final_seg from user
-    67 0000007C B800000000                mov rax, 0
-    68 00000081 48BF-                     mov rdi, floatform
-    68 00000083 [1901000000000000] 
-    69 0000008B 6A00                      push qword 0
-    70 0000008D 4889E6                    mov rsi, rsp
-    71 00000090 E8(00000000)              call scanf
-    72 00000095 F2440F101424              movsd xmm10, [rsp]
-    73 0000009B 58                        pop rax
-    74                                    ; End of block
-    75                                  
-    76                                    ; Block for math instructions
-    77                                  
-    78                                    ; Output avg_speed_msg
-    79 0000009C B800000000                mov rax, 0
-    80 000000A1 48BF-                     mov rdi, avg_speed_msg
-    80 000000A3 [C200000000000000] 
-    81 000000AB E8(00000000)              call printf
-    82                                    ; End of block
-    83                                  
-    84                                    ; Output total travel time
-    85 000000B0 B800000000                mov rax, 0
-    86 000000B5 48BF-                     mov rdi, total_msg
-    86 000000B7 [EB00000000000000] 
-    87 000000BF E8(00000000)              call printf
-    88                                    ; End of block
+    24 0000011D 0000000000B06F40          hotel_distance dq 253.5
+    25                                  
+    26                                  section .text
+    27                                  las_vegas:                ; start here
+    28                                  
+    29                                    ; Prompt for input of initial distance
+    30 00000000 B800000000                mov rax, 0              ; rax counts number of float register
+    31 00000005 48BF-                     mov rdi, initial_msg
+    31 00000007 [0000000000000000] 
+    32 0000000F E8(00000000)              call printf
+    33                                    ; End of block
+    34                                  
+    35                                    ; Get initial from user
+    36 00000014 B800000000                mov rax, 0
+    37 00000019 48BF-                     mov rdi, floatform
+    37 0000001B [1901000000000000] 
+    38 00000023 6A00                      push qword 0            ; push to top of stack
+    39 00000025 4889E6                    mov rsi, rsp
+    40 00000028 E8(00000000)              call scanf
+    41 0000002D F2440F100424              movsd xmm8, [rsp]       ; dereference rsp and copy to xmm8
+    42 00000033 58                        pop rax                 ; restore stack
+    43                                    ; End of block
+    44                                  
+    45                                    ; Prompt for input of miles maintained
+    46 00000034 B800000000                mov rax, 0
+    47 00000039 48BF-                     mov rdi, miles_msg
+    47 0000003B [4300000000000000] 
+    48 00000043 E8(00000000)              call printf
+    49                                    ; End of block
+    50                                  
+    51                                    ; Get miles from user
+    52 00000048 B800000000                mov rax, 0
+    53 0000004D 48BF-                     mov rdi, floatform
+    53 0000004F [1901000000000000] 
+    54 00000057 6A00                      push qword 0
+    55 00000059 4889E6                    mov rsi, rsp
+    56 0000005C E8(00000000)              call scanf
+    57 00000061 F2440F100C24              movsd xmm9, [rsp]
+    58 00000067 58                        pop rax
+    59                                    ; End of block
+    60                                  
+    61                                    ; Prompt for input of final speed
+    62 00000068 B800000000                mov rax, 0
+    63 0000006D 48BF-                     mov rdi, final_seg_msg
+    63 0000006F [7D00000000000000] 
+    64 00000077 E8(00000000)              call printf
+    65                                    ; End of block
+    66                                  
+    67                                    ; Get final_seg from user
+    68 0000007C B800000000                mov rax, 0
+    69 00000081 48BF-                     mov rdi, floatform
+    69 00000083 [1901000000000000] 
+    70 0000008B 6A00                      push qword 0
+    71 0000008D 4889E6                    mov rsi, rsp
+    72 00000090 E8(00000000)              call scanf
+    73 00000095 F2440F101424              movsd xmm10, [rsp]
+    74 0000009B 58                        pop rax
+    75                                    ; End of block
+    76                                  
+    77                                    ; Block to copy 25.3 into xmm1
+    78 0000009C F20F100C25-               movsd xmm1, qword [hotel_distance]
+    78 000000A1 [1D010000]         
+    79                                  
+    80                                    ; Output avg_speed_msg
+    81 000000A5 B800000000                mov rax, 0
+    82 000000AA 48BF-                     mov rdi, avg_speed_msg
+    82 000000AC [C200000000000000] 
+    83 000000B4 E8(00000000)              call printf
+    84                                    ; End of block
+    85                                  
+    86                                    ; Output total travel time
+    87 000000B9 B800000000                mov rax, 0
+    88 000000BE 48BF-                     mov rdi, total_msg
+    88 000000C0 [EB00000000000000] 
+    89 000000C8 E8(00000000)              call printf
+    90                                    ; End of block

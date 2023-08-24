@@ -21,6 +21,7 @@ section .data
   total_msg db "The total travel time will be %1.18lf hours.", 10, 0
   total_msg_len equ $-total_msg
   floatform db "%lf", 0
+  hotel_distance dq 253.5
 
 section .text
 las_vegas:                ; start here
@@ -73,7 +74,8 @@ las_vegas:                ; start here
   pop rax
   ; End of block
 
-  ; Block for math instructions
+  ; Block to copy 25.3 into xmm1
+  movsd xmm1, qword [hotel_distance]
 
   ; Output avg_speed_msg
   mov rax, 0
