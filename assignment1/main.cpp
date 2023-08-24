@@ -21,7 +21,8 @@ int main() {
   number = las_vegas();
 
   // Output number received
-  cout << "\nThe main module received this number " << number << " and will keep it for a while.\n";
+  printf("%s%1.18lf%s\n", "\nThe main module received this number ", number,
+  " and will keep it for a while.\n");
   cout << "A zero will be sent to your operating system.\n";
   cout << "Good-bye. Have a great trip.\n";
   return 0;
