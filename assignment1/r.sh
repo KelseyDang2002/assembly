@@ -3,6 +3,9 @@
 #Author: Kelsey Dang
 #Program Name: Las Vegas Problem
 
+rm *.o
+rm *.out
+
 echo "This is program <Las Vegas Problem>"
 
 echo "Assemble the module compute_trip.asm"
