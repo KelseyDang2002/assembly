@@ -34,6 +34,9 @@ section .data
   total_msg db "The total travel time will be %1.18lf hours.", 10, 0
   total_msg_len equ $-total_msg
 
+  invalid_msg db "Invalid number. Try again.", 10, 0
+  invalid_msg_len equ $-invalid_msg
+
   floatform db "%lf", 0
   stringform db "%s", 0
   hotel_distance dq 253.5
@@ -82,12 +85,35 @@ las_vegas:                ; start here
   pop rax                 ; restore stack
   ; End of block
 
-  ; ; Print initial from user
-  ; mov rax, 0
-  ; mov rsi, initial_output
-  ; call printf
+  ; ; Block to set xmm12 = 0.0
+  ; push qword 0
+  ; movsd xmm12, [rsp]
+  ; pop rax
   ; ; End of block
   ;
+  ; ; Block to check if input is invalid
+  ; ucomisd xmm8, xmm12
+  ; jb negative
+
+  ; mov rax, 1
+  ; mov rdi, floatform
+  ; mov xmm0, xmm8
+  ; call printf
+  ; jmp continue
+
+; negative:
+  ; mov rax, 0
+  ; mov rdi, invalid_msg
+  ; call printf
+
+; continue:
+
+  ; Print initial from user
+  mov rax, 0
+  mov rsi, initial_output
+  call printf
+  ; End of block
+
   ; Prompt for input of miles maintained
   mov qword rax, 0
   mov rdi, stringform     ; "%s"
