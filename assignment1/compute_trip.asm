@@ -16,19 +16,19 @@ section .data
   initial_output db "Initial entered: %1.18lf", 10, 0
   initial_output_len equ $-initial_output
 
-  miles_msg db "For how many miles will you maintain this average speed: ", 0
+  miles_msg db " For how many miles will you maintain this average speed: ", 0
   miles_msg_len equ $-miles_msg
 
   miles_output db "Miles maintained entered: ", 10, 0
   miles_output_len equ $-miles_output
 
-  final_seg_msg db "What will be your speed during the final segment of the trip (mph): ", 0
+  final_seg_msg db " What will be your speed during the final segment of the trip (mph): ", 0
   final_seg_msg_len equ $-final_seg_msg
 
   final_output db "Final speed entered: ", 10, 0
   final_output_len equ $-final_output
 
-  avg_speed_msg db "Your average speed will be %1.18lf mph.", 10, 0
+  avg_speed_msg db " Your average speed will be %1.18lf mph.", 10, 0
   avg_speed_msg_len equ $-avg_speed_msg
 
   total_msg db "The total travel time will be %1.18lf hours.", 10, 0
@@ -40,7 +40,6 @@ section .data
   floatform db "%lf", 0
   stringform db "%s", 0
   hotel_distance dq 253.5
-  three dq 3.0
 
 section .bss
   align 64
@@ -68,113 +67,88 @@ las_vegas:                ; start here
   pushf
 
   ; Prompt for input of initial distance
-  push qword 0            ; push to top of stack
-  mov qword rax, 0
+  mov rax, 0
   mov rdi, stringform     ; "%s"
   mov rsi, initial_msg
   call printf
   ; End of block
 
   ; Get initial from user
-  push qword 0            ; push to top of stack
-  mov qword rax, 0
+  mov rax, 0
   mov rdi, floatform      ; "%lf"
   mov rsi, rsp
   call scanf
-  movsd xmm8, [rsp]       ; dereference rsp and copy to xmm8
-  pop rax                 ; restore stack
+  movsd xmm8, [rsp]       ; initial speed input in xmm8 now
   ; End of block
 
-  ; ; Block to set xmm12 = 0.0
-  ; push qword 0
-  ; movsd xmm12, [rsp]
-  ; pop rax
-  ; ; End of block
-  ;
-  ; ; Block to check if input is invalid
-  ; ucomisd xmm8, xmm12
-  ; jb negative
-
-  ; mov rax, 1
-  ; mov rdi, floatform
-  ; mov xmm0, xmm8
-  ; call printf
-  ; jmp continue
-
-; negative:
-  ; mov rax, 0
-  ; mov rdi, invalid_msg
-  ; call printf
-
-; continue:
-
   ; Print initial from user
-  mov rax, 0
+  mov rax, 1
   mov rsi, initial_output
   call printf
   ; End of block
 
   ; Prompt for input of miles maintained
-  mov qword rax, 0
+  mov rax, 0
   mov rdi, stringform     ; "%s"
   mov rsi, miles_msg
   call printf
   ; End of block
-  ;
+
   ; Get miles from user
-  push qword 0
-  mov qword rax, 0
+  mov rax, 0
   mov rdi, floatform
   mov rsi, rsp
   call scanf
-  movsd xmm9, [rsp]
-  pop rax
+  movsd xmm9, [rsp]       ; miles input in xmm9 now
   ; End of block
-  ;
-  ; ; Print miles from user
-  ; mov rax, 0
-  ; mov rsi, miles_output
-  ; call printf
-  ; ; End of block
-  ;
+
+  ; Print miles from user
+  mov rax, 1
+  mov rsi, miles_output
+  call printf
+  ; End of block
+
   ; Prompt for input of final speed
-  mov qword rax, 0
+  mov rax, 0
   mov rdi, stringform     ; "%s"
   mov rsi, final_seg_msg
   call printf
   ; End of block
 
   ; Get final_seg from user
-  push qword 0
-  mov qword rax, 0
+  mov rax, 0
   mov rdi, floatform
   mov rsi, rsp
   call scanf
-  movsd xmm10, [rsp]
-  pop rax
+  movsd xmm10, [rsp] ; final_seg input in xmm10 now
   ; End of block
-  ;
-  ; ; Print final_seg from user
-  ; mov rax, 0
-  ; mov rsi, final_output
-  ; call printf
-  ; ; End of block
-  ;
-  ; ; Block to copy 253.5 into xmm1 and 3.0 into xmm2
-  ; movsd xmm1, qword [hotel_distance]
-  ; movsd xmm2, qword [three]
-  ;
-  ; ; Output avg_speed_msg
-  ; mov rax, 0
-  ; mov rdi, avg_speed_msg
-  ; call printf
-  ; ; End of block
-  ;
-  ; ; Output total travel time
-  ; mov rax, 0
-  ; mov rdi, total_msg
-  ; call printf
-  ; ; End of block
+
+  ; Print final_seg from user
+  mov rax, 1
+  mov rsi, final_output
+  call printf
+  ; End of block
+
+  ; Block to subtract (hotel_distance - miles input)
+  movsd xmm11, qword [hotel_distance] ; xmm11 = 253.5
+  subsd xmm11, xmm9     ; xmm11 = xmm11 - xmm9
+  ; End of block
+
+  ; Block to divide (initial speed / miles input)
+  divsd xmm9, xmm8      ; xmm9 = xmm9 / xmm8, hours in xmm9 now
+  ; End of block
+
+  ; Output avg_speed_msg
+  mov rax, 1
+  mov rdi, avg_speed_msg
+  call printf
+  ; End of block
+
+  ; Output total travel time
+  mov rax, 1
+  mov rdi, total_msg
+  call printf
+  ; End of block
 
   ; Block to set return value
 setreturnvalue:
