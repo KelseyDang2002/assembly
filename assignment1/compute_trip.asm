@@ -37,7 +37,6 @@ section .data
   floatform db "%lf", 0
   stringform db "%s", 0
   hotel_distance dq 253.5
-  three dq 3.0
 
 section .bss
   align 64
@@ -82,12 +81,12 @@ las_vegas:                ; start here
   pop rax                 ; restore stack
   ; End of block
 
-  ; ; Print initial from user
-  ; mov rax, 0
-  ; mov rsi, initial_output
-  ; call printf
-  ; ; End of block
-  ;
+  ; Print initial from user
+  mov rax, 0
+  mov rsi, initial_output
+  call printf
+  ; End of block
+
   ; Prompt for input of miles maintained
   mov qword rax, 0
   mov rdi, stringform     ; "%s"
@@ -104,13 +103,13 @@ las_vegas:                ; start here
   movsd xmm9, [rsp]
   pop rax
   ; End of block
-  ;
-  ; ; Print miles from user
-  ; mov rax, 0
-  ; mov rsi, miles_output
-  ; call printf
-  ; ; End of block
-  ;
+
+  ; Print miles from user
+  mov rax, 0
+  mov rsi, miles_output
+  call printf
+  ; End of block
+
   ; Prompt for input of final speed
   mov qword rax, 0
   mov rdi, stringform     ; "%s"
@@ -127,28 +126,27 @@ las_vegas:                ; start here
   movsd xmm10, [rsp]
   pop rax
   ; End of block
-  ;
-  ; ; Print final_seg from user
-  ; mov rax, 0
-  ; mov rsi, final_output
-  ; call printf
-  ; ; End of block
-  ;
-  ; ; Block to copy 253.5 into xmm1 and 3.0 into xmm2
-  ; movsd xmm1, qword [hotel_distance]
-  ; movsd xmm2, qword [three]
-  ;
-  ; ; Output avg_speed_msg
-  ; mov rax, 0
-  ; mov rdi, avg_speed_msg
-  ; call printf
-  ; ; End of block
-  ;
-  ; ; Output total travel time
-  ; mov rax, 0
-  ; mov rdi, total_msg
-  ; call printf
-  ; ; End of block
+
+  ; Print final_seg from user
+  mov rax, 0
+  mov rsi, final_output
+  call printf
+  ; End of block
+
+  ; Block to copy 253.5 into xmm11
+  ; movsd xmm11, qword [hotel_distance]
+
+  ; Output avg_speed_msg
+  mov rax, 0
+  mov rdi, avg_speed_msg
+  call printf
+  ; End of block
+
+  ; Output total travel time
+  mov rax, 0
+  mov rdi, total_msg
+  call printf
+  ; End of block
 
   ; Block to set return value
 setreturnvalue:

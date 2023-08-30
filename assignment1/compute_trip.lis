@@ -73,149 +73,152 @@
     37 00000166 256C6600                  floatform db "%lf", 0
     38 0000016A 257300                    stringform db "%s", 0
     39 0000016D 0000000000B06F40          hotel_distance dq 253.5
-    40 00000175 0000000000000840          three dq 3.0
-    41                                  
-    42                                  section .bss
-    43                                    align 64
-    44 00000000 <res 00000340>            backuparea resb 832
-    45                                  
-    46                                  section .text
-    47                                  las_vegas:                ; start here
-    48                                  
-    49                                    ; Backup GPRs
-    50 00000000 55                        push rbp
-    51 00000001 4889E5                    mov rbp, rsp
-    52 00000004 53                        push rbx
-    53 00000005 51                        push rcx
-    54 00000006 52                        push rdx
-    55 00000007 56                        push rsi
-    56 00000008 57                        push rdi
-    57 00000009 4150                      push r8
-    58 0000000B 4151                      push r9
-    59 0000000D 4152                      push r10
-    60 0000000F 4153                      push r11
-    61 00000011 4154                      push r12
-    62 00000013 4155                      push r13
-    63 00000015 4156                      push r14
-    64 00000017 4157                      push r15
-    65 00000019 9C                        pushf
-    66                                  
-    67                                    ; Prompt for input of initial distance
-    68 0000001A 6A00                      push qword 0            ; push to top of stack
-    69 0000001C B800000000                mov qword rax, 0
-    70 00000021 48BF-                     mov rdi, stringform     ; "%s"
-    70 00000023 [6A01000000000000] 
-    71 0000002B 48BE-                     mov rsi, initial_msg
-    71 0000002D [0000000000000000] 
-    72 00000035 E8(00000000)              call printf
-    73                                    ; End of block
-    74                                  
-    75                                    ; Get initial from user
-    76 0000003A 6A00                      push qword 0            ; push to top of stack
-    77 0000003C B800000000                mov qword rax, 0
-    78 00000041 48BF-                     mov rdi, floatform      ; "%lf"
-    78 00000043 [6601000000000000] 
-    79 0000004B 4889E6                    mov rsi, rsp
-    80 0000004E E8(00000000)              call scanf
-    81 00000053 F2440F100424              movsd xmm8, [rsp]       ; dereference rsp and copy to xmm8
-    82 00000059 58                        pop rax                 ; restore stack
-    83                                    ; End of block
-    84                                  
-    85                                    ; ; Print initial from user
-    86                                    ; mov rax, 0
-    87                                    ; mov rsi, initial_output
-    88                                    ; call printf
-    89                                    ; ; End of block
-    90                                    ;
-    91                                    ; Prompt for input of miles maintained
-    92 0000005A B800000000                mov qword rax, 0
-    93 0000005F 48BF-                     mov rdi, stringform     ; "%s"
-    93 00000061 [6A01000000000000] 
-    94 00000069 48BE-                     mov rsi, miles_msg
-    94 0000006B [5D00000000000000] 
-    95 00000073 E8(00000000)              call printf
-    96                                    ; End of block
-    97                                    ;
-    98                                    ; Get miles from user
-    99 00000078 6A00                      push qword 0
-   100 0000007A B800000000                mov qword rax, 0
-   101 0000007F 48BF-                     mov rdi, floatform
-   101 00000081 [6601000000000000] 
-   102 00000089 4889E6                    mov rsi, rsp
-   103 0000008C E8(00000000)              call scanf
-   104 00000091 F2440F100C24              movsd xmm9, [rsp]
-   105 00000097 58                        pop rax
-   106                                    ; End of block
-   107                                    ;
-   108                                    ; ; Print miles from user
-   109                                    ; mov rax, 0
-   110                                    ; mov rsi, miles_output
-   111                                    ; call printf
-   112                                    ; ; End of block
-   113                                    ;
-   114                                    ; Prompt for input of final speed
-   115 00000098 B800000000                mov qword rax, 0
-   116 0000009D 48BF-                     mov rdi, stringform     ; "%s"
-   116 0000009F [6A01000000000000] 
-   117 000000A7 48BE-                     mov rsi, final_seg_msg
-   117 000000A9 [B300000000000000] 
-   118 000000B1 E8(00000000)              call printf
-   119                                    ; End of block
-   120                                  
-   121                                    ; Get final_seg from user
-   122 000000B6 6A00                      push qword 0
-   123 000000B8 B800000000                mov qword rax, 0
-   124 000000BD 48BF-                     mov rdi, floatform
-   124 000000BF [6601000000000000] 
-   125 000000C7 4889E6                    mov rsi, rsp
-   126 000000CA E8(00000000)              call scanf
-   127 000000CF F2440F101424              movsd xmm10, [rsp]
-   128 000000D5 58                        pop rax
-   129                                    ; End of block
-   130                                    ;
-   131                                    ; ; Print final_seg from user
-   132                                    ; mov rax, 0
-   133                                    ; mov rsi, final_output
-   134                                    ; call printf
-   135                                    ; ; End of block
-   136                                    ;
-   137                                    ; ; Block to copy 253.5 into xmm1 and 3.0 into xmm2
-   138                                    ; movsd xmm1, qword [hotel_distance]
-   139                                    ; movsd xmm2, qword [three]
-   140                                    ;
-   141                                    ; ; Output avg_speed_msg
-   142                                    ; mov rax, 0
-   143                                    ; mov rdi, avg_speed_msg
-   144                                    ; call printf
-   145                                    ; ; End of block
-   146                                    ;
-   147                                    ; ; Output total travel time
-   148                                    ; mov rax, 0
-   149                                    ; mov rdi, total_msg
-   150                                    ; call printf
-   151                                    ; ; End of block
-   152                                  
-   153                                    ; Block to set return value
-   154                                  setreturnvalue:
-   155 000000D6 4156                      push r14
-   156 000000D8 F20F100424                movsd xmm0, [rsp]
-   157 000000DD 415E                      pop r14
-   158                                  
-   159                                    ; Restore GPRs
-   160 000000DF 9D                        popf
-   161 000000E0 415F                      pop r15
-   162 000000E2 415E                      pop r14
-   163 000000E4 415D                      pop r13
-   164 000000E6 415C                      pop r12
-   165 000000E8 415B                      pop r11
-   166 000000EA 415A                      pop r10
-   167 000000EC 4159                      pop r9
-   168 000000EE 4158                      pop r8
-   169 000000F0 5F                        pop rdi
-   170 000000F1 5E                        pop rsi
-   171 000000F2 5A                        pop rdx
-   172 000000F3 59                        pop rcx
-   173 000000F4 5B                        pop rbx
-   174 000000F5 5D                        pop rbp
-   175                                  
-   176 000000F6 C3                        ret
+    40                                  
+    41                                  section .bss
+    42                                    align 64
+    43 00000000 <res 00000340>            backuparea resb 832
+    44                                  
+    45                                  section .text
+    46                                  las_vegas:                ; start here
+    47                                  
+    48                                    ; Backup GPRs
+    49 00000000 55                        push rbp
+    50 00000001 4889E5                    mov rbp, rsp
+    51 00000004 53                        push rbx
+    52 00000005 51                        push rcx
+    53 00000006 52                        push rdx
+    54 00000007 56                        push rsi
+    55 00000008 57                        push rdi
+    56 00000009 4150                      push r8
+    57 0000000B 4151                      push r9
+    58 0000000D 4152                      push r10
+    59 0000000F 4153                      push r11
+    60 00000011 4154                      push r12
+    61 00000013 4155                      push r13
+    62 00000015 4156                      push r14
+    63 00000017 4157                      push r15
+    64 00000019 9C                        pushf
+    65                                  
+    66                                    ; Prompt for input of initial distance
+    67 0000001A 6A00                      push qword 0            ; push to top of stack
+    68 0000001C B800000000                mov qword rax, 0
+    69 00000021 48BF-                     mov rdi, stringform     ; "%s"
+    69 00000023 [6A01000000000000] 
+    70 0000002B 48BE-                     mov rsi, initial_msg
+    70 0000002D [0000000000000000] 
+    71 00000035 E8(00000000)              call printf
+    72                                    ; End of block
+    73                                  
+    74                                    ; Get initial from user
+    75 0000003A 6A00                      push qword 0            ; push to top of stack
+    76 0000003C B800000000                mov qword rax, 0
+    77 00000041 48BF-                     mov rdi, floatform      ; "%lf"
+    77 00000043 [6601000000000000] 
+    78 0000004B 4889E6                    mov rsi, rsp
+    79 0000004E E8(00000000)              call scanf
+    80 00000053 F2440F100424              movsd xmm8, [rsp]       ; dereference rsp and copy to xmm8
+    81 00000059 58                        pop rax                 ; restore stack
+    82                                    ; End of block
+    83                                  
+    84                                    ; Print initial from user
+    85 0000005A B800000000                mov rax, 0
+    86 0000005F 48BE-                     mov rsi, initial_output
+    86 00000061 [4300000000000000] 
+    87 00000069 E8(00000000)              call printf
+    88                                    ; End of block
+    89                                  
+    90                                    ; Prompt for input of miles maintained
+    91 0000006E B800000000                mov qword rax, 0
+    92 00000073 48BF-                     mov rdi, stringform     ; "%s"
+    92 00000075 [6A01000000000000] 
+    93 0000007D 48BE-                     mov rsi, miles_msg
+    93 0000007F [5D00000000000000] 
+    94 00000087 E8(00000000)              call printf
+    95                                    ; End of block
+    96                                    ;
+    97                                    ; Get miles from user
+    98 0000008C 6A00                      push qword 0
+    99 0000008E B800000000                mov qword rax, 0
+   100 00000093 48BF-                     mov rdi, floatform
+   100 00000095 [6601000000000000] 
+   101 0000009D 4889E6                    mov rsi, rsp
+   102 000000A0 E8(00000000)              call scanf
+   103 000000A5 F2440F100C24              movsd xmm9, [rsp]
+   104 000000AB 58                        pop rax
+   105                                    ; End of block
+   106                                  
+   107                                    ; Print miles from user
+   108 000000AC B800000000                mov rax, 0
+   109 000000B1 48BE-                     mov rsi, miles_output
+   109 000000B3 [9700000000000000] 
+   110 000000BB E8(00000000)              call printf
+   111                                    ; End of block
+   112                                  
+   113                                    ; Prompt for input of final speed
+   114 000000C0 B800000000                mov qword rax, 0
+   115 000000C5 48BF-                     mov rdi, stringform     ; "%s"
+   115 000000C7 [6A01000000000000] 
+   116 000000CF 48BE-                     mov rsi, final_seg_msg
+   116 000000D1 [B300000000000000] 
+   117 000000D9 E8(00000000)              call printf
+   118                                    ; End of block
+   119                                  
+   120                                    ; Get final_seg from user
+   121 000000DE 6A00                      push qword 0
+   122 000000E0 B800000000                mov qword rax, 0
+   123 000000E5 48BF-                     mov rdi, floatform
+   123 000000E7 [6601000000000000] 
+   124 000000EF 4889E6                    mov rsi, rsp
+   125 000000F2 E8(00000000)              call scanf
+   126 000000F7 F2440F101424              movsd xmm10, [rsp]
+   127 000000FD 58                        pop rax
+   128                                    ; End of block
+   129                                  
+   130                                    ; Print final_seg from user
+   131 000000FE B800000000                mov rax, 0
+   132 00000103 48BE-                     mov rsi, final_output
+   132 00000105 [F800000000000000] 
+   133 0000010D E8(00000000)              call printf
+   134                                    ; End of block
+   135                                  
+   136                                    ; Block to copy 253.5 into xmm11
+   137                                    ; movsd xmm11, qword [hotel_distance]
+   138                                  
+   139                                    ; Output avg_speed_msg
+   140 00000112 B800000000                mov rax, 0
+   141 00000117 48BF-                     mov rdi, avg_speed_msg
+   141 00000119 [0F01000000000000] 
+   142 00000121 E8(00000000)              call printf
+   143                                    ; End of block
+   144                                  
+   145                                    ; Output total travel time
+   146 00000126 B800000000                mov rax, 0
+   147 0000012B 48BF-                     mov rdi, total_msg
+   147 0000012D [3801000000000000] 
+   148 00000135 E8(00000000)              call printf
+   149                                    ; End of block
+   150                                  
+   151                                    ; Block to set return value
+   152                                  setreturnvalue:
+   153 0000013A 4156                      push r14
+   154 0000013C F20F100424                movsd xmm0, [rsp]
+   155 00000141 415E                      pop r14
+   156                                  
+   157                                    ; Restore GPRs
+   158 00000143 9D                        popf
+   159 00000144 415F                      pop r15
+   160 00000146 415E                      pop r14
+   161 00000148 415D                      pop r13
+   162 0000014A 415C                      pop r12
+   163 0000014C 415B                      pop r11
+   164 0000014E 415A                      pop r10
+   165 00000150 4159                      pop r9
+   166 00000152 4158                      pop r8
+   167 00000154 5F                        pop rdi
+   168 00000155 5E                        pop rsi
+   169 00000156 5A                        pop rdx
+   170 00000157 59                        pop rcx
+   171 00000158 5B                        pop rbx
+   172 00000159 5D                        pop rbp
+   173                                  
+   174 0000015A C3                        ret
