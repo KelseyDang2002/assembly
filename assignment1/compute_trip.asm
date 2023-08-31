@@ -10,31 +10,31 @@ extern scanf
 
 section .data
   ; Constants
-  initial_msg db "Please enter the speed for the initial segment of the trip (mph): ", 0
+  initial_msg db "    Please enter the speed for the initial segment of the trip (mph): ", 0
   initial_msg_len equ $-initial_msg
 
-  initial_output db "Initial entered: %1.18lf", 10, 0
+  initial_output db "    Initial entered: %1.18lf ", 10, 10, 0
   initial_output_len equ $-initial_output
 
-  miles_msg db " For how many miles will you maintain this average speed: ", 0
+  miles_msg db "    For how many miles will you maintain this average speed: ", 0
   miles_msg_len equ $-miles_msg
 
-  miles_output db "Miles maintained entered: ", 10, 0
+  miles_output db "    Miles maintained entered: %1.18lf ", 10, 10, 0
   miles_output_len equ $-miles_output
 
-  final_seg_msg db " What will be your speed during the final segment of the trip (mph): ", 0
+  final_seg_msg db "    What will be your speed during the final segment of the trip (mph): ", 0
   final_seg_msg_len equ $-final_seg_msg
 
-  final_output db "Final speed entered: ", 10, 0
+  final_output db "    Final speed entered: %1.18lf ", 10, 10, 0
   final_output_len equ $-final_output
 
-  avg_speed_msg db " Your average speed will be %1.18lf mph.", 10, 0
+  avg_speed_msg db "    Your average speed will be %1.18lf mph.", 10, 0
   avg_speed_msg_len equ $-avg_speed_msg
 
-  total_msg db "The total travel time will be %1.18lf hours.", 10, 0
+  total_msg db "    The total travel time will be %1.18lf hours.", 10, 0
   total_msg_len equ $-total_msg
 
-  invalid_msg db "Invalid number. Try again.", 10, 0
+  invalid_msg db "    Invalid number. Try again.", 10, 0
   invalid_msg_len equ $-invalid_msg
 
   floatform db "%lf", 0
@@ -83,7 +83,7 @@ las_vegas:                ; start here
 
   ; Print initial from user
   mov rax, 1
-  mov rsi, initial_output
+  mov rdi, initial_output
   call printf
   ; End of block
 
@@ -104,7 +104,7 @@ las_vegas:                ; start here
 
   ; Print miles from user
   mov rax, 1
-  mov rsi, miles_output
+  mov rdi, miles_output
   call printf
   ; End of block
 
@@ -125,7 +125,7 @@ las_vegas:                ; start here
 
   ; Print final_seg from user
   mov rax, 1
-  mov rsi, final_output
+  mov rdi, final_output
   call printf
   ; End of block
 
@@ -150,11 +150,9 @@ las_vegas:                ; start here
   call printf
   ; End of block
 
-  ; Block to set return value
+  ; Set return value
 setreturnvalue:
-  push r14
   movsd xmm0, [rsp]
-  pop r14
 
   ; Restore GPRs
   popf
