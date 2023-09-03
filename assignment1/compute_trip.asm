@@ -8,7 +8,7 @@ global las_vegas
 extern printf
 extern scanf
 
-section .data
+segment .data
   ; Constants
   initial_msg db "    Please enter the speed for the initial segment of the trip (mph): ", 0
   initial_msg_len equ $-initial_msg
@@ -35,11 +35,11 @@ section .data
   stringform db "%s", 0
   hotel_distance dq 253.5
 
-section .bss
+segment .bss
   align 64
   backuparea resb 832
 
-section .text
+segment .text
 las_vegas:                ; start here
 
   ; ============= Backup GPRs ============================
@@ -123,29 +123,54 @@ las_vegas:                ; start here
   call printf
   ; End of block
 
-  ; ============= Calculate average speed =========================
-  ; hotel_distance = 253.5
+  ; ================= First leg / first speed ==================
   ; xmm8 = initial (first speed)
   ; xmm9 = miles (first leg)
-  ; xmm10 = final_seg (second leg)
-  ; second_leg = 253.5 - initial
+  movsd xmm11, xmm9         ; copy xmm9 into xmm11, xmm11 = first leg
+  divsd xmm9, xmm8          ; xmm9 = xmm9 / xmm8
+
+  ; ================= Second leg = 253.5 - first leg ===========
+  movsd xmm14, qword [hotel_distance] ; xmm14 = 253.5
+  movsd xmm15, xmm14        ; copy xmm14 into xmm15, xmm15 = 253.5
+  subsd xmm14, xmm11        ; xmm14 = xmm14 - xmm11 (second leg = 253.5 - first leg)
+
+  ; ============= Second leg / second speed =======================
+  ; xmm10 = second speed
+  ; xmm14 = second leg
+  divsd xmm14, xmm10        ; xmm14 = xmm14 / xmm10
+
+  ; ============= Total travel time ===============================
   ; total travel time = (first leg / first speed) + (second leg / second speed)
+  addsd xmm9, xmm14         ; total travel time
+  movsd xmm13, xmm9         ; copy total travel time into xmm13
+
+  ; ============= Average speed ===================================
   ; average speed = 253.5 / total travel time
-  ; End of block
+  divsd xmm15, xmm9 ; xmm15 = xmm15 / xmm9 (average speed = 253.5 / total travel time)
 
-  ; =============== Output messages ===============================
+  ; ============= Output avg_speed_msg ============================
+  movsd xmm15, [rsp] ; move average speed to top of stack
 
-  ; Output avg_speed_msg
   mov rax, 1
   mov rdi, avg_speed_msg
   call printf
-  ; End of block
 
-  ; Output total travel time
+  ; ============= Output total travel time ========================
+  movsd xmm13, [rsp]        ; move total travel time to top of stack
+
   mov rax, 1
   mov rdi, total_msg
   call printf
   ; End of block
+
+  ; ============= Calculate average speed =========================
+  ; hotel_distance = 253.5
+  ; xmm8 = initial (first speed) DONE
+  ; xmm9 = miles (first leg) DONE
+  ; xmm10 = final_seg (second leg) DONE
+  ; second_leg = 253.5 - first leg DONE
+  ; total travel time = (first leg / first speed) + (second leg / second speed)
+  ; average speed = 253.5 / total travel time
 
   ; Set return value
 setreturnvalue:
