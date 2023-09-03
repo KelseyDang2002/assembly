@@ -74,15 +74,15 @@
     34 00000195 72732E0A00         
     35                                    total_msg_len equ $-total_msg
     36                                  
-    37 0000019A 496E76616C6964206E-       invalid_msg db "Invalid number. Try again.", 10, 0
-    37 000001A3 756D6265722E205472-
-    37 000001AC 7920616761696E2E0A-
-    37 000001B5 00                 
+    37 0000019A 20202020496E76616C-       invalid_msg db "    Invalid number. Try again.", 10, 0
+    37 000001A3 6964206E756D626572-
+    37 000001AC 2E2054727920616761-
+    37 000001B5 696E2E0A00         
     38                                    invalid_msg_len equ $-invalid_msg
     39                                  
-    40 000001B6 256C6600                  floatform db "%lf", 0
-    41 000001BA 257300                    stringform db "%s", 0
-    42 000001BD 0000000000B06F40          hotel_distance dq 253.5
+    40 000001BA 256C6600                  floatform db "%lf", 0
+    41 000001BE 257300                    stringform db "%s", 0
+    42 000001C1 0000000000B06F40          hotel_distance dq 253.5
     43                                  
     44                                  section .bss
     45                                    align 64
@@ -112,7 +112,7 @@
     69                                    ; Prompt for input of initial distance
     70 0000001A B800000000                mov rax, 0
     71 0000001F 48BF-                     mov rdi, stringform     ; "%s"
-    71 00000021 [BA01000000000000] 
+    71 00000021 [BE01000000000000] 
     72 00000029 48BE-                     mov rsi, initial_msg
     72 0000002B [0000000000000000] 
     73 00000033 E8(00000000)              call printf
@@ -121,7 +121,7 @@
     76                                    ; Get initial from user
     77 00000038 B800000000                mov rax, 0
     78 0000003D 48BF-                     mov rdi, floatform      ; "%lf"
-    78 0000003F [B601000000000000] 
+    78 0000003F [BA01000000000000] 
     79 00000047 4889E6                    mov rsi, rsp
     80 0000004A E8(00000000)              call scanf
     81 0000004F F2440F100424              movsd xmm8, [rsp]       ; initial speed input in xmm8 now
@@ -137,7 +137,7 @@
     90                                    ; Prompt for input of miles maintained
     91 00000069 B800000000                mov rax, 0
     92 0000006E 48BF-                     mov rdi, stringform     ; "%s"
-    92 00000070 [BA01000000000000] 
+    92 00000070 [BE01000000000000] 
     93 00000078 48BE-                     mov rsi, miles_msg
     93 0000007A [6700000000000000] 
     94 00000082 E8(00000000)              call printf
@@ -146,7 +146,7 @@
     97                                    ; Get miles from user
     98 00000087 B800000000                mov rax, 0
     99 0000008C 48BF-                     mov rdi, floatform
-    99 0000008E [B601000000000000] 
+    99 0000008E [BA01000000000000] 
    100 00000096 4889E6                    mov rsi, rsp
    101 00000099 E8(00000000)              call scanf
    102 0000009E F2440F100C24              movsd xmm9, [rsp]       ; miles input in xmm9 now
@@ -162,7 +162,7 @@
    111                                    ; Prompt for input of final speed
    112 000000B8 B800000000                mov rax, 0
    113 000000BD 48BF-                     mov rdi, stringform     ; "%s"
-   113 000000BF [BA01000000000000] 
+   113 000000BF [BE01000000000000] 
    114 000000C7 48BE-                     mov rsi, final_seg_msg
    114 000000C9 [CE00000000000000] 
    115 000000D1 E8(00000000)              call printf
@@ -171,7 +171,7 @@
    118                                    ; Get final_seg from user
    119 000000D6 B800000000                mov rax, 0
    120 000000DB 48BF-                     mov rdi, floatform
-   120 000000DD [B601000000000000] 
+   120 000000DD [BA01000000000000] 
    121 000000E5 4889E6                    mov rsi, rsp
    122 000000E8 E8(00000000)              call scanf
    123 000000ED F2440F101424              movsd xmm10, [rsp] ; final_seg input in xmm10 now
@@ -184,49 +184,55 @@
    129 00000102 E8(00000000)              call printf
    130                                    ; End of block
    131                                  
-   132                                    ; Block to subtract (hotel_distance - miles input)
-   133 00000107 F2440F101C25-             movsd xmm11, qword [hotel_distance] ; xmm11 = 253.5
-   133 0000010D [BD010000]         
-   134 00000111 F2450F5CD9                subsd xmm11, xmm9     ; xmm11 = xmm11 - xmm9
-   135                                    ; End of block
-   136                                  
-   137                                    ; Block to divide (initial speed / miles input)
-   138 00000116 F2450F5EC8                divsd xmm9, xmm8      ; xmm9 = xmm9 / xmm8, hours in xmm9 now
-   139                                    ; End of block
-   140                                  
-   141                                    ; Output avg_speed_msg
-   142 0000011B B801000000                mov rax, 1
-   143 00000120 48BF-                     mov rdi, avg_speed_msg
-   143 00000122 [3B01000000000000] 
-   144 0000012A E8(00000000)              call printf
-   145                                    ; End of block
-   146                                  
-   147                                    ; Output total travel time
-   148 0000012F B801000000                mov rax, 1
-   149 00000134 48BF-                     mov rdi, total_msg
-   149 00000136 [6801000000000000] 
-   150 0000013E E8(00000000)              call printf
-   151                                    ; End of block
-   152                                  
-   153                                    ; Set return value
-   154                                  setreturnvalue:
-   155 00000143 F20F100424                movsd xmm0, [rsp]
-   156                                  
-   157                                    ; Restore GPRs
-   158 00000148 9D                        popf
-   159 00000149 415F                      pop r15
-   160 0000014B 415E                      pop r14
-   161 0000014D 415D                      pop r13
-   162 0000014F 415C                      pop r12
-   163 00000151 415B                      pop r11
-   164 00000153 415A                      pop r10
-   165 00000155 4159                      pop r9
-   166 00000157 4158                      pop r8
-   167 00000159 5F                        pop rdi
-   168 0000015A 5E                        pop rsi
-   169 0000015B 5A                        pop rdx
-   170 0000015C 59                        pop rcx
-   171 0000015D 5B                        pop rbx
-   172 0000015E 5D                        pop rbp
-   173                                  
-   174 0000015F C3                        ret
+   132                                    ; Block to calculate average speed
+   133                                    ; movsd xmm12, [rsp]
+   134                                    ; movsd xmm12, xmm9      ; xmm12 = xmm9
+   135                                    ; divsd xmm9, xmm8       ; xmm9 = xmm9 / xmm8, hours in xmm9 now
+   136                                    ; movsd xmm11, qword [hotel_distance] ; xmm11 = 253.5
+   137                                    ; subsd xmm11, xmm12     ; xmm11 = xmm11 - xmm9
+   138                                    ; divsd xmm11, xmm10     ; xmm11 = xmm11 / xmm10
+   139                                    ; movsd xmm13, qword [hotel_distance] ; xmm13 = 253.5
+   140                                    ; addsd xmm9, xmm11      ; xmm9 = xmm9 + xmm11
+   141                                    ; movsd xmm0, xmm9       ; xmm14 = xmm9
+   142                                    ; End of block
+   143                                  
+   144                                    ; Output avg_speed_msg
+   145 00000107 B801000000                mov rax, 1
+   146 0000010C 48BF-                     mov rdi, avg_speed_msg
+   146 0000010E [3B01000000000000] 
+   147 00000116 E8(00000000)              call printf
+   148                                    ; End of block
+   149                                  
+   150                                    ; Calculate total travel time
+   151                                  
+   152                                    ; Output total travel time
+   153 0000011B B801000000                mov rax, 1
+   154 00000120 48BF-                     mov rdi, total_msg
+   154 00000122 [6801000000000000] 
+   155 0000012A E8(00000000)              call printf
+   156                                    ; End of block
+   157                                  
+   158                                    ; Set return value
+   159                                  setreturnvalue:
+   160 0000012F 4156                      push r14
+   161 00000131 F20F100424                movsd xmm0, [rsp]
+   162 00000136 415E                      pop r14
+   163                                  
+   164                                    ; Restore GPRs
+   165 00000138 9D                        popf
+   166 00000139 415F                      pop r15
+   167 0000013B 415E                      pop r14
+   168 0000013D 415D                      pop r13
+   169 0000013F 415C                      pop r12
+   170 00000141 415B                      pop r11
+   171 00000143 415A                      pop r10
+   172 00000145 4159                      pop r9
+   173 00000147 4158                      pop r8
+   174 00000149 5F                        pop rdi
+   175 0000014A 5E                        pop rsi
+   176 0000014B 5A                        pop rdx
+   177 0000014C 59                        pop rcx
+   178 0000014D 5B                        pop rbx
+   179 0000014E 5D                        pop rbp
+   180                                  
+   181 0000014F C3                        ret

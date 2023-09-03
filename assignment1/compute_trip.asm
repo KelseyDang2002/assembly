@@ -130,15 +130,11 @@ las_vegas:                ; start here
   ; End of block
 
   ; Block to calculate average speed
-  movsd xmm12, [rsp]
-  movsd xmm12, xmm9      ; xmm12 = xmm9
-  divsd xmm9, xmm8       ; xmm9 = xmm9 / xmm8, hours in xmm9 now
-  movsd xmm11, qword [hotel_distance] ; xmm11 = 253.5
-  subsd xmm11, xmm12     ; xmm11 = xmm11 - xmm9
-  divsd xmm11, xmm10     ; xmm11 = xmm11 / xmm10
-  movsd xmm13, qword [hotel_distance] ; xmm13 = 253.5
-  addsd xmm9, xmm11      ; xmm9 = xmm9 + xmm11
-  movsd xmm0, xmm9       ; xmm14 = xmm9
+  ; hotel_distance = 253.5
+  ; xmm8 = initial (first speed)
+  ; xmm9 = miles (first leg)
+  ; xmm10 = final_seg (second leg)
+  ; second_leg = 253.5 - initial
   ; End of block
 
   ; Output avg_speed_msg
@@ -146,9 +142,6 @@ las_vegas:                ; start here
   mov rdi, avg_speed_msg
   call printf
   ; End of block
-
-  ; Calculate total travel time
-  divsd xmm13, xmm14
 
   ; Output total travel time
   mov rax, 1
@@ -158,7 +151,9 @@ las_vegas:                ; start here
 
   ; Set return value
 setreturnvalue:
+  push r14
   movsd xmm0, [rsp]
+  pop r14
 
   ; Restore GPRs
   popf
