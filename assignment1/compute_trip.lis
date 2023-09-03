@@ -185,54 +185,48 @@
    130                                    ; End of block
    131                                  
    132                                    ; Block to calculate average speed
-   133                                    ; movsd xmm12, [rsp]
-   134                                    ; movsd xmm12, xmm9      ; xmm12 = xmm9
-   135                                    ; divsd xmm9, xmm8       ; xmm9 = xmm9 / xmm8, hours in xmm9 now
-   136                                    ; movsd xmm11, qword [hotel_distance] ; xmm11 = 253.5
-   137                                    ; subsd xmm11, xmm12     ; xmm11 = xmm11 - xmm9
-   138                                    ; divsd xmm11, xmm10     ; xmm11 = xmm11 / xmm10
-   139                                    ; movsd xmm13, qword [hotel_distance] ; xmm13 = 253.5
-   140                                    ; addsd xmm9, xmm11      ; xmm9 = xmm9 + xmm11
-   141                                    ; movsd xmm0, xmm9       ; xmm14 = xmm9
-   142                                    ; End of block
-   143                                  
-   144                                    ; Output avg_speed_msg
-   145 00000107 B801000000                mov rax, 1
-   146 0000010C 48BF-                     mov rdi, avg_speed_msg
-   146 0000010E [3B01000000000000] 
-   147 00000116 E8(00000000)              call printf
-   148                                    ; End of block
-   149                                  
-   150                                    ; Calculate total travel time
+   133                                    ; hotel_distance = 253.5
+   134                                    ; xmm8 = initial (first speed)
+   135                                    ; xmm9 = miles (first leg)
+   136                                    ; xmm10 = final_seg (second leg)
+   137                                    ; second_leg = 253.5 - initial
+   138                                    ; End of block
+   139                                  
+   140                                    ; Output avg_speed_msg
+   141 00000107 B801000000                mov rax, 1
+   142 0000010C 48BF-                     mov rdi, avg_speed_msg
+   142 0000010E [3B01000000000000] 
+   143 00000116 E8(00000000)              call printf
+   144                                    ; End of block
+   145                                  
+   146                                    ; Output total travel time
+   147 0000011B B801000000                mov rax, 1
+   148 00000120 48BF-                     mov rdi, total_msg
+   148 00000122 [6801000000000000] 
+   149 0000012A E8(00000000)              call printf
+   150                                    ; End of block
    151                                  
-   152                                    ; Output total travel time
-   153 0000011B B801000000                mov rax, 1
-   154 00000120 48BF-                     mov rdi, total_msg
-   154 00000122 [6801000000000000] 
-   155 0000012A E8(00000000)              call printf
-   156                                    ; End of block
+   152                                    ; Set return value
+   153                                  setreturnvalue:
+   154 0000012F 4156                      push r14
+   155 00000131 F20F100424                movsd xmm0, [rsp]
+   156 00000136 415E                      pop r14
    157                                  
-   158                                    ; Set return value
-   159                                  setreturnvalue:
-   160 0000012F 4156                      push r14
-   161 00000131 F20F100424                movsd xmm0, [rsp]
-   162 00000136 415E                      pop r14
-   163                                  
-   164                                    ; Restore GPRs
-   165 00000138 9D                        popf
-   166 00000139 415F                      pop r15
-   167 0000013B 415E                      pop r14
-   168 0000013D 415D                      pop r13
-   169 0000013F 415C                      pop r12
-   170 00000141 415B                      pop r11
-   171 00000143 415A                      pop r10
-   172 00000145 4159                      pop r9
-   173 00000147 4158                      pop r8
-   174 00000149 5F                        pop rdi
-   175 0000014A 5E                        pop rsi
-   176 0000014B 5A                        pop rdx
-   177 0000014C 59                        pop rcx
-   178 0000014D 5B                        pop rbx
-   179 0000014E 5D                        pop rbp
-   180                                  
-   181 0000014F C3                        ret
+   158                                    ; Restore GPRs
+   159 00000138 9D                        popf
+   160 00000139 415F                      pop r15
+   161 0000013B 415E                      pop r14
+   162 0000013D 415D                      pop r13
+   163 0000013F 415C                      pop r12
+   164 00000141 415B                      pop r11
+   165 00000143 415A                      pop r10
+   166 00000145 4159                      pop r9
+   167 00000147 4158                      pop r8
+   168 00000149 5F                        pop rdi
+   169 0000014A 5E                        pop rsi
+   170 0000014B 5A                        pop rdx
+   171 0000014C 59                        pop rcx
+   172 0000014D 5B                        pop rbx
+   173 0000014E 5D                        pop rbp
+   174                                  
+   175 0000014F C3                        ret
