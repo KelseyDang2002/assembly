@@ -42,7 +42,7 @@ section .bss
 section .text
 las_vegas:                ; start here
 
-  ; Backup GPRs
+  ; ============= Backup GPRs ============================
   push rbp
   mov rbp, rsp
   push rbx
@@ -60,12 +60,13 @@ las_vegas:                ; start here
   push r15
   pushf
 
+  ; =============== First speed ================================
+
   ; Prompt for input of initial distance
   mov rax, 0
   mov rdi, stringform     ; "%s"
   mov rsi, initial_msg
   call printf
-  ; End of block
 
   ; Get initial from user
   mov rax, 0
@@ -73,7 +74,6 @@ las_vegas:                ; start here
   mov rsi, rsp
   call scanf
   movsd xmm8, [rsp]       ; initial speed input in xmm8 now
-  ; End of block
 
   ; Print initial from user
   mov rax, 1
@@ -81,12 +81,13 @@ las_vegas:                ; start here
   call printf
   ; End of block
 
+  ; =============== First leg ===================================
+
   ; Prompt for input of miles maintained
   mov rax, 0
   mov rdi, stringform     ; "%s"
   mov rsi, miles_msg
   call printf
-  ; End of block
 
   ; Get miles from user
   mov rax, 0
@@ -94,7 +95,6 @@ las_vegas:                ; start here
   mov rsi, rsp
   call scanf
   movsd xmm9, [rsp]       ; miles input in xmm9 now
-  ; End of block
 
   ; Print miles from user
   mov rax, 1
@@ -102,12 +102,13 @@ las_vegas:                ; start here
   call printf
   ; End of block
 
+  ; ================= Second speed =============================
+
   ; Prompt for input of final speed
   mov rax, 0
   mov rdi, stringform     ; "%s"
   mov rsi, final_seg_msg
   call printf
-  ; End of block
 
   ; Get final_seg from user
   mov rax, 0
@@ -115,7 +116,6 @@ las_vegas:                ; start here
   mov rsi, rsp
   call scanf
   movsd xmm10, [rsp] ; final_seg input in xmm10 now
-  ; End of block
 
   ; Print final_seg from user
   mov rax, 1
@@ -123,7 +123,7 @@ las_vegas:                ; start here
   call printf
   ; End of block
 
-  ; Block to calculate average speed
+  ; ============= Calculate average speed =========================
   ; hotel_distance = 253.5
   ; xmm8 = initial (first speed)
   ; xmm9 = miles (first leg)
@@ -132,6 +132,8 @@ las_vegas:                ; start here
   ; total travel time = (first leg / first speed) + (second leg / second speed)
   ; average speed = 253.5 / total travel time
   ; End of block
+
+  ; =============== Output messages ===============================
 
   ; Output avg_speed_msg
   mov rax, 1
@@ -149,7 +151,7 @@ las_vegas:                ; start here
 setreturnvalue:
   movsd xmm0, [rsp]
 
-  ; Restore GPRs
+  ; =============== Restore GPRs ==========================
   popf
   pop r15
   pop r14
