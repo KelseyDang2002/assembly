@@ -74,190 +74,219 @@
     39                                  align 64
     40 00000000 <res 00000340>          backuparea resb 832
     41                                  
-    42                                  segment .text
-    43                                  las_vegas:                ; start here
-    44                                  
-    45                                  ; ============= Backup GPRs ============================
-    46 00000000 55                      push rbp
-    47 00000001 4889E5                  mov rbp, rsp
-    48 00000004 53                      push rbx
-    49 00000005 51                      push rcx
-    50 00000006 52                      push rdx
-    51 00000007 56                      push rsi
-    52 00000008 57                      push rdi
-    53 00000009 4150                    push r8
-    54 0000000B 4151                    push r9
-    55 0000000D 4152                    push r10
-    56 0000000F 4153                    push r11
-    57 00000011 4154                    push r12
-    58 00000013 4155                    push r13
-    59 00000015 4156                    push r14
-    60 00000017 4157                    push r15
-    61 00000019 9C                      pushf
-    62                                  
-    63                                  ; =============== First speed ================================
-    64                                  
-    65                                  ; Prompt for input of initial distance
-    66 0000001A 6A00                    push qword 0
-    67 0000001C B800000000              mov qword rax, 0
-    68 00000021 48BF-                   mov rdi, stringform       ; "%s"
-    68 00000023 [6301000000000000] 
-    69 0000002B 48BE-                   mov rsi, initial_msg
-    69 0000002D [0000000000000000] 
-    70 00000035 E8(00000000)            call printf
-    71                                  
-    72                                  ; Get initial from user
-    73 0000003A 6A00                    push qword 0
-    74 0000003C B800000000              mov qword rax, 0
-    75 00000041 48BF-                   mov rdi, floatform        ; "%lf"
-    75 00000043 [5F01000000000000] 
-    76 0000004B 4889E6                  mov rsi, rsp
-    77 0000004E E8(00000000)            call scanf
-    78 00000053 F2440F100424            movsd xmm8, [rsp]         ; initial speed input in xmm8 now
-    79 00000059 58                      pop rax
-    80                                  
-    81                                  ; Print initial from user
-    82 0000005A 6A00                    push qword 0
-    83 0000005C B801000000              mov rax, 1
-    84 00000061 48BF-                   mov rdi, debug
-    84 00000063 [4B01000000000000] 
-    85 0000006B E8(00000000)            call printf
-    86                                  ; End of block
-    87                                  
-    88                                  ; =============== First leg ===================================
-    89                                  
-    90                                  ; Prompt for input of miles maintained
-    91 00000070 6A00                    push qword 0
-    92 00000072 B800000000              mov qword rax, 0
-    93 00000077 48BF-                   mov rdi, stringform       ; "%s"
-    93 00000079 [6301000000000000] 
-    94 00000081 48BE-                   mov rsi, miles_msg
-    94 00000083 [4700000000000000] 
-    95 0000008B E8(00000000)            call printf
-    96                                  
-    97                                  ; Get miles from user
-    98 00000090 6A00                    push qword 0
-    99 00000092 B800000000              mov qword rax, 0
-   100 00000097 48BF-                   mov rdi, floatform
-   100 00000099 [5F01000000000000] 
-   101 000000A1 4889E6                  mov rsi, rsp
-   102 000000A4 E8(00000000)            call scanf
-   103 000000A9 F2440F100C24            movsd xmm9, [rsp]         ; miles input in xmm9 now
-   104 000000AF 58                      pop rax
-   105                                  
-   106                                  ; Print miles from user
-   107 000000B0 6A00                    push qword 0
-   108 000000B2 B801000000              mov rax, 1
-   109 000000B7 48BF-                   mov rdi, debug
-   109 000000B9 [4B01000000000000] 
-   110 000000C1 E8(00000000)            call printf
-   111                                  ; End of block
-   112                                  
-   113                                  ; ================= Second speed =============================
-   114                                  
-   115                                  ; Prompt for input of final speed
-   116 000000C6 6A00                    push qword 0
-   117 000000C8 B800000000              mov qword rax, 0
-   118 000000CD 48BF-                   mov rdi, stringform       ; "%s"
-   118 000000CF [6301000000000000] 
-   119 000000D7 48BE-                   mov rsi, final_seg_msg
-   119 000000D9 [8500000000000000] 
-   120 000000E1 E8(00000000)            call printf
-   121                                  
-   122                                  ; Get final_seg from user
-   123 000000E6 6A00                    push qword 0
-   124 000000E8 B800000000              mov qword rax, 0
-   125 000000ED 48BF-                   mov rdi, floatform
-   125 000000EF [5F01000000000000] 
-   126 000000F7 4889E6                  mov rsi, rsp
-   127 000000FA E8(00000000)            call scanf
-   128 000000FF F2440F101424            movsd xmm10, [rsp]        ; final_seg input in xmm10 now
-   129 00000105 58                      pop rax
-   130                                  
-   131                                  ; Print final_seg from user
-   132 00000106 6A00                    push qword 0
-   133 00000108 B801000000              mov rax, 1
-   134 0000010D 48BF-                   mov rdi, debug
-   134 0000010F [4B01000000000000] 
-   135 00000117 E8(00000000)            call printf
-   136 0000011C 58                      pop rax
-   137                                  ; End of block
-   138                                  
-   139                                  ; ================= First leg / first speed ==================
-   140                                  ; xmm8 = initial (first speed)
-   141                                  ; xmm9 = miles (first leg)
-   142                                  ; movsd xmm11, xmm9         ; copy xmm9 into xmm11, xmm11 = first leg
-   143                                  ; movsd xmm8, [rsp]
-   144                                  ; divsd xmm11, [rsp]        ; xmm11 = xmm11 / xmm8
-   145                                  
-   146                                  ; ================= Second leg = 253.5 - first leg ===========
-   147                                  ; movsd xmm14, qword [hotel_distance] ; xmm14 = 253.5
-   148                                  ; movsd xmm15, xmm14        ; copy xmm14 into xmm15, xmm15 = 253.5
-   149                                  ; subsd xmm14, xmm11        ; xmm14 = xmm14 - xmm11 (second leg = 253.5 - first leg)
-   150                                  
-   151                                  ; ============= Second leg / second speed =======================
-   152                                  ; xmm10 = second speed
-   153                                  ; xmm14 = second leg
-   154                                  ; divsd xmm14, xmm10        ; xmm14 = xmm14 / xmm10
-   155                                  
-   156                                  ; ============= Total travel time ===============================
-   157                                  ; total travel time = (first leg / first speed) + (second leg / second speed)
-   158                                  ; addsd xmm9, xmm14         ; total travel time
-   159                                  ; movsd xmm13, xmm9         ; copy total travel time into xmm13
-   160                                  
-   161                                  ; ============= Average speed ===================================
-   162                                  ; average speed = 253.5 / total travel time
-   163                                  ; divsd xmm15, xmm9 ; xmm15 = xmm15 / xmm9 (average speed = 253.5 / total travel time)
+    42 00000340 <res 00000008>          distance: resq 1
+    43                                  
+    44 00000348 <res 00000008>          first_speed: resq 1
+    45 00000350 <res 00000008>          first_leg: resq 1
+    46 00000358 <res 00000008>          first_time: resq 1
+    47                                  
+    48 00000360 <res 00000008>          second_speed: resq 1
+    49 00000368 <res 00000008>          second_leg: resq 1
+    50 00000370 <res 00000008>          second_time: resq 1
+    51                                  
+    52 00000378 <res 00000008>          avg_speed: resq 1
+    53 00000380 <res 00000008>          total_time: resq 1
+    54                                  
+    55                                  segment .text
+    56                                  las_vegas:                ; start here
+    57                                  
+    58                                  ; ============= Backup GPRs ============================
+    59 00000000 55                      push rbp
+    60 00000001 4889E5                  mov rbp, rsp
+    61 00000004 53                      push rbx
+    62 00000005 51                      push rcx
+    63 00000006 52                      push rdx
+    64 00000007 56                      push rsi
+    65 00000008 57                      push rdi
+    66 00000009 4150                    push r8
+    67 0000000B 4151                    push r9
+    68 0000000D 4152                    push r10
+    69 0000000F 4153                    push r11
+    70 00000011 4154                    push r12
+    71 00000013 4155                    push r13
+    72 00000015 4156                    push r14
+    73 00000017 4157                    push r15
+    74 00000019 9C                      pushf
+    75                                  
+    76                                  ; =============== First speed ================================
+    77                                  
+    78                                  ; Prompt for input of initial distance
+    79                                  ; push qword 0
+    80 0000001A B800000000              mov rax, 0
+    81 0000001F 48BF-                   mov rdi, stringform       ; "%s"
+    81 00000021 [6301000000000000] 
+    82 00000029 48BE-                   mov rsi, initial_msg
+    82 0000002B [0000000000000000] 
+    83 00000033 E8(00000000)            call printf
+    84                                  
+    85                                  ; Get initial from user
+    86                                  ; push qword 0
+    87 00000038 B800000000              mov rax, 0
+    88 0000003D 48BF-                   mov rdi, floatform        ; "%lf"
+    88 0000003F [5F01000000000000] 
+    89 00000047 4889E6                  mov rsi, rsp
+    90 0000004A E8(00000000)            call scanf
+    91 0000004F F2440F100424            movsd xmm8, [rsp]         ; initial speed input in xmm8 now
+    92                                  ; movsd qword [first_speed], xmm8
+    93                                  ; pop rax
+    94                                  
+    95                                  ; Print initial from user
+    96                                  ; push qword 0
+    97 00000055 B801000000              mov rax, 1
+    98 0000005A 48BF-                   mov rdi, debug
+    98 0000005C [4B01000000000000] 
+    99 00000064 E8(00000000)            call printf
+   100                                  ; End of block
+   101                                  
+   102                                  ; =============== First leg ===================================
+   103                                  
+   104                                  ; Prompt for input of miles maintained
+   105                                  ; push qword 0
+   106 00000069 B800000000              mov rax, 0
+   107 0000006E 48BF-                   mov rdi, stringform       ; "%s"
+   107 00000070 [6301000000000000] 
+   108 00000078 48BE-                   mov rsi, miles_msg
+   108 0000007A [4700000000000000] 
+   109 00000082 E8(00000000)            call printf
+   110                                  
+   111                                  ; Get miles from user
+   112                                  ; push qword 0
+   113 00000087 B800000000              mov rax, 0
+   114 0000008C 48BF-                   mov rdi, floatform
+   114 0000008E [5F01000000000000] 
+   115 00000096 4889E6                  mov rsi, rsp
+   116 00000099 E8(00000000)            call scanf
+   117 0000009E F2440F100C24            movsd xmm9, [rsp]         ; miles input in xmm9 now
+   118                                  ; movsd qword [first_leg], xmm9
+   119                                  ; pop rax
+   120                                  
+   121                                  ; Print miles from user
+   122                                  ; push qword 0
+   123 000000A4 B801000000              mov rax, 1
+   124 000000A9 48BF-                   mov rdi, debug
+   124 000000AB [4B01000000000000] 
+   125 000000B3 E8(00000000)            call printf
+   126                                  ; End of block
+   127                                  
+   128                                  ; ================= Second speed =============================
+   129                                  
+   130                                  ; Prompt for input of final speed
+   131                                  ; push qword 0
+   132 000000B8 B800000000              mov rax, 0
+   133 000000BD 48BF-                   mov rdi, stringform       ; "%s"
+   133 000000BF [6301000000000000] 
+   134 000000C7 48BE-                   mov rsi, final_seg_msg
+   134 000000C9 [8500000000000000] 
+   135 000000D1 E8(00000000)            call printf
+   136                                  
+   137                                  ; Get final_seg from user
+   138                                  ; push qword 0
+   139 000000D6 B800000000              mov rax, 0
+   140 000000DB 48BF-                   mov rdi, floatform
+   140 000000DD [5F01000000000000] 
+   141 000000E5 4889E6                  mov rsi, rsp
+   142 000000E8 E8(00000000)            call scanf
+   143 000000ED F2440F101424            movsd xmm10, [rsp]        ; final_seg input in xmm10 now
+   144                                  ; movsd qword [second_speed], xmm10
+   145                                  ; pop rax
+   146                                  
+   147                                  ; Print final_seg from user
+   148                                  ; push qword 0
+   149 000000F3 B801000000              mov rax, 1
+   150 000000F8 48BF-                   mov rdi, debug
+   150 000000FA [4B01000000000000] 
+   151 00000102 E8(00000000)            call printf
+   152                                  ; pop rax
+   153                                  ; End of block
+   154                                  
+   155                                  ; ================= First leg / first speed ==================
+   156                                  ; xmm8 = initial (first speed)
+   157                                  ; xmm9 = miles (first leg)
+   158 00000107 F2450F10D9              movsd xmm11, xmm9
+   159 0000010C F2450F5ED8              divsd xmm11, xmm8
+   160 00000111 F2450F10E3              movsd xmm12, xmm11
+   161                                  ; movsd xmm11, qword [first_leg]          ; move first_speed (xmm8) into xmm11
+   162                                  ; divsd xmm11, qword [first_speed]        ; xmm11 = xmm11 / first_speed
+   163                                  ; movsd qword [first_time], xmm11         ; move xmm11 into first_time
    164                                  
-   165                                  ; ============= Output avg_speed_msg ============================
-   166                                  ; movsd xmm15, [rsp] ; move average speed to top of stack
-   167 0000011D 6A00                    push qword 0
-   168 0000011F B801000000              mov rax, 1
-   169 00000124 48BF-                   mov rdi, avg_speed_msg
-   169 00000126 [CE00000000000000] 
-   170 0000012E E8(00000000)            call printf
-   171 00000133 58                      pop rax
-   172                                  
-   173                                  ; ============= Output total travel time ========================
-   174                                  ; movsd xmm13, [rsp]        ; move total travel time to top of stack
-   175 00000134 6A00                    push qword 0
-   176 00000136 B801000000              mov rax, 1
-   177 0000013B 48BF-                   mov rdi, total_msg
-   177 0000013D [FA00000000000000] 
-   178 00000145 E8(00000000)            call printf
-   179 0000014A 58                      pop rax
-   180                                  ; End of block
-   181                                  
-   182                                  ; ============= Calculate average speed =========================
-   183                                  ; hotel_distance = 253.5
-   184                                  ; xmm8 = initial (first speed) DONE
-   185                                  ; xmm9 = miles (first leg) DONE
-   186                                  ; xmm10 = final_seg (second leg) DONE
-   187                                  ; second_leg = 253.5 - first leg DONE
-   188                                  ; total travel time = (first leg / first speed) + (second leg / second speed)
-   189                                  ; average speed = 253.5 / total travel time
-   190                                  
-   191                                  ; Set return value
-   192                                  setreturnvalue:
-   193 0000014B 4156                    push r14
-   194 0000014D F20F100424              movsd xmm0, [rsp]
-   195 00000152 415E                    pop r14
-   196                                  
-   197                                  ; =============== Restore GPRs ==========================
-   198 00000154 9D                      popf
-   199 00000155 415F                    pop r15
-   200 00000157 415E                    pop r14
-   201 00000159 415D                    pop r13
-   202 0000015B 415C                    pop r12
-   203 0000015D 415B                    pop r11
-   204 0000015F 415A                    pop r10
-   205 00000161 4159                    pop r9
-   206 00000163 4158                    pop r8
-   207 00000165 5F                      pop rdi
-   208 00000166 5E                      pop rsi
-   209 00000167 5A                      pop rdx
-   210 00000168 59                      pop rcx
-   211 00000169 5B                      pop rbx
-   212 0000016A 5D                      pop rbp
-   213                                  
-   214 0000016B C3                      ret
+   165                                  ; ================= Second leg = 253.5 - first leg ===========
+   166 00000116 F2440F101C25-           movsd xmm11, qword [hotel_distance] ; xmm11 = 253.5
+   166 0000011C [66010000]         
+   167 00000120 F2450F10FB              movsd xmm15, xmm11       ; copy xmm11 into xmm15, xmm15 = 253.5
+   168 00000125 F2450F5CD9              subsd xmm11, xmm9        ; xmm11 = xmm11 - xmm9 (second leg = 253.5 - first leg)
+   169                                  
+   170                                  ; ============= Second leg / second speed =======================
+   171                                  ; xmm10 = second speed
+   172                                  ; xmm14 = second leg
+   173 0000012A F2450F5EDA              divsd xmm11, xmm10        ; xmm11 = xmm11 / xmm10
+   174                                  ; movsd qword [second_time], xmm11
+   175                                  
+   176                                  ; ============= Total travel time ===============================
+   177                                  ; total travel time = (first leg / first speed) + (second leg / second speed)
+   178                                  ; movsd xmm11, qword [second_time]
+   179 0000012F F2450F58DC              addsd xmm11, xmm12
+   180                                  ; addsd xmm9, xmm14         ; total travel time
+   181                                  ; movsd xmm13, xmm9         ; copy total travel time into xmm13
+   182                                  
+   183                                  ; ============= Average speed ===================================
+   184                                  ; average speed = 253.5 / total travel time
+   185 00000134 F2450F5EFB              divsd xmm15, xmm11 ; xmm15 = xmm15 / xmm11 (average speed = 253.5 / total travel time)
+   186                                  
+   187                                  ; ============= Output avg_speed_msg ============================
+   188                                  ; movsd xmm15, [rsp] ; move average speed to top of stack
+   189                                  ; push qword 0
+   190 00000139 B801000000              mov rax, 1
+   191 0000013E F2410F10C7              movsd xmm0, xmm15
+   192 00000143 F20F100424              movsd xmm0, [rsp]
+   193 00000148 48BF-                   mov rdi, avg_speed_msg
+   193 0000014A [CE00000000000000] 
+   194 00000152 E8(00000000)            call printf
+   195                                  ; mov qword rax, 0
+   196                                  ; pop rax
+   197                                  
+   198                                  ; ============= Output total travel time ========================
+   199                                  ; movsd xmm0, xmm11        ; move total travel time to top of stack
+   200                                  ; push qword 0
+   201 00000157 B801000000              mov rax, 1
+   202 0000015C F2410F10C3              movsd xmm0, xmm11
+   203 00000161 F20F100424              movsd xmm0, [rsp]
+   204 00000166 48BF-                   mov rdi, total_msg
+   204 00000168 [FA00000000000000] 
+   205 00000170 E8(00000000)            call printf
+   206                                  ; mov qword rax, 0
+   207                                  ; pop rax
+   208                                  ; End of block
+   209                                  
+   210                                  ; ============= Calculate average speed =========================
+   211                                  ; hotel_distance = 253.5
+   212                                  ; xmm8 = initial (first speed) DONE
+   213                                  ; xmm9 = miles (first leg) DONE
+   214                                  ; xmm10 = final_seg (second leg) DONE
+   215                                  ; second_leg = 253.5 - first leg DONE
+   216                                  ; total travel time = (first leg / first speed) + (second leg / second speed)
+   217                                  ; average speed = 253.5 / total travel time
+   218                                  
+   219                                  ; Set return value
+   220                                  ; setreturnvalue:
+   221                                  ; push r14
+   222 00000175 F20F100424              movsd xmm0, [rsp]
+   223                                  ; pop r14
+   224                                  
+   225                                  ; =============== Restore GPRs ==========================
+   226 0000017A 9D                      popf
+   227 0000017B 415F                    pop r15
+   228 0000017D 415E                    pop r14
+   229 0000017F 415D                    pop r13
+   230 00000181 415C                    pop r12
+   231 00000183 415B                    pop r11
+   232 00000185 415A                    pop r10
+   233 00000187 4159                    pop r9
+   234 00000189 4158                    pop r8
+   235 0000018B 5F                      pop rdi
+   236 0000018C 5E                      pop rsi
+   237 0000018D 5A                      pop rdx
+   238 0000018E 59                      pop rcx
+   239 0000018F 5B                      pop rbx
+   240 00000190 5D                      pop rbp
+   241                                  
+   242 00000191 C3                      ret
