@@ -39,18 +39,18 @@ segment .bss
 align 64
 backuparea resb 832
 
-distance: resq 1
-
-first_speed: resq 1
-first_leg: resq 1
-first_time: resq 1
-
-second_speed: resq 1
-second_leg: resq 1
-second_time: resq 1
-
-avg_speed: resq 1
-total_time: resq 1
+; distance: resq 1
+;
+; first_speed: resq 1
+; first_leg: resq 1
+; first_time: resq 1
+;
+; second_speed: resq 1
+; second_leg: resq 1
+; second_time: resq 1
+;
+; avg_speed: resq 1
+; total_time: resq 1
 
 segment .text
 las_vegas:                ; start here
@@ -89,14 +89,13 @@ mov rdi, floatform        ; "%lf"
 mov rsi, rsp
 call scanf
 movsd xmm8, [rsp]         ; initial speed input in xmm8 now
-; movsd qword [first_speed], xmm8
 ; pop rax
 
 ; Print initial from user
 ; push qword 0
-mov rax, 1
-mov rdi, debug
-call printf
+; mov rax, 1
+; mov rdi, debug
+; call printf
 ; End of block
 
 ; =============== First leg ===================================
@@ -115,14 +114,13 @@ mov rdi, floatform
 mov rsi, rsp
 call scanf
 movsd xmm9, [rsp]         ; miles input in xmm9 now
-; movsd qword [first_leg], xmm9
 ; pop rax
 
 ; Print miles from user
 ; push qword 0
-mov rax, 1
-mov rdi, debug
-call printf
+; mov rax, 1
+; mov rdi, debug
+; call printf
 ; End of block
 
 ; ================= Second speed =============================
@@ -141,80 +139,74 @@ mov rdi, floatform
 mov rsi, rsp
 call scanf
 movsd xmm10, [rsp]        ; final_seg input in xmm10 now
-; movsd qword [second_speed], xmm10
 ; pop rax
 
 ; Print final_seg from user
 ; push qword 0
-mov rax, 1
-mov rdi, debug
-call printf
+; mov rax, 1
+; mov rdi, debug
+; call printf
 ; pop rax
 ; End of block
 
 ; ================= First leg / first speed ==================
-; xmm8 = initial (first speed)
-; xmm9 = miles (first leg)
-movsd xmm11, xmm9
-divsd xmm11, xmm8
-movsd xmm12, xmm11
-; movsd xmm11, qword [first_leg]          ; move first_speed (xmm8) into xmm11
-; divsd xmm11, qword [first_speed]        ; xmm11 = xmm11 / first_speed
-; movsd qword [first_time], xmm11         ; move xmm11 into first_time
+; xmm8 = first speed (user input)
+; xmm9 = first leg (user input)
+movsd xmm9, [rsp]
+movsd xmm11, xmm9            ; copy first_leg into xmm11
+divsd xmm11, xmm8            ; xmm11 = xmm11 / first_speed
+movsd xmm12, xmm11           ; copy xmm11 into xmm12 for later use
+movsd xmm12, [rsp]
+
+; mov rax, 1
+; mov rdi, debug
+; movsd xmm1, xmm12
+; call printf
+; pop rax
 
 ; ================= Second leg = 253.5 - first leg ===========
 movsd xmm11, qword [hotel_distance] ; xmm11 = 253.5
-movsd xmm15, xmm11       ; copy xmm11 into xmm15, xmm15 = 253.5
-subsd xmm11, xmm9        ; xmm11 = xmm11 - xmm9 (second leg = 253.5 - first leg)
+movsd xmm11, [rsp]
+movsd xmm15, xmm11          ; copy xmm11 into xmm15 for later use
+subsd xmm11, xmm9           ; xmm11 = xmm11 - xmm9 (second leg = 253.5 - first leg)
 
 ; ============= Second leg / second speed =======================
-; xmm10 = second speed
-; xmm14 = second leg
-divsd xmm11, xmm10        ; xmm11 = xmm11 / xmm10
-; movsd qword [second_time], xmm11
+; xmm10 = second speed (user input)
+; xmm11 = second leg
+divsd xmm11, xmm10          ; xmm11 = second_leg / second_speed
 
 ; ============= Total travel time ===============================
 ; total travel time = (first leg / first speed) + (second leg / second speed)
-; movsd xmm11, qword [second_time]
-addsd xmm11, xmm12
-; addsd xmm9, xmm14         ; total travel time
-; movsd xmm13, xmm9         ; copy total travel time into xmm13
+; xmm11 = second speed avg
+; xmm12 = first speed avg
+addsd xmm11, xmm12          ; total travel time
 
 ; ============= Average speed ===================================
 ; average speed = 253.5 / total travel time
-divsd xmm15, xmm11 ; xmm15 = xmm15 / xmm11 (average speed = 253.5 / total travel time)
+; xmm11 = total travel time
+; xmm15 = 253.5
+divsd xmm15, xmm11          ; xmm15 = xmm15 / xmm11 (average speed = 253.5 / total travel time)
 
 ; ============= Output avg_speed_msg ============================
-; movsd xmm15, [rsp] ; move average speed to top of stack
 ; push qword 0
 mov rax, 1
-movsd xmm0, xmm15
-movsd xmm0, [rsp]
+movsd xmm2, xmm15
+movsd xmm2, [rsp]          ; move average speed to top of stack
 mov rdi, avg_speed_msg
 call printf
-; mov qword rax, 0
+mov qword rax, 0
 ; pop rax
 
 ; ============= Output total travel time ========================
-; movsd xmm0, xmm11        ; move total travel time to top of stack
 ; push qword 0
 mov rax, 1
-movsd xmm0, xmm11
-movsd xmm0, [rsp]
+movsd xmm1, xmm11
+movsd xmm1, [rsp]          ; move total travel time to top of stack
 mov rdi, total_msg
 call printf
-; mov qword rax, 0
+mov qword rax, 0
 ; pop rax
 ; End of block
-
-; ============= Calculate average speed =========================
-; hotel_distance = 253.5
-; xmm8 = initial (first speed) DONE
-; xmm9 = miles (first leg) DONE
-; xmm10 = final_seg (second leg) DONE
-; second_leg = 253.5 - first leg DONE
-; total travel time = (first leg / first speed) + (second leg / second speed)
-; average speed = 253.5 / total travel time
 
 ; Set return value
 ; setreturnvalue:
