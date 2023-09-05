@@ -40,17 +40,17 @@ align 64
 backuparea resb 832
 
 ; distance: resq 1
-;
-; first_speed: resq 1
-; first_leg: resq 1
-; first_time: resq 1
-;
-; second_speed: resq 1
-; second_leg: resq 1
-; second_time: resq 1
-;
-; avg_speed: resq 1
-; total_time: resq 1
+
+first_speed: resq 1
+first_leg: resq 1
+first_time: resq 1
+
+second_speed: resq 1
+second_leg: resq 1
+second_time: resq 1
+
+avg_speed: resq 1
+total_time: resq 1
 
 segment .text
 las_vegas:                ; start here
@@ -76,23 +76,18 @@ pushf
 ; =============== First speed ================================
 
 ; Prompt for input of initial distance
-; push qword 0
 mov rax, 0
 mov rdi, stringform       ; "%s"
 mov rsi, initial_msg
 call printf
 
 ; Get initial from user
-; push qword 0
 mov rax, 0
 mov rdi, floatform        ; "%lf"
-mov rsi, rsp
+mov rsi, first_speed
 call scanf
-movsd xmm8, [rsp]         ; initial speed input in xmm8 now
-; pop rax
 
 ; Print initial from user
-; push qword 0
 ; mov rax, 1
 ; mov rdi, debug
 ; call printf
@@ -101,23 +96,18 @@ movsd xmm8, [rsp]         ; initial speed input in xmm8 now
 ; =============== First leg ===================================
 
 ; Prompt for input of miles maintained
-; push qword 0
 mov rax, 0
 mov rdi, stringform       ; "%s"
 mov rsi, miles_msg
 call printf
 
 ; Get miles from user
-; push qword 0
 mov rax, 0
 mov rdi, floatform
-mov rsi, rsp
+mov rsi, first_leg
 call scanf
-movsd xmm9, [rsp]         ; miles input in xmm9 now
-; pop rax
 
 ; Print miles from user
-; push qword 0
 ; mov rax, 1
 ; mov rdi, debug
 ; call printf
@@ -126,7 +116,6 @@ movsd xmm9, [rsp]         ; miles input in xmm9 now
 ; ================= Second speed =============================
 
 ; Prompt for input of final speed
-; push qword 0
 mov rax, 0
 mov rdi, stringform       ; "%s"
 mov rsi, final_seg_msg
@@ -136,83 +125,75 @@ call printf
 ; push qword 0
 mov rax, 0
 mov rdi, floatform
-mov rsi, rsp
+mov rsi, second_speed
 call scanf
-movsd xmm10, [rsp]        ; final_seg input in xmm10 now
 ; pop rax
 
 ; Print final_seg from user
-; push qword 0
 ; mov rax, 1
 ; mov rdi, debug
 ; call printf
-; pop rax
 ; End of block
 
-; ================= First leg / first speed ==================
-; xmm8 = first speed (user input)
-; xmm9 = first leg (user input)
-movsd xmm9, [rsp]
-movsd xmm11, xmm9            ; copy first_leg into xmm11
-divsd xmm11, xmm8            ; xmm11 = xmm11 / first_speed
-movsd xmm12, xmm11           ; copy xmm11 into xmm12 for later use
-movsd xmm12, [rsp]
+; ================= Move variables into xmm registers ==============
+movsd xmm8, qword [first_speed]
+movsd xmm9, qword [first_leg]
+movsd xmm10, qword [second_speed]
 
-; mov rax, 1
-; mov rdi, debug
-; movsd xmm1, xmm12
-; call printf
-; pop rax
+; ================= First leg / first speed ==================
+; xmm8 = first speed
+; xmm9 = first leg
+; movsd xmm11, xmm9             ; copy first_leg into xmm11
+divsd xmm9, xmm8                ; xmm9 = xmm9 / xmm8
+movsd qword [first_time], xmm9  ; copy xmm9 into first_time variable for later use
+
+mov rax, 1
+mov rdi, debug
+call printf
 
 ; ================= Second leg = 253.5 - first leg ===========
 movsd xmm11, qword [hotel_distance] ; xmm11 = 253.5
-movsd xmm11, [rsp]
-movsd xmm15, xmm11          ; copy xmm11 into xmm15 for later use
-subsd xmm11, xmm9           ; xmm11 = xmm11 - xmm9 (second leg = 253.5 - first leg)
+; movsd xmm15, xmm11          ; copy xmm11 into xmm15 for later use
+movsd xmm9, qword [first_leg]
+subsd xmm11, xmm9           ; xmm11 = xmm11 - xmm9 (xmm11 = second leg)
 
 ; ============= Second leg / second speed =======================
-; xmm10 = second speed (user input)
+; xmm10 = second speed
 ; xmm11 = second leg
-divsd xmm11, xmm10          ; xmm11 = second_leg / second_speed
+divsd xmm11, xmm10          ; xmm11 = xmm11 / xmm10 (second_leg / second_speed)
+movsd qword [second_time], xmm11 ; copy xmm11 into second_time variable for later use
 
 ; ============= Total travel time ===============================
 ; total travel time = (first leg / first speed) + (second leg / second speed)
-; xmm11 = second speed avg
-; xmm12 = first speed avg
-addsd xmm11, xmm12          ; total travel time
+; total travel time = first_time + second_time
+; xmm9 = first_time
+; xmm11 = second_time
+addsd xmm11, xmm9           ; xmm11 = xmm11 + xmm9 (total travel time)
+movsd qword [total_time], xmm11 ; copy xmm11 into total_time variable for output
 
 ; ============= Average speed ===================================
 ; average speed = 253.5 / total travel time
 ; xmm11 = total travel time
-; xmm15 = 253.5
-divsd xmm15, xmm11          ; xmm15 = xmm15 / xmm11 (average speed = 253.5 / total travel time)
+movsd xmm12, qword [hotel_distance]
+divsd xmm12, xmm11          ; xmm12 = xmm12 / xmm11 (average speed)
+movsd qword [avg_speed], xmm12 ; copy xmm12 into avg_speed variable for output
 
 ; ============= Output avg_speed_msg ============================
-; push qword 0
 mov rax, 1
-movsd xmm2, xmm15
-movsd xmm2, [rsp]          ; move average speed to top of stack
 mov rdi, avg_speed_msg
+movsd xmm1, qword [avg_speed]
 call printf
-mov qword rax, 0
-; pop rax
 
 ; ============= Output total travel time ========================
 ; push qword 0
 mov rax, 1
-movsd xmm1, xmm11
-movsd xmm1, [rsp]          ; move total travel time to top of stack
 mov rdi, total_msg
+movsd xmm0, qword [total_time]
 call printf
-mov qword rax, 0
-; pop rax
 ; End of block
 
 ; Set return value
-; setreturnvalue:
-; push r14
 movsd xmm0, [rsp]
-; pop r14
 
 ; =============== Restore GPRs ==========================
 popf
