@@ -112,7 +112,7 @@
     74 0000003F [5F01000000000000] 
     75 00000047 4889E6                  mov rsi, rsp
     76 0000004A E8(00000000)            call scanf
-    77 0000004F F2440F100424            movsd xmm8, [rsp]
+    77 0000004F F2440F102C24            movsd xmm13, [rsp]
     78                                  
     79                                  ; Check for invaild input
     80                                  ; xorpd xmm9, xmm9
@@ -146,7 +146,7 @@
    105 0000007A [5F01000000000000] 
    106 00000082 4889E6                  mov rsi, rsp
    107 00000085 E8(00000000)            call scanf
-   108 0000008A F2440F101424            movsd xmm10, [rsp]
+   108 0000008A F2440F103424            movsd xmm14, [rsp]
    109                                  
    110                                  ; Check for invaild input
    111                                  ; xorpd xmm9, xmm9
@@ -180,7 +180,7 @@
    136 000000B5 [5F01000000000000] 
    137 000000BD 4889E6                  mov rsi, rsp
    138 000000C0 E8(00000000)            call scanf
-   139 000000C5 F2440F101C24            movsd xmm11, [rsp]
+   139 000000C5 F2440F103C24            movsd xmm15, [rsp]
    140                                  ; End of block
    141                                  
    142                                  ; ================= Second leg = 253.5 - first leg ===========
@@ -189,26 +189,26 @@
    145                                  ; xmm11 = second_speed
    146 000000CB F2440F102425-           movsd xmm12, [hotel_distance]       ; xmm12 = 253.5
    146 000000D1 [66010000]         
-   147 000000D5 F2450F5CE2              subsd xmm12, xmm10                  ; xmm12 = xmm12 - xmm10, xmm12 = second_leg
+   147 000000D5 F2450F5CE6              subsd xmm12, xmm14                  ; xmm12 = xmm12 - xmm10, xmm12 = second_leg
    148                                  
    149                                  ; ================= Average total speed =======================
    150                                  ; xmm8 = first_speed
    151                                  ; xmm10 = first_leg
    152                                  ; xmm11 = second_speed
    153                                  ; xmm12 = second_leg
-   154 000000DA F2450F5ED0              divsd xmm10, xmm8                   ; xmm10 = first_leg / first_speed
-   155 000000DF F2450F5EE3              divsd xmm12, xmm11                  ; xmm12 = second_leg / second_speed
-   156 000000E4 F2450F58E2              addsd xmm12, xmm10                  ; xmm12 = xmm12 + xmm10, xmm12 = average total time
+   154 000000DA F2450F5EF5              divsd xmm14, xmm13                  ; xmm10 = first_leg / first_speed
+   155 000000DF F2450F5EE7              divsd xmm12, xmm15                  ; xmm12 = second_leg / second_speed
+   156 000000E4 F2450F58E6              addsd xmm12, xmm14                  ; xmm12 = xmm12 + xmm10, xmm12 = average total time
    157                                  
    158                                  ; ================= Average speed ==============================
    159                                  ; xmm10 = first_leg / first_speed
    160                                  ; xmm12 = average total time
-   161 000000E9 F2440F101425-           movsd xmm10, [hotel_distance]       ; xmm10 = 253.5
+   161 000000E9 F2440F103425-           movsd xmm14, [hotel_distance]       ; xmm10 = 253.5
    161 000000EF [66010000]         
-   162 000000F3 F2450F5ED4              divsd xmm10, xmm12                  ; xmm10 = xmm10 / xmm12, xmm10 = average speed
+   162 000000F3 F2450F5EF4              divsd xmm14, xmm12                  ; xmm10 = xmm10 / xmm12, xmm10 = average speed
    163                                  
    164                                  ; ============= Output avg_speed_msg ============================
-   165 000000F8 F2410F10C2              movsd xmm0, xmm10
+   165 000000F8 F2410F10C6              movsd xmm0, xmm14
    166 000000FD B801000000              mov rax, 1
    167 00000102 48BF-                   mov rdi, avg_speed_msg
    167 00000104 [CE00000000000000] 

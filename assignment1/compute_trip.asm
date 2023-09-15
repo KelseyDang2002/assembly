@@ -62,7 +62,7 @@ push r15
 pushf
 
 ; =============== First speed ================================
-
+; xmm10-xmm15 does not lose data
 ; Prompt for input of initial distance
 mov rax, 0
 mov rdi, stringform       ; "%s"
@@ -74,7 +74,7 @@ mov rax, 0
 mov rdi, floatform        ; "%lf"
 mov rsi, rsp
 call scanf
-movsd xmm8, [rsp]
+movsd xmm13, [rsp]        ; first speed in xmm13
 
 ; Check for invaild input
 ; xorpd xmm9, xmm9
@@ -105,7 +105,7 @@ mov rax, 0
 mov rdi, floatform
 mov rsi, rsp
 call scanf
-movsd xmm10, [rsp]
+movsd xmm14, [rsp]        ; first leg in xmm14
 
 ; Check for invaild input
 ; xorpd xmm9, xmm9
@@ -136,33 +136,33 @@ mov rax, 0
 mov rdi, floatform
 mov rsi, rsp
 call scanf
-movsd xmm11, [rsp]
+movsd xmm15, [rsp]        ; second speed in xmm15
 ; End of block
 
 ; ================= Second leg = 253.5 - first leg ===========
-; xmm8 = first_speed
-; xmm10 = first_leg
-; xmm11 = second_speed
+; xmm13 = first_speed
+; xmm14 = first_leg
+; xmm15 = second_speed
 movsd xmm12, [hotel_distance]       ; xmm12 = 253.5
-subsd xmm12, xmm10                  ; xmm12 = xmm12 - xmm10, xmm12 = second_leg
+subsd xmm12, xmm14                  ; xmm12 = xmm12 - xmm14, xmm12 = second_leg
 
 ; ================= Average total speed =======================
-; xmm8 = first_speed
-; xmm10 = first_leg
-; xmm11 = second_speed
+; xmm13 = first_speed
+; xmm14 = first_leg
+; xmm15 = second_speed
 ; xmm12 = second_leg
-divsd xmm10, xmm8                   ; xmm10 = first_leg / first_speed
-divsd xmm12, xmm11                  ; xmm12 = second_leg / second_speed
-addsd xmm12, xmm10                  ; xmm12 = xmm12 + xmm10, xmm12 = average total time
+divsd xmm14, xmm13                  ; xmm14 = first_leg / first_speed
+divsd xmm12, xmm15                  ; xmm12 = second_leg / second_speed
+addsd xmm12, xmm14                  ; xmm12 = xmm12 + xmm14, xmm12 = average total time
 
 ; ================= Average speed ==============================
-; xmm10 = first_leg / first_speed
+; xmm14 = first_leg / first_speed
 ; xmm12 = average total time
-movsd xmm10, [hotel_distance]       ; xmm10 = 253.5
-divsd xmm10, xmm12                  ; xmm10 = xmm10 / xmm12, xmm10 = average speed
+movsd xmm14, [hotel_distance]       ; xmm14 = 253.5
+divsd xmm14, xmm12                  ; xmm14 = xmm14 / xmm12, xmm14 = average speed
 
 ; ============= Output avg_speed_msg ============================
-movsd xmm0, xmm10
+movsd xmm0, xmm14
 mov rax, 1
 mov rdi, avg_speed_msg
 call printf
