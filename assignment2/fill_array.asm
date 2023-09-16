@@ -11,6 +11,8 @@ extern scanf
 segment .data
 input_msg db "Please input float numbers followed by ws. After the last number, press ws followed by CTRL + D: ", 10, 0
 
+debug_msg db "%lf entered", 10, 0
+
 floatform db "%lf", 0
 stringform db "%s", 0
 
@@ -37,14 +39,49 @@ push r14
 push r15
 pushf
 
-; ============== Print input_msg ===============
+; =============== Stuff =================================
+mov r14, rdi          ; r14 is the array
+mov r15, rsi          ; r15 is the number of cells
+
+; =============== Print input_msg =======================
 mov rax, 0
 mov rdi, stringform
 mov rsi, input_msg
 call printf
+pop rax
 
-; ============== Fill array ====================
+; =============== Fill array ============================
+xor r13, r13          ; r13 is the index
 
+beginloop:
+cmp r13, r15
+je done
+
+mov rax, 0
+mov rdi, floatform    ; %lf
+push qword -3
+mov rsi, rsp
+call scanf
+
+cdqe
+cmp rax, -1           ; check for CTRL + D
+je done
+
+; mov rax, 1
+; mov rdi, stringform
+; mov rsi, debug_msg
+; call printf
+
+pop rbx
+mov [r14 + r13 * 8], rbx
+inc r13               ; r13++
+
+jmp beginloop
+
+done:
+mov rax, r13
+
+; =============== Restore GPRs ==========================
 popf
 pop r15
 pop r14

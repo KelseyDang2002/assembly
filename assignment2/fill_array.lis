@@ -21,56 +21,95 @@
     12 00000051 656420627920435452-
     12 0000005A 4C202B20443A200A00 
     13                                  
-    14 00000063 256C6600                floatform db "%lf", 0
-    15 00000067 257300                  stringform db "%s", 0
-    16                                  
-    17                                  segment .bss
+    14 00000063 256C6620656E746572-     debug_msg db "%lf entered", 10, 0
+    14 0000006C 65640A00           
+    15                                  
+    16 00000070 256C6600                floatform db "%lf", 0
+    17 00000074 257300                  stringform db "%s", 0
     18                                  
-    19                                  segment .text
-    20                                  fill_array:
-    21                                  
-    22                                  ; ============= Backup GPRs ============================
-    23 00000000 55                      push rbp
-    24 00000001 4889E5                  mov rbp, rsp
-    25 00000004 53                      push rbx
-    26 00000005 51                      push rcx
-    27 00000006 52                      push rdx
-    28 00000007 56                      push rsi
-    29 00000008 57                      push rdi
-    30 00000009 4150                    push r8
-    31 0000000B 4151                    push r9
-    32 0000000D 4152                    push r10
-    33 0000000F 4153                    push r11
-    34 00000011 4154                    push r12
-    35 00000013 4155                    push r13
-    36 00000015 4156                    push r14
-    37 00000017 4157                    push r15
-    38 00000019 9C                      pushf
-    39                                  
-    40                                  ; ============== Print input_msg ===============
-    41 0000001A B800000000              mov rax, 0
-    42 0000001F 48BF-                   mov rdi, stringform
-    42 00000021 [6700000000000000] 
-    43 00000029 48BE-                   mov rsi, input_msg
-    43 0000002B [0000000000000000] 
-    44 00000033 E8(00000000)            call printf
+    19                                  segment .bss
+    20                                  
+    21                                  segment .text
+    22                                  fill_array:
+    23                                  
+    24                                  ; ============= Backup GPRs ============================
+    25 00000000 55                      push rbp
+    26 00000001 4889E5                  mov rbp, rsp
+    27 00000004 53                      push rbx
+    28 00000005 51                      push rcx
+    29 00000006 52                      push rdx
+    30 00000007 56                      push rsi
+    31 00000008 57                      push rdi
+    32 00000009 4150                    push r8
+    33 0000000B 4151                    push r9
+    34 0000000D 4152                    push r10
+    35 0000000F 4153                    push r11
+    36 00000011 4154                    push r12
+    37 00000013 4155                    push r13
+    38 00000015 4156                    push r14
+    39 00000017 4157                    push r15
+    40 00000019 9C                      pushf
+    41                                  
+    42                                  ; =============== Stuff =================================
+    43 0000001A 4989FE                  mov r14, rdi          ; r14 is the array
+    44 0000001D 4989F7                  mov r15, rsi          ; r15 is the number of cells
     45                                  
-    46                                  ; ============== Fill array ====================
-    47                                  
-    48 00000038 9D                      popf
-    49 00000039 415F                    pop r15
-    50 0000003B 415E                    pop r14
-    51 0000003D 415D                    pop r13
-    52 0000003F 415C                    pop r12
-    53 00000041 415B                    pop r11
-    54 00000043 415A                    pop r10
-    55 00000045 4159                    pop r9
-    56 00000047 4158                    pop r8
-    57 00000049 5F                      pop rdi
-    58 0000004A 5E                      pop rsi
-    59 0000004B 5A                      pop rdx
-    60 0000004C 59                      pop rcx
-    61 0000004D 5B                      pop rbx
-    62 0000004E 5D                      pop rbp
-    63                                  
-    64 0000004F C3                      ret
+    46                                  ; =============== Print input_msg =======================
+    47 00000020 B800000000              mov rax, 0
+    48 00000025 48BF-                   mov rdi, stringform
+    48 00000027 [7400000000000000] 
+    49 0000002F 48BE-                   mov rsi, input_msg
+    49 00000031 [0000000000000000] 
+    50 00000039 E8(00000000)            call printf
+    51 0000003E 58                      pop rax
+    52                                  
+    53                                  ; =============== Fill array ============================
+    54 0000003F 4D31ED                  xor r13, r13          ; r13 is the index
+    55                                  
+    56                                  beginloop:
+    57 00000042 4D39FD                  cmp r13, r15
+    58 00000045 742B                    je done
+    59                                  
+    60 00000047 B800000000              mov rax, 0
+    61 0000004C 48BF-                   mov rdi, floatform    ; %lf
+    61 0000004E [7000000000000000] 
+    62 00000056 6AFD                    push qword -3
+    63 00000058 4889E6                  mov rsi, rsp
+    64 0000005B E8(00000000)            call scanf
+    65                                  
+    66 00000060 4898                    cdqe
+    67 00000062 4883F8FF                cmp rax, -1           ; check for CTRL + D
+    68 00000066 740A                    je done
+    69                                  
+    70                                  ; mov rax, 1
+    71                                  ; mov rdi, stringform
+    72                                  ; mov rsi, debug_msg
+    73                                  ; call printf
+    74                                  
+    75 00000068 5B                      pop rbx
+    76 00000069 4B891CEE                mov [r14 + r13 * 8], rbx
+    77 0000006D 49FFC5                  inc r13               ; r13++
+    78                                  
+    79 00000070 EBD0                    jmp beginloop
+    80                                  
+    81                                  done:
+    82 00000072 4C89E8                  mov rax, r13
+    83                                  
+    84                                  ; =============== Restore GPRs ==========================
+    85 00000075 9D                      popf
+    86 00000076 415F                    pop r15
+    87 00000078 415E                    pop r14
+    88 0000007A 415D                    pop r13
+    89 0000007C 415C                    pop r12
+    90 0000007E 415B                    pop r11
+    91 00000080 415A                    pop r10
+    92 00000082 4159                    pop r9
+    93 00000084 4158                    pop r8
+    94 00000086 5F                      pop rdi
+    95 00000087 5E                      pop rsi
+    96 00000088 5A                      pop rdx
+    97 00000089 59                      pop rcx
+    98 0000008A 5B                      pop rbx
+    99 0000008B 5D                      pop rbp
+   100                                  
+   101 0000008C C3                      ret
