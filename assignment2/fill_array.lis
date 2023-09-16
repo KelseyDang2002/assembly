@@ -1,0 +1,76 @@
+     1                                  ; Author: Kelsey Dang
+     2                                  ; Email: kdangdo2002@csu.fullerton.edu
+     3                                  ; Due Date: 10/25/23
+     4                                  ; Subject: CPSC 240-03 Assignment 2 Arrays
+     5                                  ; Filename: fill_array.asm
+     6                                  
+     7                                  global fill_array
+     8                                  extern printf
+     9                                  extern scanf
+    10                                  
+    11                                  segment .data
+    12 00000000 506C6561736520696E-     input_msg db "Please input float numbers followed by ws. After the last number, press ws followed by CTRL + D: ", 10, 0
+    12 00000009 70757420666C6F6174-
+    12 00000012 206E756D6265727320-
+    12 0000001B 666F6C6C6F77656420-
+    12 00000024 62792077732E204166-
+    12 0000002D 74657220746865206C-
+    12 00000036 617374206E756D6265-
+    12 0000003F 722C20707265737320-
+    12 00000048 777320666F6C6C6F77-
+    12 00000051 656420627920435452-
+    12 0000005A 4C202B20443A200A00 
+    13                                  
+    14 00000063 256C6600                floatform db "%lf", 0
+    15 00000067 257300                  stringform db "%s", 0
+    16                                  
+    17                                  segment .bss
+    18                                  
+    19                                  segment .text
+    20                                  fill_array:
+    21                                  
+    22                                  ; ============= Backup GPRs ============================
+    23 00000000 55                      push rbp
+    24 00000001 4889E5                  mov rbp, rsp
+    25 00000004 53                      push rbx
+    26 00000005 51                      push rcx
+    27 00000006 52                      push rdx
+    28 00000007 56                      push rsi
+    29 00000008 57                      push rdi
+    30 00000009 4150                    push r8
+    31 0000000B 4151                    push r9
+    32 0000000D 4152                    push r10
+    33 0000000F 4153                    push r11
+    34 00000011 4154                    push r12
+    35 00000013 4155                    push r13
+    36 00000015 4156                    push r14
+    37 00000017 4157                    push r15
+    38 00000019 9C                      pushf
+    39                                  
+    40                                  ; ============== Print input_msg ===============
+    41 0000001A B800000000              mov rax, 0
+    42 0000001F 48BF-                   mov rdi, stringform
+    42 00000021 [6700000000000000] 
+    43 00000029 48BE-                   mov rsi, input_msg
+    43 0000002B [0000000000000000] 
+    44 00000033 E8(00000000)            call printf
+    45                                  
+    46                                  ; ============== Fill array ====================
+    47                                  
+    48 00000038 9D                      popf
+    49 00000039 415F                    pop r15
+    50 0000003B 415E                    pop r14
+    51 0000003D 415D                    pop r13
+    52 0000003F 415C                    pop r12
+    53 00000041 415B                    pop r11
+    54 00000043 415A                    pop r10
+    55 00000045 4159                    pop r9
+    56 00000047 4158                    pop r8
+    57 00000049 5F                      pop rdi
+    58 0000004A 5E                      pop rsi
+    59 0000004B 5A                      pop rdx
+    60 0000004C 59                      pop rcx
+    61 0000004D 5B                      pop rbx
+    62 0000004E 5D                      pop rbp
+    63                                  
+    64 0000004F C3                      ret

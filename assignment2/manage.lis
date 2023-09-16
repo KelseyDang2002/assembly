@@ -1,0 +1,126 @@
+     1                                  ; Author: Kelsey Dang
+     2                                  ; Email: kdangdo2002@csu.fullerton.edu
+     3                                  ; Due Date: 10/25/23
+     4                                  ; Subject: CPSC 240-03 Assignment 2 Arrays
+     5                                  ; Filename: manage.asm
+     6                                  
+     7                                  global manage
+     8                                  extern fill_array
+     9                                  extern printf
+    10                                  extern scanf
+    11                                  max_size equ 8
+    12                                  
+    13                                  segment .data
+    14 00000000 57652077696C6C2074-     welcome_msg db "We will take care of all your array needs.", 10, 0
+    14 00000009 616B65206361726520-
+    14 00000012 6F6620616C6C20796F-
+    14 0000001B 757220617272617920-
+    14 00000024 6E656564732E0A00   
+    15                                  
+    16                                  ; input_msg db "Please input float numbers followed by ws. After the last number, press ws followed by CTRL + D: ", 10, 0
+    17                                  
+    18 0000002C 5468616E6B20796F75-     receive_input_msg db "Thank you. The numbers in the array are: ", 10, 0
+    18 00000035 2E20546865206E756D-
+    18 0000003E 6265727320696E2074-
+    18 00000047 686520617272617920-
+    18 00000050 6172653A200A00     
+    19                                  
+    20 00000057 5468652073756D206F-     sum_msg db "The sum of the numbers in the array is %lf", 10, 0
+    20 00000060 6620746865206E756D-
+    20 00000069 6265727320696E2074-
+    20 00000072 686520617272617920-
+    20 0000007B 697320256C660A00   
+    21                                  
+    22 00000083 5468616E6B20796F75-     end_msg db "Thank you for using Array Management System.", 10, 0
+    22 0000008C 20666F72207573696E-
+    22 00000095 67204172726179204D-
+    22 0000009E 616E6167656D656E74-
+    22 000000A7 2053797374656D2E0A-
+    22 000000B0 00                 
+    23                                  
+    24 000000B1 256C6600                floatform db "%lf", 0
+    25 000000B5 257300                  stringform db "%s", 0
+    26                                  
+    27                                  segment .bss
+    28 00000000 <res 00000040>          array resq max_size ; array is a number where cell 0 starts in memory
+    29                                  
+    30                                  segment .text
+    31                                  manage:
+    32                                  
+    33                                  ; ============= Backup GPRs ============================
+    34 00000000 55                      push rbp
+    35 00000001 4889E5                  mov rbp, rsp
+    36 00000004 53                      push rbx
+    37 00000005 51                      push rcx
+    38 00000006 52                      push rdx
+    39 00000007 56                      push rsi
+    40 00000008 57                      push rdi
+    41 00000009 4150                    push r8
+    42 0000000B 4151                    push r9
+    43 0000000D 4152                    push r10
+    44 0000000F 4153                    push r11
+    45 00000011 4154                    push r12
+    46 00000013 4155                    push r13
+    47 00000015 4156                    push r14
+    48 00000017 4157                    push r15
+    49 00000019 9C                      pushf
+    50                                  
+    51                                  ; =============== Print welcome_msg =====================
+    52 0000001A B800000000              mov rax, 0
+    53 0000001F 48BF-                   mov rdi, stringform
+    53 00000021 [B500000000000000] 
+    54 00000029 48BE-                   mov rsi, welcome_msg
+    54 0000002B [0000000000000000] 
+    55 00000033 E8(00000000)            call printf
+    56                                  
+    57                                  ; =============== Print input_msg =======================
+    58                                  ; mov rax, 0
+    59                                  ; mov rdi, stringform
+    60                                  ; mov rsi, input_msg
+    61                                  ; call printf
+    62                                  
+    63                                  ; =============== Call fill_array =======================
+    64 00000038 B800000000              mov rax, 0
+    65 0000003D 48BF-                   mov rdi, array
+    65 0000003F [0000000000000000] 
+    66 00000047 BE08000000              mov rsi, max_size
+    67 0000004C E8(00000000)            call fill_array
+    68                                  
+    69                                  ; =============== Print receive_input_msg ===============
+    70 00000051 B800000000              mov rax, 0
+    71 00000056 48BF-                   mov rdi, stringform
+    71 00000058 [B500000000000000] 
+    72 00000060 48BE-                   mov rsi, receive_input_msg
+    72 00000062 [2C00000000000000] 
+    73 0000006A E8(00000000)            call printf
+    74                                  
+    75                                  ; =============== Call output_array =====================
+    76                                  
+    77                                  ; =============== Calculate sum of array ================
+    78                                  
+    79                                  ; =============== Print end_msg =========================
+    80 0000006F B800000000              mov rax, 0
+    81 00000074 48BF-                   mov rdi, stringform
+    81 00000076 [B500000000000000] 
+    82 0000007E 48BE-                   mov rsi, end_msg
+    82 00000080 [8300000000000000] 
+    83 00000088 E8(00000000)            call printf
+    84                                  
+    85                                  ; =============== Restore GPRs ==========================
+    86 0000008D 9D                      popf
+    87 0000008E 415F                    pop r15
+    88 00000090 415E                    pop r14
+    89 00000092 415D                    pop r13
+    90 00000094 415C                    pop r12
+    91 00000096 415B                    pop r11
+    92 00000098 415A                    pop r10
+    93 0000009A 4159                    pop r9
+    94 0000009C 4158                    pop r8
+    95 0000009E 5F                      pop rdi
+    96 0000009F 5E                      pop rsi
+    97 000000A0 5A                      pop rdx
+    98 000000A1 59                      pop rcx
+    99 000000A2 5B                      pop rbx
+   100 000000A3 5D                      pop rbp
+   101                                  
+   102 000000A4 C3                      ret
