@@ -55,61 +55,59 @@
     44 0000001D 4989F7                  mov r15, rsi          ; r15 is the number of cells
     45                                  
     46                                  ; =============== Print input_msg =======================
-    47 00000020 B800000000              mov rax, 0
-    48 00000025 48BF-                   mov rdi, stringform
-    48 00000027 [7400000000000000] 
-    49 0000002F 48BE-                   mov rsi, input_msg
-    49 00000031 [0000000000000000] 
-    50 00000039 E8(00000000)            call printf
-    51 0000003E 58                      pop rax
+    47                                  ; mov rax, 0
+    48                                  ; mov rdi, stringform
+    49                                  ; mov rsi, input_msg
+    50                                  ; call printf
+    51                                  ; pop rax
     52                                  
     53                                  ; =============== Fill array ============================
-    54 0000003F 4D31ED                  xor r13, r13          ; r13 is the index
+    54 00000020 4D31ED                  xor r13, r13          ; r13 is the index
     55                                  
     56                                  beginloop:
-    57 00000042 4D39FD                  cmp r13, r15
-    58 00000045 742B                    je done
+    57 00000023 4D39FD                  cmp r13, r15
+    58 00000026 742B                    je done
     59                                  
-    60 00000047 B800000000              mov rax, 0
-    61 0000004C 48BF-                   mov rdi, floatform    ; %lf
-    61 0000004E [7000000000000000] 
-    62 00000056 6AFD                    push qword -3
-    63 00000058 4889E6                  mov rsi, rsp
-    64 0000005B E8(00000000)            call scanf
+    60 00000028 B800000000              mov rax, 0
+    61 0000002D 48BF-                   mov rdi, floatform    ; %lf
+    61 0000002F [7000000000000000] 
+    62 00000037 6AFD                    push qword -3
+    63 00000039 4889E6                  mov rsi, rsp
+    64 0000003C E8(00000000)            call scanf
     65                                  
-    66 00000060 4898                    cdqe
-    67 00000062 4883F8FF                cmp rax, -1           ; check for CTRL + D
-    68 00000066 740A                    je done
+    66 00000041 4898                    cdqe
+    67 00000043 4883F8FF                cmp rax, -1           ; check for CTRL + D
+    68 00000047 740A                    je done
     69                                  
     70                                  ; mov rax, 1
     71                                  ; mov rdi, stringform
     72                                  ; mov rsi, debug_msg
     73                                  ; call printf
     74                                  
-    75 00000068 5B                      pop rbx
-    76 00000069 4B891CEE                mov [r14 + r13 * 8], rbx
-    77 0000006D 49FFC5                  inc r13               ; r13++
+    75 00000049 5B                      pop rbx
+    76 0000004A 4B891CEE                mov [r14 + r13 * 8], rbx
+    77 0000004E 49FFC5                  inc r13               ; r13++
     78                                  
-    79 00000070 EBD0                    jmp beginloop
+    79 00000051 EBD0                    jmp beginloop
     80                                  
     81                                  done:
-    82 00000072 4C89E8                  mov rax, r13
+    82 00000053 4C89E8                  mov rax, r13
     83                                  
     84                                  ; =============== Restore GPRs ==========================
-    85 00000075 9D                      popf
-    86 00000076 415F                    pop r15
-    87 00000078 415E                    pop r14
-    88 0000007A 415D                    pop r13
-    89 0000007C 415C                    pop r12
-    90 0000007E 415B                    pop r11
-    91 00000080 415A                    pop r10
-    92 00000082 4159                    pop r9
-    93 00000084 4158                    pop r8
-    94 00000086 5F                      pop rdi
-    95 00000087 5E                      pop rsi
-    96 00000088 5A                      pop rdx
-    97 00000089 59                      pop rcx
-    98 0000008A 5B                      pop rbx
-    99 0000008B 5D                      pop rbp
+    85 00000056 9D                      popf
+    86 00000057 415F                    pop r15
+    87 00000059 415E                    pop r14
+    88 0000005B 415D                    pop r13
+    89 0000005D 415C                    pop r12
+    90 0000005F 415B                    pop r11
+    91 00000061 415A                    pop r10
+    92 00000063 4159                    pop r9
+    93 00000065 4158                    pop r8
+    94 00000067 5F                      pop rdi
+    95 00000068 5E                      pop rsi
+    96 00000069 5A                      pop rdx
+    97 0000006A 59                      pop rcx
+    98 0000006B 5B                      pop rbx
+    99 0000006C 5D                      pop rbp
    100                                  
-   101 0000008C C3                      ret
+   101 0000006D C3                      ret

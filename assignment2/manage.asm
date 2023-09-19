@@ -6,6 +6,8 @@
 
 global manage
 extern fill_array
+extern sum_array
+extern output_array
 extern printf
 extern scanf
 max_size equ 8
@@ -13,7 +15,7 @@ max_size equ 8
 segment .data
 welcome_msg db "We will take care of all your array needs.", 10, 0
 
-; input_msg db "Please input float numbers followed by ws. After the last number, press ws followed by CTRL + D: ", 10, 0
+input_msg db "Please input float numbers followed by ws. After the last number, press ws followed by CTRL + D: ", 10, 0
 
 receive_input_msg db "Thank you. The numbers in the array are: ", 10, 0
 
@@ -55,10 +57,10 @@ mov rsi, welcome_msg
 call printf
 
 ; =============== Print input_msg =======================
-; mov rax, 0
-; mov rdi, stringform
-; mov rsi, input_msg
-; call printf
+mov rax, 0
+mov rdi, stringform
+mov rsi, input_msg
+call printf
 
 ; =============== Call fill_array =======================
 mov rax, 0
@@ -74,7 +76,13 @@ call printf
 
 ; =============== Call output_array =====================
 
-; =============== Calculate sum of array ================
+; =============== Call sum_array ========================
+
+; =============== Print sum_msg =========================
+mov rax, 0
+mov rdi, stringform
+mov rsi, sum_msg
+call printf
 
 ; =============== Print end_msg =========================
 mov rax, 0

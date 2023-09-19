@@ -44,11 +44,11 @@ mov r14, rdi          ; r14 is the array
 mov r15, rsi          ; r15 is the number of cells
 
 ; =============== Print input_msg =======================
-mov rax, 0
-mov rdi, stringform
-mov rsi, input_msg
-call printf
-pop rax
+; mov rax, 0
+; mov rdi, stringform
+; mov rsi, input_msg
+; call printf
+; pop rax
 
 ; =============== Fill array ============================
 xor r13, r13          ; r13 is the index
