@@ -8,6 +8,7 @@ global output_array
 extern printf
 
 segment .data
+print_data db "output_array: %16.10lf", 10, 0
 
 segment .bss
 
@@ -32,7 +33,9 @@ push r14
 push r15
 pushf
 
-; Block
+; =============== Backup r14 and r15 ====================
+mov r14, rdi          ; r14 is the array
+mov r15, rsi          ; r15 is the number of cells
 
 ; =============== Restore GPRs ==========================
 popf

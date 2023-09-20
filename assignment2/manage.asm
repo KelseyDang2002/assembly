@@ -13,15 +13,15 @@ extern scanf
 max_size equ 8
 
 segment .data
-welcome_msg db "We will take care of all your array needs.", 10, 0
+welcome_msg db "manage: We will take care of all your array needs.", 10, 0
 
-input_msg db "Please input float numbers followed by ws. After the last number, press ws followed by CTRL + D: ", 10, 0
+input_msg db "manage: Please input float numbers followed by ws. After the last number, press ws followed by CTRL + D: ", 10, 0
 
-receive_input_msg db "Thank you. The numbers in the array are: ", 10, 0
+receive_input_msg db "manage: Thank you. The numbers in the array are: ", 10, 0
 
-sum_msg db "The sum of the numbers in the array is %lf", 10, 0
+sum_msg db "manage: The sum of the numbers in the array is %lf", 10, 0
 
-end_msg db "Thank you for using Array Management System.", 10, 0
+end_msg db "manage: Thank you for using Array Management System.", 10, 0
 
 floatform db "%lf", 0
 stringform db "%s", 0
@@ -67,6 +67,7 @@ mov rax, 0
 mov rdi, array
 mov rsi, max_size
 call fill_array
+mov r14, rax ; r14 holds the number of values stored in array
 
 ; =============== Print receive_input_msg ===============
 mov rax, 0
@@ -75,6 +76,10 @@ mov rsi, receive_input_msg
 call printf
 
 ; =============== Call output_array =====================
+; mov rax, 0
+; mov rdi, array
+; mov rsi, r14
+; call output_array
 
 ; =============== Call sum_array ========================
 
@@ -89,6 +94,9 @@ mov rax, 0
 mov rdi, stringform
 mov rsi, end_msg
 call printf
+
+; =============== Return execution to driver ============
+xorpd xmm0, xmm0
 
 ; =============== Restore GPRs ==========================
 popf

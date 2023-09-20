@@ -9,7 +9,7 @@ extern printf
 extern scanf
 
 segment .data
-input_msg db "Please input float numbers followed by ws. After the last number, press ws followed by CTRL + D: ", 10, 0
+; input_msg db "Please input float numbers followed by ws. After the last number, press ws followed by CTRL + D: ", 10, 0
 
 debug_msg db "%lf entered", 10, 0
 
@@ -17,6 +17,7 @@ floatform db "%lf", 0
 stringform db "%s", 0
 
 segment .bss
+; this segment is empty
 
 segment .text
 fill_array:
@@ -40,45 +41,34 @@ push r15
 pushf
 
 ; =============== Stuff =================================
+pop rax
 mov r14, rdi          ; r14 is the array
 mov r15, rsi          ; r15 is the number of cells
 
-; =============== Print input_msg =======================
-; mov rax, 0
-; mov rdi, stringform
-; mov rsi, input_msg
-; call printf
-; pop rax
-
 ; =============== Fill array ============================
-xor r13, r13          ; r13 is the index
+xor r13, r13          ; r13 is the starting index 0
 
 beginloop:
-cmp r13, r15
-je done
+cmp r13, r15          ; if current index is >= number of cells (r15)
+je endloop            ; end the loop
 
+; =============== Receive input from user ===============
 mov rax, 0
 mov rdi, floatform    ; %lf
-push qword -3
+push qword 0
 mov rsi, rsp
 call scanf
 
 cdqe
 cmp rax, -1           ; check for CTRL + D
-je done
-
-; mov rax, 1
-; mov rdi, stringform
-; mov rsi, debug_msg
-; call printf
+je endloop            ; jump to end of loop if CTRL + D
 
 pop rbx
-mov [r14 + r13 * 8], rbx
+mov [r14+8*r13], rbx
 inc r13               ; r13++
-
 jmp beginloop
 
-done:
+endloop:
 mov rax, r13
 
 ; =============== Restore GPRs ==========================

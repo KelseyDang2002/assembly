@@ -9,12 +9,12 @@
 extern double manage();
 
 int main(int argc, char* argv[]) {
-  printf("\nWelcome to Array Management System.\n");
-  printf("This product is maintained by Kelsey Dang at kdangdo2002@csu.fullerton.edu.\n\n");
+  printf("\ndriver: Welcome to Array Management System.\n");
+  printf("driver: This product is maintained by Kelsey Dang at kdangdo2002@csu.fullerton.edu.\n\n");
   double return_code = manage();
-  printf("\nThe main function received %lf ", return_code);
+  printf("\ndriver: The main function received %lf ", return_code);
   printf("and will keep it for a while.\n");
-  printf("Please consider buying more software from our suite of commercial programs.\n");
-  printf("A zero will be returned to to the operating system. Bye.\n");
+  printf("driver: Please consider buying more software from our suite of commercial programs.\n");
+  printf("driver: A zero will be returned to to the operating system. Bye.\n");
   return 0;
 }
