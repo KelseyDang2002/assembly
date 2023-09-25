@@ -9,85 +9,94 @@
      9                                  extern scanf
     10                                  
     11                                  segment .data
-    12                                  ; input_msg db "Please input float numbers followed by ws. After the last number, press ws followed by CTRL + D: ", 10, 0
+    12 00000000 256C6620656E746572-     debug_msg db "%lf entered", 10, 0
+    12 00000009 65640A00           
     13                                  
-    14 00000000 256C6620656E746572-     debug_msg db "%lf entered", 10, 0
-    14 00000009 65640A00           
-    15                                  
-    16 0000000D 256C6600                floatform db "%lf", 0
-    17 00000011 257300                  stringform db "%s", 0
-    18                                  
-    19                                  segment .bss
-    20                                  ; this segment is empty
-    21                                  
-    22                                  segment .text
-    23                                  fill_array:
-    24                                  
-    25                                  ; ============= Backup GPRs ============================
-    26 00000000 55                      push rbp
-    27 00000001 4889E5                  mov rbp, rsp
-    28 00000004 53                      push rbx
-    29 00000005 51                      push rcx
-    30 00000006 52                      push rdx
-    31 00000007 56                      push rsi
-    32 00000008 57                      push rdi
-    33 00000009 4150                    push r8
-    34 0000000B 4151                    push r9
-    35 0000000D 4152                    push r10
-    36 0000000F 4153                    push r11
-    37 00000011 4154                    push r12
-    38 00000013 4155                    push r13
-    39 00000015 4156                    push r14
-    40 00000017 4157                    push r15
-    41 00000019 9C                      pushf
-    42                                  
-    43                                  ; =============== Stuff =================================
-    44 0000001A 58                      pop rax
-    45 0000001B 4989FE                  mov r14, rdi          ; r14 is the array
-    46 0000001E 4989F7                  mov r15, rsi          ; r15 is the number of cells
-    47                                  
-    48                                  ; =============== Fill array ============================
-    49 00000021 4D31ED                  xor r13, r13          ; r13 is the starting index 0
-    50                                  
-    51                                  beginloop:
-    52 00000024 4D39FD                  cmp r13, r15          ; if current index is >= number of cells (r15)
-    53 00000027 742B                    je endloop            ; end the loop
+    14 0000000D 256C6600                floatform db "%lf", 0
+    15 00000011 257300                  stringform db "%s", 0
+    16                                  
+    17                                  segment .bss
+    18                                  align 64
+    19 00000000 <res 00000340>          backuparea resb 832
+    20                                  
+    21                                  segment .text
+    22                                  fill_array:
+    23                                  
+    24                                  ; ============= Backup GPRs ============================
+    25 00000000 55                      push rbp
+    26 00000001 4889E5                  mov rbp, rsp
+    27 00000004 53                      push rbx
+    28 00000005 51                      push rcx
+    29 00000006 52                      push rdx
+    30 00000007 56                      push rsi
+    31 00000008 57                      push rdi
+    32 00000009 4150                    push r8
+    33 0000000B 4151                    push r9
+    34 0000000D 4152                    push r10
+    35 0000000F 4153                    push r11
+    36 00000011 4154                    push r12
+    37 00000013 4155                    push r13
+    38 00000015 4156                    push r14
+    39 00000017 4157                    push r15
+    40 00000019 9C                      pushf
+    41                                  
+    42                                  ; =============== xsave =================================
+    43                                  ; mov rax, 7
+    44                                  ; mov rdx, 0
+    45                                  ; xsave [backuparea]
+    46                                  
+    47                                  ; =============== Backup r14 and r15 ====================
+    48 0000001A 58                      pop rax
+    49 0000001B 4989FE                  mov r14, rdi          ; r14 is the array
+    50 0000001E 4989F7                  mov r15, rsi          ; r15 is the number of cells
+    51                                  
+    52                                  ; =============== Fill array ============================
+    53 00000021 4D31ED                  xor r13, r13          ; r13 is the starting index 0
     54                                  
-    55                                  ; =============== Receive input from user ===============
-    56 00000029 B800000000              mov rax, 0
-    57 0000002E 48BF-                   mov rdi, floatform    ; %lf
-    57 00000030 [0D00000000000000] 
-    58 00000038 6A00                    push qword 0
-    59 0000003A 4889E6                  mov rsi, rsp
-    60 0000003D E8(00000000)            call scanf
-    61                                  
-    62 00000042 4898                    cdqe
-    63 00000044 4883F8FF                cmp rax, -1           ; check for CTRL + D
-    64 00000048 740A                    je endloop            ; jump to end of loop if CTRL + D
+    55                                  beginloop:
+    56 00000024 4D39FD                  cmp r13, r15          ; if current index is >= number of cells (r15)
+    57 00000027 742B                    je endloop            ; end the loop
+    58                                  
+    59                                  ; =============== Receive input from user ===============
+    60 00000029 B800000000              mov rax, 0
+    61 0000002E 48BF-                   mov rdi, floatform    ; %lf
+    61 00000030 [0D00000000000000] 
+    62 00000038 6A00                    push qword 0
+    63 0000003A 4889E6                  mov rsi, rsp
+    64 0000003D E8(00000000)            call scanf
     65                                  
-    66 0000004A 5B                      pop rbx
-    67 0000004B 4B891CEE                mov [r14+8*r13], rbx
-    68 0000004F 49FFC5                  inc r13               ; r13++
-    69 00000052 EBD0                    jmp beginloop
-    70                                  
-    71                                  endloop:
-    72 00000054 4C89E8                  mov rax, r13
-    73                                  
-    74                                  ; =============== Restore GPRs ==========================
-    75 00000057 9D                      popf
-    76 00000058 415F                    pop r15
-    77 0000005A 415E                    pop r14
-    78 0000005C 415D                    pop r13
-    79 0000005E 415C                    pop r12
-    80 00000060 415B                    pop r11
-    81 00000062 415A                    pop r10
-    82 00000064 4159                    pop r9
-    83 00000066 4158                    pop r8
-    84 00000068 5F                      pop rdi
-    85 00000069 5E                      pop rsi
-    86 0000006A 5A                      pop rdx
-    87 0000006B 59                      pop rcx
-    88 0000006C 5B                      pop rbx
-    89 0000006D 5D                      pop rbp
-    90                                  
-    91 0000006E C3                      ret
+    66 00000042 4898                    cdqe
+    67 00000044 4883F8FF                cmp rax, -1           ; check for CTRL + D
+    68 00000048 740A                    je endloop            ; jump to end of loop if CTRL + D
+    69                                  
+    70 0000004A 5B                      pop rbx
+    71 0000004B 4B891CEE                mov [r14+8*r13], rbx
+    72 0000004F 49FFC5                  inc r13               ; r13++
+    73 00000052 EBD0                    jmp beginloop         ; start loop again
+    74                                  
+    75                                  endloop:
+    76 00000054 4C89E8                  mov rax, r13
+    77                                  
+    78                                  ; =============== xrstor ================================
+    79                                  ; mov rax, 7
+    80                                  ; mov rdx, 0
+    81                                  ; xrstor [backuparea]
+    82                                  
+    83                                  ; =============== Restore GPRs ==========================
+    84 00000057 9D                      popf
+    85 00000058 415F                    pop r15
+    86 0000005A 415E                    pop r14
+    87 0000005C 415D                    pop r13
+    88 0000005E 415C                    pop r12
+    89 00000060 415B                    pop r11
+    90 00000062 415A                    pop r10
+    91 00000064 4159                    pop r9
+    92 00000066 4158                    pop r8
+    93 00000068 5F                      pop rdi
+    94 00000069 5E                      pop rsi
+    95 0000006A 5A                      pop rdx
+    96 0000006B 59                      pop rcx
+    97 0000006C 5B                      pop rbx
+    98 0000006D 5D                      pop rbp
+    99                                  
+   100 0000006E C3                      ret

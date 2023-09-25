@@ -31,7 +31,17 @@ push r14
 push r15
 pushf
 
+; =============== xsave =================================
+; mov rax, 7
+; mov rdx, 0
+; xsave [backuparea]
+
 ; Block
+
+; =============== xrstor ================================
+; mov rax, 7
+; mov rdx, 0
+; xrstor [backuparea]
 
 ; =============== Restore GPRs ==========================
 popf

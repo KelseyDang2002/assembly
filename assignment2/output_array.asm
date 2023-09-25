@@ -10,7 +10,12 @@ extern printf
 segment .data
 print_data db "output_array: %16.10lf", 10, 0
 
+floatform db "%lf", 0
+stringform db "%s", 0
+
 segment .bss
+align 64
+backuparea resb 832
 
 segment .text
 output_array:
@@ -33,9 +38,38 @@ push r14
 push r15
 pushf
 
+; =============== xsave =================================
+; mov rax, 7
+; mov rdx, 0
+; xsave [backuparea]
+
 ; =============== Backup r14 and r15 ====================
 mov r14, rdi          ; r14 is the array
 mov r15, rsi          ; r15 is the number of cells
+
+; =============== Display the array =====================
+xor r13, r13          ; r13 is the starting index 0
+
+beginloop:
+cmp r13, r15          ; if current index is >= number of cells (r15)
+je endloop            ; end the loop
+
+; =============== Print data in array ===================
+movsd xmm0, [r14+8*r13]
+mov rax, 1
+mov rdi, print_data
+call printf
+
+inc r13
+jmp beginloop
+
+endloop:
+mov rax, r13
+
+; =============== xrstor ================================
+; mov rax, 7
+; mov rdx, 0
+; xrstor [backuparea]
 
 ; =============== Restore GPRs ==========================
 popf

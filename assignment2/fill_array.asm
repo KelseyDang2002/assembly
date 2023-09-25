@@ -9,15 +9,14 @@ extern printf
 extern scanf
 
 segment .data
-; input_msg db "Please input float numbers followed by ws. After the last number, press ws followed by CTRL + D: ", 10, 0
-
 debug_msg db "%lf entered", 10, 0
 
 floatform db "%lf", 0
 stringform db "%s", 0
 
 segment .bss
-; this segment is empty
+align 64
+backuparea resb 832
 
 segment .text
 fill_array:
@@ -40,7 +39,12 @@ push r14
 push r15
 pushf
 
-; =============== Stuff =================================
+; =============== xsave =================================
+; mov rax, 7
+; mov rdx, 0
+; xsave [backuparea]
+
+; =============== Backup r14 and r15 ====================
 pop rax
 mov r14, rdi          ; r14 is the array
 mov r15, rsi          ; r15 is the number of cells
@@ -66,10 +70,15 @@ je endloop            ; jump to end of loop if CTRL + D
 pop rbx
 mov [r14+8*r13], rbx
 inc r13               ; r13++
-jmp beginloop
+jmp beginloop         ; start loop again
 
 endloop:
 mov rax, r13
+
+; =============== xrstor ================================
+; mov rax, 7
+; mov rdx, 0
+; xrstor [backuparea]
 
 ; =============== Restore GPRs ==========================
 popf
