@@ -3,6 +3,7 @@
 // Due Date: 10/25/23
 // Subject: CPSC 240-03 Assignment 2
 // Filename: driver.c
+// Purpose: This is the driver file that calls manage for Array Management System.
 
 #include <stdio.h>
 

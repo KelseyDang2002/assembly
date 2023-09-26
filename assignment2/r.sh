@@ -22,8 +22,11 @@ nasm -f elf64 -l fill_array.lis -o fill_array.o fill_array.asm
 echo "bash: Assembling output_array..."
 nasm -f elf64 -l output_array.lis -o output_array.o output_array.asm
 
+echo "bash: Assembling sum_array..."
+nasm -f elf64 -l sum_array.lis -o sum_array.o sum_array.asm
+
 echo "bash: Linking the four created object files..."
-gcc -m64 -fno-pie -no-pie -o a.out driver.o manage.o fill_array.o output_array.o -std=c17
+gcc -m64 -fno-pie -no-pie -o a.out driver.o manage.o fill_array.o output_array.o sum_array.o -std=c17
 
 echo "bash: Running program..."
 ./a.out

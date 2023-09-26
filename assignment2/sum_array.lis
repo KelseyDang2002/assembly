@@ -1,0 +1,89 @@
+     1                                  ; Author: Kelsey Dang
+     2                                  ; Email: kdangdo2002@csu.fullerton.edu
+     3                                  ; Due Date: 10/25/23
+     4                                  ; Subject: CPSC 240-03 Assignment 2 Arrays
+     5                                  ; Filename: sum_array.asm
+     6                                  ; Purpose: This file adds all the floats in the array and sends it to manage.
+     7                                  
+     8                                  global sum_array
+     9                                  extern printf
+    10                                  
+    11                                  segment .data
+    12 00000000 0A73756D5F61727261-     test_msg db 10, "sum_array", 10, 0
+    12 00000009 790A00             
+    13                                  
+    14 0000000C 257300                  stringform db "%s", 0
+    15                                  
+    16                                  segment .bss
+    17                                  align 64
+    18 00000000 <res 00000340>          backuparea resb 832
+    19                                  
+    20                                  segment .text
+    21                                  sum_array:
+    22                                  
+    23                                  ; ============= Backup GPRs ============================
+    24 00000000 55                      push rbp
+    25 00000001 4889E5                  mov rbp, rsp
+    26 00000004 53                      push rbx
+    27 00000005 51                      push rcx
+    28 00000006 52                      push rdx
+    29 00000007 56                      push rsi
+    30 00000008 57                      push rdi
+    31 00000009 4150                    push r8
+    32 0000000B 4151                    push r9
+    33 0000000D 4152                    push r10
+    34 0000000F 4153                    push r11
+    35 00000011 4154                    push r12
+    36 00000013 4155                    push r13
+    37 00000015 4156                    push r14
+    38 00000017 4157                    push r15
+    39 00000019 9C                      pushf
+    40                                  
+    41                                  ; =============== xsave =================================
+    42 0000001A B808000000              mov rax, 8
+    43 0000001F BA00000000              mov rdx, 0
+    44 00000024 0FAE2425[00000000]      xsave [backuparea]
+    45                                  
+    46                                  ; =============== Backup r14 and r15 ====================
+    47 0000002C 4989FE                  mov r14, rdi          ; r14 is the array
+    48 0000002F 4989F7                  mov r15, rsi          ; r15 is the number of cells
+    49 00000032 41BD00000000            mov r13, 0            ; r13 is the starting index 0
+    50                                  
+    51                                  ; =============== Sum of elements in array ==============
+    52 00000038 4D31ED                  xor r13, r13          ; r13 is the starting index 0
+    53                                  
+    54                                  beginloop:
+    55 0000003B 4D39FD                  cmp r13, r15          ; if current index is >= number of cells (r15)
+    56 0000003E 740B                    je endloop            ; end the loop
+    57                                  
+    58 00000040 F2470F583CEE            addsd xmm15, [r14+8*r13]
+    59                                  
+    60 00000046 49FFC5                  inc r13
+    61 00000049 EBF0                    jmp beginloop
+    62                                  
+    63                                  endloop:
+    64 0000004B F2410F10C7              movsd xmm0, xmm15
+    65                                  
+    66                                  ; =============== xrstor ================================
+    67 00000050 B808000000              mov rax, 8
+    68 00000055 BA00000000              mov rdx, 0
+    69 0000005A 0FAE2C25[00000000]      xrstor [backuparea]
+    70                                  
+    71                                  ; =============== Restore GPRs ==========================
+    72 00000062 9D                      popf
+    73 00000063 415F                    pop r15
+    74 00000065 415E                    pop r14
+    75 00000067 415D                    pop r13
+    76 00000069 415C                    pop r12
+    77 0000006B 415B                    pop r11
+    78 0000006D 415A                    pop r10
+    79 0000006F 4159                    pop r9
+    80 00000071 4158                    pop r8
+    81 00000073 5F                      pop rdi
+    82 00000074 5E                      pop rsi
+    83 00000075 5A                      pop rdx
+    84 00000076 59                      pop rcx
+    85 00000077 5B                      pop rbx
+    86 00000078 5D                      pop rbp
+    87                                  
+    88 00000079 C3                      ret

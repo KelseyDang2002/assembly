@@ -3,6 +3,8 @@
 ; Due Date: 10/25/23
 ; Subject: CPSC 240-03 Assignment 2 Arrays
 ; Filename: manage.asm
+; Purpose: This file manages fill_array, output_array, and sum_array in Array Management System.
+; Then manage gets called by the driver.
 
 global manage
 extern fill_array
@@ -19,7 +21,7 @@ input_msg db "manage: Please input float numbers followed by ws. After the last 
 
 receive_input_msg db 10, "manage: Thank you. The numbers in the array are: ", 10, 10, 0
 
-sum_msg db 10, "manage: The sum of the numbers in the array is %lf", 10, 0
+sum_msg db 10, "manage: The sum of the numbers in the array is %16.10lf", 10, 0
 
 end_msg db "manage: Thank you for using Array Management System.", 10, 0
 
@@ -53,13 +55,9 @@ push r15
 pushf
 
 ; =============== xsave =================================
-; mov rax, 7
-; mov rdx, 0
-; xsave [backuparea]
-
-; =============== Backup r14 and r15 ====================
-mov r14, rdi          ; r14 is the array
-mov r15, rsi          ; r15 is the number of cells
+mov rax, 8
+mov rdx, 0
+xsave [backuparea]
 
 ; =============== Print welcome_msg =====================
 mov rax, 0
@@ -76,7 +74,7 @@ call printf
 ; =============== Call fill_array =======================
 mov rax, 0
 mov rdi, array
-mov rsi, max_size + 1
+mov rsi, max_size+1
 call fill_array
 mov r14, rax ; r14 holds the number of values stored in array
 
@@ -93,11 +91,15 @@ mov rsi, r14
 call output_array
 
 ; =============== Call sum_array ========================
+mov rax, 0
+mov rdi, array
+mov rsi, r14
+call sum_array
+movsd [rsp], xmm0
 
 ; =============== Print sum_msg =========================
-mov rax, 0
-mov rdi, stringform
-mov rsi, sum_msg
+mov rax, 1
+mov rdi, sum_msg
 call printf
 
 ; =============== Print end_msg =========================
@@ -107,12 +109,12 @@ mov rsi, end_msg
 call printf
 
 ; =============== Return execution to driver ============
-xorpd xmm0, xmm0
+movsd xmm0, [rsp]
 
 ; =============== xrstor ================================
-; mov rax, 7
-; mov rdx, 0
-; xrstor [backuparea]
+mov rax, 8
+mov rdx, 0
+xrstor [backuparea]
 
 ; =============== Restore GPRs ==========================
 popf

@@ -3,6 +3,7 @@
 ; Due Date: 10/25/23
 ; Subject: CPSC 240-03 Assignment 2 Arrays
 ; Filename: output_array.asm
+; Purpose: This file prints the elements in the array.
 
 global output_array
 extern printf
@@ -39,13 +40,14 @@ push r15
 pushf
 
 ; =============== xsave =================================
-; mov rax, 7
-; mov rdx, 0
-; xsave [backuparea]
+mov rax, 8
+mov rdx, 0
+xsave [backuparea]
 
 ; =============== Backup r14 and r15 ====================
 mov r14, rdi          ; r14 is the array
 mov r15, rsi          ; r15 is the number of cells
+mov r13, 0            ; r13 is the starting index 0
 
 ; =============== Display the array =====================
 xor r13, r13          ; r13 is the starting index 0
@@ -67,9 +69,9 @@ endloop:
 mov rax, r13
 
 ; =============== xrstor ================================
-; mov rax, 7
-; mov rdx, 0
-; xrstor [backuparea]
+mov rax, 8
+mov rdx, 0
+xrstor [backuparea]
 
 ; =============== Restore GPRs ==========================
 popf

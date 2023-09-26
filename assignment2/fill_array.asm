@@ -3,6 +3,7 @@
 ; Due Date: 10/25/23
 ; Subject: CPSC 240-03 Assignment 2 Arrays
 ; Filename: fill_array.asm
+; Purpose: This file gets user input of floats in the array.
 
 global fill_array
 extern printf
@@ -40,14 +41,15 @@ push r15
 pushf
 
 ; =============== xsave =================================
-; mov rax, 7
-; mov rdx, 0
-; xsave [backuparea]
+mov rax, 8
+mov rdx, 0
+xsave [backuparea]
 
 ; =============== Backup r14 and r15 ====================
 pop rax
 mov r14, rdi          ; r14 is the array
 mov r15, rsi          ; r15 is the number of cells
+mov r13, 0            ; r13 is the starting index 0
 
 ; =============== Fill array ============================
 xor r13, r13          ; r13 is the starting index 0
@@ -76,7 +78,7 @@ endloop:
 mov rax, r13
 
 ; =============== xrstor ================================
-; mov rax, 7
+; mov rax, 8
 ; mov rdx, 0
 ; xrstor [backuparea]
 
