@@ -2,7 +2,7 @@
 
 #Author: Kelsey Dang
 #Email: kdangdo2002@csu.fullerton.edu
-#Due Date: 10/25/23
+#Due Date: 9/25/23
 #Program Name: Arrays
 #Filename: r.sh
 rm *.o
