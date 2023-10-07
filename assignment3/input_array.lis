@@ -1,0 +1,92 @@
+     1                                  ; Author: Kelsey Dang
+     2                                  ; Email: kdangdo2002@csu.fullerton.edu
+     3                                  ; Due Date: 10/1/23
+     4                                  ; Subject: CPSC 240-03 Assignment 3 <Sort by Pointers>
+     5                                  ; Filename: input_array.asm
+     6                                  ; Purpose: This file gets user input of floats in the array.
+     7                                  
+     8                                  global input_array
+     9                                  extern printf
+    10                                  extern scanf
+    11                                  
+    12                                  segment .data
+    13 00000000 696E7075745F617272-     debug_msg db "input_array called", 10, 0
+    13 00000009 61792063616C6C6564-
+    13 00000012 0A00               
+    14                                  
+    15 00000014 256C6600                floatform db "%lf", 0
+    16 00000018 257300                  stringform db "%s", 0
+    17                                  
+    18                                  segment .bss
+    19                                  align 64
+    20 00000000 <res 00000340>          backuparea resb 832
+    21                                  
+    22                                  segment .text
+    23                                  input_array:
+    24                                  
+    25                                  ; ============= Backup GPRs ============================
+    26 00000000 55                      push rbp
+    27 00000001 4889E5                  mov rbp, rsp
+    28 00000004 53                      push rbx
+    29 00000005 51                      push rcx
+    30 00000006 52                      push rdx
+    31 00000007 56                      push rsi
+    32 00000008 57                      push rdi
+    33 00000009 4150                    push r8
+    34 0000000B 4151                    push r9
+    35 0000000D 4152                    push r10
+    36 0000000F 4153                    push r11
+    37 00000011 4154                    push r12
+    38 00000013 4155                    push r13
+    39 00000015 4156                    push r14
+    40 00000017 4157                    push r15
+    41 00000019 9C                      pushf
+    42                                  
+    43                                  ; =============== xsave =================================
+    44                                  ; mov rax, 10
+    45                                  ; mov rdx, 0
+    46                                  ; xsave [backuparea]
+    47                                  
+    48                                  ; test call input_array
+    49 0000001A B800000000              mov rax, 0
+    50 0000001F 48BF-                   mov rdi, stringform
+    50 00000021 [1800000000000000] 
+    51 00000029 48BE-                   mov rsi, debug_msg
+    51 0000002B [0000000000000000] 
+    52 00000033 E8(00000000)            call printf
+    53                                  
+    54                                  ; =============== Backup r14 and r15 ====================
+    55 00000038 4989FE                  mov r14, rdi          ; r14 is the array
+    56 0000003B 4989F7                  mov r15, rsi          ; r15 is the size of array
+    57 0000003E 41BD00000000            mov r13, 0            ; r13 is the starting index 0
+    58                                  
+    59                                  ; =============== Receive input from user ===============
+    60 00000044 4D31ED                  xor r13, r13
+    61                                  
+    62                                  beginloop:
+    63                                  
+    64                                  endloop:
+    65                                  
+    66                                  ; =============== xrstor ================================
+    67                                  ; mov rax, 10
+    68                                  ; mov rdx, 0
+    69                                  ; xrstor [backuparea]
+    70                                  
+    71                                  ; =============== Restore GPRs ==========================
+    72 00000047 9D                      popf
+    73 00000048 415F                    pop r15
+    74 0000004A 415E                    pop r14
+    75 0000004C 415D                    pop r13
+    76 0000004E 415C                    pop r12
+    77 00000050 415B                    pop r11
+    78 00000052 415A                    pop r10
+    79 00000054 4159                    pop r9
+    80 00000056 4158                    pop r8
+    81 00000058 5F                      pop rdi
+    82 00000059 5E                      pop rsi
+    83 0000005A 5A                      pop rdx
+    84 0000005B 59                      pop rcx
+    85 0000005C 5B                      pop rbx
+    86 0000005D 5D                      pop rbp
+    87                                  
+    88 0000005E C3                      ret

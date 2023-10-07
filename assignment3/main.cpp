@@ -13,5 +13,9 @@ using namespace std;
 extern "C" double director();
 
 int main() {
+  cout << "\nmain: Welcome to Sort by Pointers by Kelsey Dang.\n\n";
+  double return_code = director();
+  cout << "\nmain: The main function receieved this set of numbers:\n";
+  cout << "\nmain: Main will keep these and send a zero to the operating system.\n";
   return 0;
 }
