@@ -1,10 +1,10 @@
 #!/bin/bash
 
-#Author: Kelsey Dang
-#Email: kdangdo2002@csu.fullerton.edu
-#Due Date: 10/1/23
-#Filename: r.sh
-#Purpose: This bash file compiles, links, and executes all the files from Sort by Pointers.
+# Author: Kelsey Dang
+# Email: kdangdo2002@csu.fullerton.edu
+# Due Date: 10/1/23
+# Filename: r.sh
+# Purpose: This bash file compiles, links, and executes all the files from Sort by Pointers.
 
 rm *.o
 rm *.out
@@ -21,11 +21,13 @@ echo "bash: Assembling input_array.asm..."
 nasm -f elf64 -l input_array.lis -o input_array.o input_array.asm
 
 echo "bash: Compiling output_array.cpp..."
+g++ -c -m64 -Wall -fno-pie -no-pie -std=c++17 -o output_array.o output_array.cpp
 
 echo "bash: Compiling sortpointers.cpp..."
+# TODO
 
 echo "bash: Linking the 5 created object files..."
-g++ -m64 -fno-pie -no-pie -std=c++17 -o a.out main.o director.o input_array.o
+g++ -m64 -fno-pie -no-pie -std=c++17 -o a.out main.o director.o input_array.o output_array.o
 
 echo "bash: Running program..."
 ./a.out

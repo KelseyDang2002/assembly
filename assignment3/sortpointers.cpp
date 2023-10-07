@@ -10,6 +10,16 @@
 
 using namespace std;
 
-int main() {
-  return 0;
+extern "C" {void sortpointers(double* array[], long max_size);}
+
+void sortpointers(double* array[], long max_size) {
+  for (double step = 0; step < max_size; step++) {
+    for (int i = 0; i < max_size - step; i++) {
+      if (**array[i] > **array[i + 1]) {
+        int temp = **array[i];
+        *array[i] = **array[i + 1];
+        *array[i + 1] = temp;
+      }
+    }
+  }
 }

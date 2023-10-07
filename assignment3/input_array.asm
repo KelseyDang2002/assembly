@@ -6,11 +6,12 @@
 ; Purpose: This file gets user input of floats in the array.
 
 global input_array
+extern malloc
 extern printf
 extern scanf
 
 segment .data
-debug_msg db "input_array called", 10, 0
+debug_msg db "input_array: called", 10, 0
 
 floatform db "%lf", 0
 stringform db "%s", 0
@@ -45,11 +46,11 @@ pushf
 ; mov rdx, 0
 ; xsave [backuparea]
 
-; test call input_array
-mov rax, 0
-mov rdi, stringform
-mov rsi, debug_msg
-call printf
+; =============== test call input_array =================
+; mov rax, 0
+; mov rdi, stringform
+; mov rsi, debug_msg
+; call printf
 
 ; =============== Backup r14 and r15 ====================
 mov r14, rdi          ; r14 is the array
@@ -57,11 +58,31 @@ mov r15, rsi          ; r15 is the size of array
 mov r13, 0            ; r13 is the starting index 0
 
 ; =============== Receive input from user ===============
-xor r13, r13
+xor r13, r13          ; r13 is the is the starting index 0
 
 beginloop:
+cmp r13, r15          ; compare index and size of array
+jge endloop           ; end the loop if index >= size of array
+
+mov rax, 0
+mov rdi, 8            ; 8 bytes
+call malloc           ; move 8 bytes into heap
+
+mov r12, rax
+mov rdi, floatform    ; %lf
+mov rsi, r12
+call scanf            ; receive user input
+
+cdqe
+cmp rax, -1           ; check for CTRL + D
+je endloop            ; jump to ned of loop if CTRL + D
+
+mov [r14+8*r13], r12
+inc r13               ; increment r13 (i++)
+jmp beginloop         ; start loop again
 
 endloop:
+mov rax, r13
 
 ; =============== xrstor ================================
 ; mov rax, 10

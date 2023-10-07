@@ -8,7 +8,7 @@
      8                                  
      9                                  global director
     10                                  extern input_array
-    11                                  ; extern output_array
+    11                                  extern output_array
     12                                  ; extern sortpointers
     13                                  extern printf
     14                                  max_size equ 10
@@ -43,45 +43,45 @@
     21 000000C9 776564206279204354-
     21 000000D2 524C202B20443A0A00 
     22                                  
-    23 000000DB 6469726563746F723A-     thanks_msg db "director: Thank you. You entered these numbers:", 10, 10, 0
-    23 000000E4 205468616E6B20796F-
-    23 000000ED 752E20596F7520656E-
-    23 000000F6 746572656420746865-
-    23 000000FF 7365206E756D626572-
-    23 00000108 733A0A0A00         
+    23 000000DB 0A0A6469726563746F-     thanks_msg db 10, 10, "director: Thank you. You entered these numbers:", 10, 10, 0
+    23 000000E4 723A205468616E6B20-
+    23 000000ED 796F752E20596F7520-
+    23 000000F6 656E74657265642074-
+    23 000000FF 68657365206E756D62-
+    23 00000108 6572733A0A0A00     
     24                                  
-    25 0000010D 0A6469726563746F72-     output_end_msg db 10, "director: End of output array.", 10, 10, 0
-    25 00000116 3A20456E64206F6620-
-    25 0000011F 6F7574707574206172-
-    25 00000128 7261792E0A0A00     
+    25 0000010F 0A6469726563746F72-     output_end_msg db 10, "director: End of output array.", 10, 10, 0
+    25 00000118 3A20456E64206F6620-
+    25 00000121 6F7574707574206172-
+    25 0000012A 7261792E0A0A00     
     26                                  
-    27 0000012F 6469726563746F723A-     sorting_msg db "director: The array is now being sorted without moving any numbers...", 10, 0
-    27 00000138 205468652061727261-
-    27 00000141 79206973206E6F7720-
-    27 0000014A 6265696E6720736F72-
-    27 00000153 74656420776974686F-
-    27 0000015C 7574206D6F76696E67-
-    27 00000165 20616E79206E756D62-
-    27 0000016E 6572732E2E2E0A00   
+    27 00000131 6469726563746F723A-     sorting_msg db "director: The array is now being sorted without moving any numbers...", 10, 0
+    27 0000013A 205468652061727261-
+    27 00000143 79206973206E6F7720-
+    27 0000014C 6265696E6720736F72-
+    27 00000155 74656420776974686F-
+    27 0000015E 7574206D6F76696E67-
+    27 00000167 20616E79206E756D62-
+    27 00000170 6572732E2E2E0A00   
     28                                  
-    29 00000176 6469726563746F723A-     output_sort_msg db "director: The data in the array are now ordered as follows:", 10, 10, 0
-    29 0000017F 205468652064617461-
-    29 00000188 20696E207468652061-
-    29 00000191 727261792061726520-
-    29 0000019A 6E6F77206F72646572-
-    29 000001A3 656420617320666F6C-
-    29 000001AC 6C6F77733A0A0A00   
+    29 00000178 6469726563746F723A-     output_sort_msg db "director: The data in the array are now ordered as follows:", 10, 10, 0
+    29 00000181 205468652064617461-
+    29 0000018A 20696E207468652061-
+    29 00000193 727261792061726520-
+    29 0000019C 6E6F77206F72646572-
+    29 000001A5 656420617320666F6C-
+    29 000001AE 6C6F77733A0A0A00   
     30                                  
-    31 000001B4 6469726563746F723A-     exit_msg db "director: The array will be sent back to the caller function.", 10, 0
-    31 000001BD 205468652061727261-
-    31 000001C6 792077696C6C206265-
-    31 000001CF 2073656E7420626163-
-    31 000001D8 6B20746F2074686520-
-    31 000001E1 63616C6C6572206675-
-    31 000001EA 6E6374696F6E2E0A00 
+    31 000001B6 6469726563746F723A-     exit_msg db "director: The array will be sent back to the caller function.", 10, 0
+    31 000001BF 205468652061727261-
+    31 000001C8 792077696C6C206265-
+    31 000001D1 2073656E7420626163-
+    31 000001DA 6B20746F2074686520-
+    31 000001E3 63616C6C6572206675-
+    31 000001EC 6E6374696F6E2E0A00 
     32                                  
-    33 000001F3 256C6600                floatform db "%lf", 0
-    34 000001F7 257300                  stringform db "%s", 0
+    33 000001F5 256C6600                floatform db "%lf", 0
+    34 000001F9 257300                  stringform db "%s", 0
     35                                  
     36                                  segment .bss
     37                                  align 64
@@ -117,7 +117,7 @@
     67                                  ; =============== Print welcome_msg =====================
     68 0000001A B800000000              mov rax, 0
     69 0000001F 48BF-                   mov rdi, stringform
-    69 00000021 [F701000000000000] 
+    69 00000021 [F901000000000000] 
     70 00000029 48BE-                   mov rsi, welcome_msg
     70 0000002B [0000000000000000] 
     71 00000033 E8(00000000)            call printf
@@ -125,7 +125,7 @@
     73                                  ; =============== Print instruction_msg1 ================
     74 00000038 B800000000              mov rax, 0
     75 0000003D 48BF-                   mov rdi, stringform
-    75 0000003F [F701000000000000] 
+    75 0000003F [F901000000000000] 
     76 00000047 48BE-                   mov rsi, instruction_msg1
     76 00000049 [3700000000000000] 
     77 00000051 E8(00000000)            call printf
@@ -133,7 +133,7 @@
     79                                  ; =============== Print instruction_msg2 ================
     80 00000056 B800000000              mov rax, 0
     81 0000005B 48BF-                   mov rdi, stringform
-    81 0000005D [F701000000000000] 
+    81 0000005D [F901000000000000] 
     82 00000065 48BE-                   mov rsi, instruction_msg2
     82 00000067 [8100000000000000] 
     83 0000006F E8(00000000)            call printf
@@ -149,83 +149,88 @@
     92                                  ; =============== Print thanks_msg ======================
     93 00000090 B800000000              mov rax, 0
     94 00000095 48BF-                   mov rdi, stringform
-    94 00000097 [F701000000000000] 
+    94 00000097 [F901000000000000] 
     95 0000009F 48BE-                   mov rsi, thanks_msg
     95 000000A1 [DB00000000000000] 
     96 000000A9 E8(00000000)            call printf
     97                                  
     98                                  ; =============== Call output_array =====================
-    99                                  ; TODO
-   100                                  
-   101                                  ; =============== Print output_end_msg ==================
-   102 000000AE B800000000              mov rax, 0
-   103 000000B3 48BF-                   mov rdi, stringform
-   103 000000B5 [F701000000000000] 
-   104 000000BD 48BE-                   mov rsi, output_end_msg
-   104 000000BF [0D01000000000000] 
-   105 000000C7 E8(00000000)            call printf
-   106                                  
-   107                                  ; =============== Print sorting_msg =====================
-   108 000000CC B800000000              mov rax, 0
-   109 000000D1 48BF-                   mov rdi, stringform
-   109 000000D3 [F701000000000000] 
-   110 000000DB 48BE-                   mov rsi, sorting_msg
-   110 000000DD [2F01000000000000] 
-   111 000000E5 E8(00000000)            call printf
-   112                                  
-   113                                  ; =============== Call sortpointers =====================
-   114                                  ; TODO
-   115                                  
-   116                                  ; =============== Print output_sort_msg =================
-   117 000000EA B800000000              mov rax, 0
-   118 000000EF 48BF-                   mov rdi, stringform
-   118 000000F1 [F701000000000000] 
-   119 000000F9 48BE-                   mov rsi, output_sort_msg
-   119 000000FB [7601000000000000] 
-   120 00000103 E8(00000000)            call printf
-   121                                  
-   122                                  ; =============== Call output_array =====================
-   123                                  ; TODO
-   124                                  
-   125                                  ; =============== Print output_end_msg ==================
-   126 00000108 B800000000              mov rax, 0
-   127 0000010D 48BF-                   mov rdi, stringform
-   127 0000010F [F701000000000000] 
-   128 00000117 48BE-                   mov rsi, output_end_msg
-   128 00000119 [0D01000000000000] 
-   129 00000121 E8(00000000)            call printf
-   130                                  
-   131                                  ; =============== Print exit_msg ========================
-   132 00000126 B800000000              mov rax, 0
-   133 0000012B 48BF-                   mov rdi, stringform
-   133 0000012D [F701000000000000] 
-   134 00000135 48BE-                   mov rsi, exit_msg
-   134 00000137 [B401000000000000] 
-   135 0000013F E8(00000000)            call printf
-   136                                  
-   137                                  ; =============== Return execution to driver ============
-   138 00000144 F20F100424              movsd xmm0, [rsp]
-   139                                  
-   140                                  ; =============== xrstor ================================
-   141                                  ; mov rax, 10
-   142                                  ; mov rdx, 0
-   143                                  ; xrstor [backuparea]
-   144                                  
-   145                                  ; =============== Restore GPRs ==========================
-   146 00000149 9D                      popf
-   147 0000014A 415F                    pop r15
-   148 0000014C 415E                    pop r14
-   149 0000014E 415D                    pop r13
-   150 00000150 415C                    pop r12
-   151 00000152 415B                    pop r11
-   152 00000154 415A                    pop r10
-   153 00000156 4159                    pop r9
-   154 00000158 4158                    pop r8
-   155 0000015A 5F                      pop rdi
-   156 0000015B 5E                      pop rsi
-   157 0000015C 5A                      pop rdx
-   158 0000015D 59                      pop rcx
-   159 0000015E 5B                      pop rbx
-   160 0000015F 5D                      pop rbp
-   161                                  
-   162 00000160 C3                      ret
+    99 000000AE B800000000              mov rax, 0
+   100 000000B3 48BF-                   mov rdi, array
+   100 000000B5 [4003000000000000] 
+   101 000000BD 4C89F6                  mov rsi, r14
+   102 000000C0 E8(00000000)            call output_array
+   103                                  ; TODO
+   104                                  
+   105                                  ; =============== Print output_end_msg ==================
+   106 000000C5 B800000000              mov rax, 0
+   107 000000CA 48BF-                   mov rdi, stringform
+   107 000000CC [F901000000000000] 
+   108 000000D4 48BE-                   mov rsi, output_end_msg
+   108 000000D6 [0F01000000000000] 
+   109 000000DE E8(00000000)            call printf
+   110                                  
+   111                                  ; =============== Print sorting_msg =====================
+   112 000000E3 B800000000              mov rax, 0
+   113 000000E8 48BF-                   mov rdi, stringform
+   113 000000EA [F901000000000000] 
+   114 000000F2 48BE-                   mov rsi, sorting_msg
+   114 000000F4 [3101000000000000] 
+   115 000000FC E8(00000000)            call printf
+   116                                  
+   117                                  ; =============== Call sortpointers =====================
+   118                                  ; TODO
+   119                                  
+   120                                  ; =============== Print output_sort_msg =================
+   121 00000101 B800000000              mov rax, 0
+   122 00000106 48BF-                   mov rdi, stringform
+   122 00000108 [F901000000000000] 
+   123 00000110 48BE-                   mov rsi, output_sort_msg
+   123 00000112 [7801000000000000] 
+   124 0000011A E8(00000000)            call printf
+   125                                  
+   126                                  ; =============== Call output_array =====================
+   127                                  ; TODO
+   128                                  
+   129                                  ; =============== Print output_end_msg ==================
+   130 0000011F B800000000              mov rax, 0
+   131 00000124 48BF-                   mov rdi, stringform
+   131 00000126 [F901000000000000] 
+   132 0000012E 48BE-                   mov rsi, output_end_msg
+   132 00000130 [0F01000000000000] 
+   133 00000138 E8(00000000)            call printf
+   134                                  
+   135                                  ; =============== Print exit_msg ========================
+   136 0000013D B800000000              mov rax, 0
+   137 00000142 48BF-                   mov rdi, stringform
+   137 00000144 [F901000000000000] 
+   138 0000014C 48BE-                   mov rsi, exit_msg
+   138 0000014E [B601000000000000] 
+   139 00000156 E8(00000000)            call printf
+   140                                  
+   141                                  ; =============== Return execution to driver ============
+   142 0000015B F20F100424              movsd xmm0, [rsp]
+   143                                  
+   144                                  ; =============== xrstor ================================
+   145                                  ; mov rax, 10
+   146                                  ; mov rdx, 0
+   147                                  ; xrstor [backuparea]
+   148                                  
+   149                                  ; =============== Restore GPRs ==========================
+   150 00000160 9D                      popf
+   151 00000161 415F                    pop r15
+   152 00000163 415E                    pop r14
+   153 00000165 415D                    pop r13
+   154 00000167 415C                    pop r12
+   155 00000169 415B                    pop r11
+   156 0000016B 415A                    pop r10
+   157 0000016D 4159                    pop r9
+   158 0000016F 4158                    pop r8
+   159 00000171 5F                      pop rdi
+   160 00000172 5E                      pop rsi
+   161 00000173 5A                      pop rdx
+   162 00000174 59                      pop rcx
+   163 00000175 5B                      pop rbx
+   164 00000176 5D                      pop rbp
+   165                                  
+   166 00000177 C3                      ret

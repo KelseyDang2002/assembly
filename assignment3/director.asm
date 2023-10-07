@@ -8,7 +8,7 @@
 
 global director
 extern input_array
-; extern output_array
+extern output_array
 ; extern sortpointers
 extern printf
 max_size equ 10
@@ -20,7 +20,7 @@ instruction_msg1 db "director: Please enter flocating point numbers seperated by
 
 instruction_msg2 db "director: After the last numeric input, enter at least one more WS followed by CTRL + D:", 10, 0
 
-thanks_msg db "director: Thank you. You entered these numbers:", 10, 10, 0
+thanks_msg db 10, 10, "director: Thank you. You entered these numbers:", 10, 10, 0
 
 output_end_msg db 10, "director: End of output array.", 10, 10, 0
 
@@ -96,6 +96,10 @@ mov rsi, thanks_msg
 call printf
 
 ; =============== Call output_array =====================
+mov rax, 0
+mov rdi, array
+mov rsi, r14
+call output_array
 ; TODO
 
 ; =============== Print output_end_msg ==================
