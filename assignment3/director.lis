@@ -41,77 +41,77 @@
     39 00000019 9C                      pushf
     40                                  
     41                                  ; =============== xsave =================================
-    42                                  ; mov rax, 10
-    43                                  ; mov rdx, 0
-    44                                  ; xsave [backuparea]
+    42 0000001A B80A000000              mov rax, 10
+    43 0000001F BA00000000              mov rdx, 0
+    44 00000024 0FAE2425[00000000]      xsave [backuparea]
     45                                  
     46                                  ; =============== test call =============================
-    47 0000001A B800000000              mov rax, 0
-    48 0000001F 48BF-                   mov rdi, stringform
-    48 00000021 [1800000000000000] 
-    49 00000029 48BE-                   mov rsi, debug_msg
-    49 0000002B [0000000000000000] 
-    50 00000033 E8(00000000)            call printf
+    47 0000002C B800000000              mov rax, 0
+    48 00000031 48BF-                   mov rdi, stringform
+    48 00000033 [1800000000000000] 
+    49 0000003B 48BE-                   mov rsi, debug_msg
+    49 0000003D [0000000000000000] 
+    50 00000045 E8(00000000)            call printf
     51                                  
     52                                  ; =============== Backup r14 and r15 ====================
-    53 00000038 4989FE                  mov r14, rdi          ; r14 is the array
-    54 0000003B 4989F7                  mov r15, rsi          ; r15 is the size of the array
-    55 0000003E 49C7C5FFFFFFFF          mov r13, -1           ; index for outter loop (step)
-    56 00000045 41BC00000000            mov r12, 0            ; index for inner loop (i)
+    53 0000004A 4989FE                  mov r14, rdi          ; r14 is the array
+    54 0000004D 4989F7                  mov r15, rsi          ; r15 is the size of the array
+    55 00000050 49C7C5FFFFFFFF          mov r13, -1           ; index for outter loop (step)
+    56 00000057 41BC00000000            mov r12, 0            ; index for inner loop (i)
     57                                  
     58                                  ; =============== challenge_sort ========================
-    59                                  ; outerloop:
-    60                                  ; inc r13               ; r13 is now index 0
-    61                                  ; cmp r13, r15          ; compare index and size of array
-    62                                  ; jge endloop           ; end loop if index >= size of array
-    63                                  ;
-    64                                  ; mov r12, 0            ; resets counter of inner loop (i)
-    65                                  ; jmp innerloop         ; continue to inner loop
-    66                                  ;
-    67                                  ;   innerloop:
-    68                                  ;   mov r11, r15        ; copy r15 (size) into r11
-    69                                  ;   sub r11, r13        ; r11 is size - step (r15 - r13)
-    70                                  ;   cmp r11, r12        ; compare i with (size - step)
-    71                                  ;   jge outerloop
-    72                                  ;
-    73                                  ;   lea r10, [r14+8*r12]; **array[i]
-    74                                  ;   movsd xmm15, [r10]
-    75                                  ;   lea r9, [r14+16*r12]; **array[i + 1]
-    76                                  ;   movsd xmm14, [r9]
-    77                                  ;   inc r12
-    78                                  ;   ucomisd xmm15, xmm14
-    79                                  ;   jge swap
-    80                                  ;
-    81                                  ;   swap:
-    82                                  ;   mov r8, r12
-    83                                  ;   sub r8, 1
-    84                                  ;   lea [r14+16*r8], xmm15
-    85                                  ;   lea [r14+8*r8], xmm14
-    86                                  ;   jmp innerloop
-    87                                  ;
-    88                                  ; endloop:
-    89                                  ; mov rax, r14
-    90                                  
-    91                                  ; =============== xrstor ================================
-    92                                  ; mov rax, 10
-    93                                  ; mov rdx, 0
-    94                                  ; xrstor [backuparea]
+    59                                  ; ; outerloop:
+    60                                  ; ; inc r13               ; r13 is now index 0
+    61                                  ; ; cmp r13, r15          ; compare index and size of array
+    62                                  ; ; jge endloop           ; end loop if index >= size of array
+    63                                  ; ;
+    64                                  ; ; mov r12, 0            ; resets counter of inner loop (i)
+    65                                  ; ; jmp innerloop         ; continue to inner loop
+    66                                  ; ;
+    67                                  ; ;   innerloop:
+    68                                  ; ;   mov r11, r15        ; copy r15 (size) into r11
+    69                                  ; ;   sub r11, r13        ; r11 is size - step (r15 - r13)
+    70                                  ; ;   cmp r11, r12        ; compare i with (size - step)
+    71                                  ; ;   jge outerloop
+    72                                  ; ;
+    73                                  ; ;   lea r10, [r14+8*r12]; **array[i]
+    74                                  ; ;   movsd xmm15, [r10]
+    75                                  ; ;   lea r9, [r14+16*r12]; **array[i + 1]
+    76                                  ; ;   movsd xmm14, [r9]
+    77                                  ; ;   inc r12
+    78                                  ; ;   ucomisd xmm15, xmm14
+    79                                  ; ;   jge swap
+    80                                  ; ;
+    81                                  ; ;   swap:
+    82                                  ; ;   mov r8, r12
+    83                                  ; ;   sub r8, 1
+    84                                  ; ;   lea [r14+16*r8], xmm15
+    85                                  ; ;   lea [r14+8*r8], xmm14
+    86                                  ; ;   jmp innerloop
+    87                                  ; ;
+    88                                  ; ; endloop:
+    89                                  ; ; ; =============== xrstor ================================
+    90                                  ; ; ; mov rax, 10
+    91                                  ; ; ; mov rdx, 0
+    92                                  ; ; ; xrstor [backuparea]
+    93                                  ;
+    94                                  ; mov rax, r14
     95                                  
     96                                  ; =============== Restore GPRs ==========================
-    97 0000004B 9D                      popf
-    98 0000004C 415F                    pop r15
-    99 0000004E 415E                    pop r14
-   100 00000050 415D                    pop r13
-   101 00000052 415C                    pop r12
-   102 00000054 415B                    pop r11
-   103 00000056 415A                    pop r10
-   104 00000058 4159                    pop r9
-   105 0000005A 4158                    pop r8
-   106 0000005C 5F                      pop rdi
-   107 0000005D 5E                      pop rsi
-   108 0000005E 5A                      pop rdx
-   109 0000005F 59                      pop rcx
-   110 00000060 5B                      pop rbx
-   111 00000061 5D                      pop rbp
+    97 0000005D 9D                      popf
+    98 0000005E 415F                    pop r15
+    99 00000060 415E                    pop r14
+   100 00000062 415D                    pop r13
+   101 00000064 415C                    pop r12
+   102 00000066 415B                    pop r11
+   103 00000068 415A                    pop r10
+   104 0000006A 4159                    pop r9
+   105 0000006C 4158                    pop r8
+   106 0000006E 5F                      pop rdi
+   107 0000006F 5E                      pop rsi
+   108 00000070 5A                      pop rdx
+   109 00000071 59                      pop rcx
+   110 00000072 5B                      pop rbx
+   111 00000073 5D                      pop rbp
    112                                  
-   113 00000062 C3                      ret
+   113 00000074 C3                      ret

@@ -12,7 +12,7 @@ using namespace std;
 
 extern "C" {
   // sortpointers function uses bubblesort
-  long sortpointers(unsigned long* array[], long max_size) {
+  long sortpointers(unsigned long* array[], int max_size) {
     printf("sortpointers: test call\n");
     // outer loop goes through elements in array
     for (int step = 0; step < max_size; step++) {

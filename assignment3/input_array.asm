@@ -7,18 +7,16 @@
 
 global input_array
 extern malloc
-extern printf
 extern scanf
 
 segment .data
-debug_msg db "input_array: called", 10, 0
-
 floatform db "%lf", 0
 stringform db "%s", 0
 
 segment .bss
 align 64
 backuparea resb 832
+sendback resq 2
 
 segment .text
 input_array:
@@ -42,15 +40,9 @@ push r15
 pushf
 
 ; =============== xsave =================================
-; mov rax, 10
-; mov rdx, 0
-; xsave [backuparea]
-
-; =============== test call input_array =================
-; mov rax, 0
-; mov rdi, stringform
-; mov rsi, debug_msg
-; call printf
+mov rax, 10
+mov rdx, 0
+xsave [backuparea]
 
 ; =============== Backup r14 and r15 ====================
 mov r14, rdi          ; r14 is the array
@@ -82,12 +74,17 @@ inc r13               ; increment r13 (i++)
 jmp beginloop         ; start loop again
 
 endloop:
-mov rax, r13
 
 ; =============== xrstor ================================
-; mov rax, 10
-; mov rdx, 0
-; xrstor [backuparea]
+mov rax, 10
+mov rdx, 0
+xrstor [backuparea]
+
+mov rax, r13
+
+; mov rax, 2
+; movsd xmm0, [r14]
+; movsd xmm1, [r14+8]
 
 ; =============== Restore GPRs ==========================
 popf

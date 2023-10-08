@@ -38,6 +38,7 @@ segment .bss
 align 64
 backuparea resb 832
 array resq max_size
+sendback resq 2
 
 segment .text
 director:
@@ -61,9 +62,9 @@ push r15
 pushf
 
 ; =============== xsave =================================
-; mov rax, 10
-; mov rdx, 0
-; xsave [backuparea]
+mov rax, 10
+mov rdx, 0
+xsave [backuparea]
 
 ; =============== Print welcome_msg =====================
 mov rax, 0
@@ -151,7 +152,12 @@ mov rsi, exit_msg
 call printf
 
 ; =============== Return execution to driver ============
-movsd xmm0, [rsp]
+; movsd xmm0, [rsp]
+
+; =============== Sendback # of inputs and array ========
+mov [sendback+0*8], r14
+mov r15, array
+mov [sendback+1*8], r15
 
 ; =============== xrstor ================================
 ; mov rax, 10
@@ -174,5 +180,8 @@ pop rdx
 pop rcx
 pop rbx
 pop rbp
+
+; =============== Sendback to main ======================
+mov rax, sendback
 
 ret

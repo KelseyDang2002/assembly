@@ -11,7 +11,7 @@
 using namespace std;
 
 extern "C" {
-  void output_array(double* array[], long max_size){
+  void output_array(unsigned long* array[], int max_size){
     for (int i = 0; i < max_size; i++) {
       printf("output_array: %16.8lf\n", *array[i]);
     }

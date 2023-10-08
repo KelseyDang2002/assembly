@@ -14,11 +14,16 @@ extern "C" unsigned long* director();
 
 int main() {
   cout << "\nmain: Welcome to Sort by Pointers by Kelsey Dang.\n\n";
-  unsigned long *return_array = director();
+
+  unsigned long* return_array = director();
+  int size_of_array = (int)return_array[0];
+  double** ptr_array = (double**)return_array[1];
+
   cout << "main: The main function receieved this set of numbers:\n\n";
-  // for(int i = 0; i < max_size; i++) {
-  printf("main: %16.8lf", return_array);
-  // }
-  cout << "\n\nmain: Main will keep these and send a zero to the operating system.\n";
+  for(int i = 0; i < size_of_array; i++) {
+    printf("main: %16.8lf\n", *(ptr_array[i]));
+  }
+
+  cout << "\nmain: Main will keep these and send a zero to the operating system.\n";
   return 0;
 }

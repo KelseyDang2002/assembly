@@ -7,106 +7,101 @@
      7                                  
      8                                  global input_array
      9                                  extern malloc
-    10                                  extern printf
-    11                                  extern scanf
-    12                                  
-    13                                  segment .data
-    14 00000000 696E7075745F617272-     debug_msg db "input_array: called", 10, 0
-    14 00000009 61793A2063616C6C65-
-    14 00000012 640A00             
+    10                                  extern scanf
+    11                                  
+    12                                  segment .data
+    13 00000000 256C6600                floatform db "%lf", 0
+    14 00000004 257300                  stringform db "%s", 0
     15                                  
-    16 00000015 256C6600                floatform db "%lf", 0
-    17 00000019 257300                  stringform db "%s", 0
-    18                                  
-    19                                  segment .bss
-    20                                  align 64
-    21 00000000 <res 00000340>          backuparea resb 832
-    22                                  
-    23                                  segment .text
-    24                                  input_array:
-    25                                  
-    26                                  ; ============= Backup GPRs ============================
-    27 00000000 55                      push rbp
-    28 00000001 4889E5                  mov rbp, rsp
-    29 00000004 53                      push rbx
-    30 00000005 51                      push rcx
-    31 00000006 52                      push rdx
-    32 00000007 56                      push rsi
-    33 00000008 57                      push rdi
-    34 00000009 4150                    push r8
-    35 0000000B 4151                    push r9
-    36 0000000D 4152                    push r10
-    37 0000000F 4153                    push r11
-    38 00000011 4154                    push r12
-    39 00000013 4155                    push r13
-    40 00000015 4156                    push r14
-    41 00000017 4157                    push r15
-    42 00000019 9C                      pushf
-    43                                  
-    44                                  ; =============== xsave =================================
-    45                                  ; mov rax, 10
-    46                                  ; mov rdx, 0
-    47                                  ; xsave [backuparea]
-    48                                  
-    49                                  ; =============== test call input_array =================
-    50                                  ; mov rax, 0
-    51                                  ; mov rdi, stringform
-    52                                  ; mov rsi, debug_msg
-    53                                  ; call printf
+    16                                  segment .bss
+    17                                  align 64
+    18 00000000 <res 00000340>          backuparea resb 832
+    19 00000340 <res 00000010>          sendback resq 2
+    20                                  
+    21                                  segment .text
+    22                                  input_array:
+    23                                  
+    24                                  ; ============= Backup GPRs ============================
+    25 00000000 55                      push rbp
+    26 00000001 4889E5                  mov rbp, rsp
+    27 00000004 53                      push rbx
+    28 00000005 51                      push rcx
+    29 00000006 52                      push rdx
+    30 00000007 56                      push rsi
+    31 00000008 57                      push rdi
+    32 00000009 4150                    push r8
+    33 0000000B 4151                    push r9
+    34 0000000D 4152                    push r10
+    35 0000000F 4153                    push r11
+    36 00000011 4154                    push r12
+    37 00000013 4155                    push r13
+    38 00000015 4156                    push r14
+    39 00000017 4157                    push r15
+    40 00000019 9C                      pushf
+    41                                  
+    42                                  ; =============== xsave =================================
+    43 0000001A B80A000000              mov rax, 10
+    44 0000001F BA00000000              mov rdx, 0
+    45 00000024 0FAE2425[00000000]      xsave [backuparea]
+    46                                  
+    47                                  ; =============== Backup r14 and r15 ====================
+    48 0000002C 4989FE                  mov r14, rdi          ; r14 is the array
+    49 0000002F 4989F7                  mov r15, rsi          ; r15 is the size of array
+    50 00000032 41BD00000000            mov r13, 0            ; r13 is the starting index 0
+    51                                  
+    52                                  ; =============== Receive input from user ===============
+    53 00000038 4D31ED                  xor r13, r13          ; r13 is the is the starting index 0
     54                                  
-    55                                  ; =============== Backup r14 and r15 ====================
-    56 0000001A 4989FE                  mov r14, rdi          ; r14 is the array
-    57 0000001D 4989F7                  mov r15, rsi          ; r15 is the size of array
-    58 00000020 41BD00000000            mov r13, 0            ; r13 is the starting index 0
-    59                                  
-    60                                  ; =============== Receive input from user ===============
-    61 00000026 4D31ED                  xor r13, r13          ; r13 is the is the starting index 0
+    55                                  beginloop:
+    56 0000003B 4D39FD                  cmp r13, r15          ; compare index and size of array
+    57 0000003E 7D35                    jge endloop           ; end the loop if index >= size of array
+    58                                  
+    59 00000040 B800000000              mov rax, 0
+    60 00000045 BF08000000              mov rdi, 8            ; 8 bytes
+    61 0000004A E8(00000000)            call malloc           ; move 8 bytes into heap
     62                                  
-    63                                  beginloop:
-    64 00000029 4D39FD                  cmp r13, r15          ; compare index and size of array
-    65 0000002C 7D35                    jge endloop           ; end the loop if index >= size of array
-    66                                  
-    67 0000002E B800000000              mov rax, 0
-    68 00000033 BF08000000              mov rdi, 8            ; 8 bytes
-    69 00000038 E8(00000000)            call malloc           ; move 8 bytes into heap
-    70                                  
-    71 0000003D 4989C4                  mov r12, rax
-    72 00000040 48BF-                   mov rdi, floatform    ; %lf
-    72 00000042 [1500000000000000] 
-    73 0000004A 4C89E6                  mov rsi, r12
-    74 0000004D E8(00000000)            call scanf            ; receive user input
+    63 0000004F 4989C4                  mov r12, rax
+    64 00000052 48BF-                   mov rdi, floatform    ; %lf
+    64 00000054 [0000000000000000] 
+    65 0000005C 4C89E6                  mov rsi, r12
+    66 0000005F E8(00000000)            call scanf            ; receive user input
+    67                                  
+    68 00000064 4898                    cdqe                  ; convert double to quad and extend
+    69 00000066 4883F8FF                cmp rax, -1           ; check for CTRL + D
+    70 0000006A 7409                    je endloop            ; jump to ned of loop if CTRL + D
+    71                                  
+    72 0000006C 4F8924EE                mov [r14+8*r13], r12
+    73 00000070 49FFC5                  inc r13               ; increment r13 (i++)
+    74 00000073 EBC6                    jmp beginloop         ; start loop again
     75                                  
-    76 00000052 4898                    cdqe                  ; convert double to quad and extend
-    77 00000054 4883F8FF                cmp rax, -1           ; check for CTRL + D
-    78 00000058 7409                    je endloop            ; jump to ned of loop if CTRL + D
-    79                                  
-    80 0000005A 4F8924EE                mov [r14+8*r13], r12
-    81 0000005E 49FFC5                  inc r13               ; increment r13 (i++)
-    82 00000061 EBC6                    jmp beginloop         ; start loop again
-    83                                  
-    84                                  endloop:
-    85 00000063 4C89E8                  mov rax, r13
-    86                                  
-    87                                  ; =============== xrstor ================================
-    88                                  ; mov rax, 10
-    89                                  ; mov rdx, 0
-    90                                  ; xrstor [backuparea]
-    91                                  
-    92                                  ; =============== Restore GPRs ==========================
-    93 00000066 9D                      popf
-    94 00000067 415F                    pop r15
-    95 00000069 415E                    pop r14
-    96 0000006B 415D                    pop r13
-    97 0000006D 415C                    pop r12
-    98 0000006F 415B                    pop r11
-    99 00000071 415A                    pop r10
-   100 00000073 4159                    pop r9
-   101 00000075 4158                    pop r8
-   102 00000077 5F                      pop rdi
-   103 00000078 5E                      pop rsi
-   104 00000079 5A                      pop rdx
-   105 0000007A 59                      pop rcx
-   106 0000007B 5B                      pop rbx
-   107 0000007C 5D                      pop rbp
-   108                                  
-   109 0000007D C3                      ret
+    76                                  endloop:
+    77                                  
+    78                                  ; =============== xrstor ================================
+    79 00000075 B80A000000              mov rax, 10
+    80 0000007A BA00000000              mov rdx, 0
+    81 0000007F 0FAE2C25[00000000]      xrstor [backuparea]
+    82                                  
+    83 00000087 4C89E8                  mov rax, r13
+    84                                  
+    85                                  ; mov rax, 2
+    86                                  ; movsd xmm0, [r14]
+    87                                  ; movsd xmm1, [r14+8]
+    88                                  
+    89                                  ; =============== Restore GPRs ==========================
+    90 0000008A 9D                      popf
+    91 0000008B 415F                    pop r15
+    92 0000008D 415E                    pop r14
+    93 0000008F 415D                    pop r13
+    94 00000091 415C                    pop r12
+    95 00000093 415B                    pop r11
+    96 00000095 415A                    pop r10
+    97 00000097 4159                    pop r9
+    98 00000099 4158                    pop r8
+    99 0000009B 5F                      pop rdi
+   100 0000009C 5E                      pop rsi
+   101 0000009D 5A                      pop rdx
+   102 0000009E 59                      pop rcx
+   103 0000009F 5B                      pop rbx
+   104 000000A0 5D                      pop rbp
+   105                                  
+   106 000000A1 C3                      ret
