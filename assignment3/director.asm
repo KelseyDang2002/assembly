@@ -10,6 +10,7 @@ global director
 extern input_array
 extern output_array
 ; extern sortpointers
+extern challenge_sort
 extern printf
 max_size equ 10
 
@@ -100,7 +101,6 @@ mov rax, 0
 mov rdi, array
 mov rsi, r14
 call output_array
-; TODO
 
 ; =============== Print output_end_msg ==================
 mov rax, 0
@@ -115,7 +115,16 @@ mov rsi, sorting_msg
 call printf
 
 ; =============== Call sortpointers =====================
-; TODO
+; mov rax, 0
+; mov rdi, array
+; mov rsi, r14
+; call sortpointers
+
+; =============== Call challenge_sort ===================
+mov rax, 0
+mov rdi, array
+mov rsi, r14
+call challenge_sort
 
 ; =============== Print output_sort_msg =================
 mov rax, 0
@@ -124,7 +133,10 @@ mov rsi, output_sort_msg
 call printf
 
 ; =============== Call output_array =====================
-; TODO
+; mov rax, 0
+; mov rdi, array
+; mov rsi, r14
+; call output_array
 
 ; =============== Print output_end_msg ==================
 mov rax, 0

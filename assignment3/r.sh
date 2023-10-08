@@ -23,11 +23,14 @@ nasm -f elf64 -l input_array.lis -o input_array.o input_array.asm
 echo "bash: Compiling output_array.cpp..."
 g++ -c -m64 -Wall -fno-pie -no-pie -std=c++17 -o output_array.o output_array.cpp
 
-echo "bash: Compiling sortpointers.cpp..."
-# TODO
+# echo "bash: Compiling sortpointers.cpp..."
+# g++ -c -m64 -Wall -fno-pie -no-pie -std=c++17 -o sortpointers.o sortpointers.cpp
+
+echo "bash: Compiling challenge_sort.asm..."
+nasm -f elf64 -l director.lis -o challenge_sort.o challenge_sort.asm
 
 echo "bash: Linking the 5 created object files..."
-g++ -m64 -fno-pie -no-pie -std=c++17 -o a.out main.o director.o input_array.o output_array.o
+g++ -m64 -fno-pie -no-pie -std=c++17 -o a.out main.o director.o input_array.o output_array.o challenge_sort.o #sortpointers.o
 
 echo "bash: Running program..."
 ./a.out

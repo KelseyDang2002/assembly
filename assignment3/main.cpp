@@ -10,13 +10,15 @@
 
 using namespace std;
 
-extern "C" double director();
+extern "C" unsigned long* director();
 
 int main() {
   cout << "\nmain: Welcome to Sort by Pointers by Kelsey Dang.\n\n";
-  double return_code = director();
+  unsigned long *return_array = director();
   cout << "\nmain: The main function receieved this set of numbers:\n\n";
-  printf("main: %lf", return_code);
+  // for(int i = 0; i < max_size, i++) {
+  printf("main: %ln", return_array);
+  // }
   cout << "\n\nmain: Main will keep these and send a zero to the operating system.\n";
   return 0;
 }
