@@ -73,7 +73,7 @@ mov rdi, floatform    ; %lf
 mov rsi, r12
 call scanf            ; receive user input
 
-cdqe
+cdqe                  ; convert double to quad and extend
 cmp rax, -1           ; check for CTRL + D
 je endloop            ; jump to ned of loop if CTRL + D
 

@@ -6,8 +6,12 @@
 ; Purpose: This file sorts the elements in the array.
 
 global challenge_sort
+extern printf
 
 segment .data
+debug_msg db "challenge_sort: called", 10, 0
+
+stringform db "%s", 0
 
 segment .bss
 align 64
@@ -39,6 +43,12 @@ pushf
 ; mov rdx, 0
 ; xsave [backuparea]
 
+; =============== test call =============================
+mov rax, 0
+mov rdi, stringform
+mov rsi, debug_msg
+call printf
+
 ; =============== Backup r14 and r15 ====================
 mov r14, rdi          ; r14 is the array
 mov r15, rsi          ; r15 is the size of the array
@@ -46,37 +56,37 @@ mov r13, -1           ; index for outter loop (step)
 mov r12, 0            ; index for inner loop (i)
 
 ; =============== challenge_sort ========================
-outerloop:
-inc r13               ; r13 is now index 0
-cmp r13, r15          ; compare index and size of array
-jge endloop           ; end loop if index >= size of array
-
-mov r12, 0            ; resets counter of inner loop (i)
-jmp innerloop         ; continue to inner loop
-
-  innerloop:
-  mov r11, r15        ; copy r15 (size) into r11
-  sub r11, r13        ; r11 is size - step (r15 - r13)
-  cmp r11, r12        ; compare i with (size - step)
-  jge outerloop
-
-  lea r10, [r14+8*r12]; **array[i]
-  movsd xmm15, [r10]
-  lea r9, [r14+16*r12]; **array[i + 1]
-  movsd xmm14, [r9]
-  inc r12
-  ucomisd xmm15, xmm14
-  jge swap
-
-  swap:
-  mov r8, r12
-  sub r8, 1
-  lea [r14+16*r8], xmm15
-  lea [r14+8*r8], xmm14
-  jmp innerloop
-
-endloop:
-mov rax, r14
+; outerloop:
+; inc r13               ; r13 is now index 0
+; cmp r13, r15          ; compare index and size of array
+; jge endloop           ; end loop if index >= size of array
+;
+; mov r12, 0            ; resets counter of inner loop (i)
+; jmp innerloop         ; continue to inner loop
+;
+;   innerloop:
+;   mov r11, r15        ; copy r15 (size) into r11
+;   sub r11, r13        ; r11 is size - step (r15 - r13)
+;   cmp r11, r12        ; compare i with (size - step)
+;   jge outerloop
+;
+;   lea r10, [r14+8*r12]; **array[i]
+;   movsd xmm15, [r10]
+;   lea r9, [r14+16*r12]; **array[i + 1]
+;   movsd xmm14, [r9]
+;   inc r12
+;   ucomisd xmm15, xmm14
+;   jge swap
+;
+;   swap:
+;   mov r8, r12
+;   sub r8, 1
+;   lea [r14+16*r8], xmm15
+;   lea [r14+8*r8], xmm14
+;   jmp innerloop
+;
+; endloop:
+; mov rax, r14
 
 ; =============== xrstor ================================
 ; mov rax, 10

@@ -9,7 +9,7 @@
 global director
 extern input_array
 extern output_array
-; extern sortpointers
+extern sortpointers
 extern challenge_sort
 extern printf
 max_size equ 10
@@ -23,7 +23,7 @@ instruction_msg2 db "director: After the last numeric input, enter at least one 
 
 thanks_msg db 10, 10, "director: Thank you. You entered these numbers:", 10, 10, 0
 
-output_end_msg db 10, "director: End of output array.", 10, 10, 0
+output_end_msg db 10, "director: End of output array.", 10, 0
 
 sorting_msg db "director: The array is now being sorted without moving any numbers...", 10, 0
 
@@ -133,10 +133,10 @@ mov rsi, output_sort_msg
 call printf
 
 ; =============== Call output_array =====================
-; mov rax, 0
-; mov rdi, array
-; mov rsi, r14
-; call output_array
+mov rax, 0
+mov rdi, array
+mov rsi, r14
+call output_array
 
 ; =============== Print output_end_msg ==================
 mov rax, 0

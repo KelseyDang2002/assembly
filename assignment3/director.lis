@@ -1,0 +1,117 @@
+     1                                  ; Author: Kelsey Dang
+     2                                  ; Email: kdangdo2002@csu.fullerton.edu
+     3                                  ; Due Date: 10/1/23
+     4                                  ; Subject: CPSC 240-03 Assignment 3 <Sort by Pointers>
+     5                                  ; Filename: challenge_sort.asm
+     6                                  ; Purpose: This file sorts the elements in the array.
+     7                                  
+     8                                  global challenge_sort
+     9                                  extern printf
+    10                                  
+    11                                  segment .data
+    12 00000000 6368616C6C656E6765-     debug_msg db "challenge_sort: called", 10, 0
+    12 00000009 5F736F72743A206361-
+    12 00000012 6C6C65640A00       
+    13                                  
+    14 00000018 257300                  stringform db "%s", 0
+    15                                  
+    16                                  segment .bss
+    17                                  align 64
+    18 00000000 <res 00000340>          backuparea resb 832
+    19                                  
+    20                                  segment .text
+    21                                  challenge_sort:
+    22                                  
+    23                                  ; ============= Backup GPRs ============================
+    24 00000000 55                      push rbp
+    25 00000001 4889E5                  mov rbp, rsp
+    26 00000004 53                      push rbx
+    27 00000005 51                      push rcx
+    28 00000006 52                      push rdx
+    29 00000007 56                      push rsi
+    30 00000008 57                      push rdi
+    31 00000009 4150                    push r8
+    32 0000000B 4151                    push r9
+    33 0000000D 4152                    push r10
+    34 0000000F 4153                    push r11
+    35 00000011 4154                    push r12
+    36 00000013 4155                    push r13
+    37 00000015 4156                    push r14
+    38 00000017 4157                    push r15
+    39 00000019 9C                      pushf
+    40                                  
+    41                                  ; =============== xsave =================================
+    42                                  ; mov rax, 10
+    43                                  ; mov rdx, 0
+    44                                  ; xsave [backuparea]
+    45                                  
+    46                                  ; =============== test call =============================
+    47 0000001A B800000000              mov rax, 0
+    48 0000001F 48BF-                   mov rdi, stringform
+    48 00000021 [1800000000000000] 
+    49 00000029 48BE-                   mov rsi, debug_msg
+    49 0000002B [0000000000000000] 
+    50 00000033 E8(00000000)            call printf
+    51                                  
+    52                                  ; =============== Backup r14 and r15 ====================
+    53 00000038 4989FE                  mov r14, rdi          ; r14 is the array
+    54 0000003B 4989F7                  mov r15, rsi          ; r15 is the size of the array
+    55 0000003E 49C7C5FFFFFFFF          mov r13, -1           ; index for outter loop (step)
+    56 00000045 41BC00000000            mov r12, 0            ; index for inner loop (i)
+    57                                  
+    58                                  ; =============== challenge_sort ========================
+    59                                  ; outerloop:
+    60                                  ; inc r13               ; r13 is now index 0
+    61                                  ; cmp r13, r15          ; compare index and size of array
+    62                                  ; jge endloop           ; end loop if index >= size of array
+    63                                  ;
+    64                                  ; mov r12, 0            ; resets counter of inner loop (i)
+    65                                  ; jmp innerloop         ; continue to inner loop
+    66                                  ;
+    67                                  ;   innerloop:
+    68                                  ;   mov r11, r15        ; copy r15 (size) into r11
+    69                                  ;   sub r11, r13        ; r11 is size - step (r15 - r13)
+    70                                  ;   cmp r11, r12        ; compare i with (size - step)
+    71                                  ;   jge outerloop
+    72                                  ;
+    73                                  ;   lea r10, [r14+8*r12]; **array[i]
+    74                                  ;   movsd xmm15, [r10]
+    75                                  ;   lea r9, [r14+16*r12]; **array[i + 1]
+    76                                  ;   movsd xmm14, [r9]
+    77                                  ;   inc r12
+    78                                  ;   ucomisd xmm15, xmm14
+    79                                  ;   jge swap
+    80                                  ;
+    81                                  ;   swap:
+    82                                  ;   mov r8, r12
+    83                                  ;   sub r8, 1
+    84                                  ;   lea [r14+16*r8], xmm15
+    85                                  ;   lea [r14+8*r8], xmm14
+    86                                  ;   jmp innerloop
+    87                                  ;
+    88                                  ; endloop:
+    89                                  ; mov rax, r14
+    90                                  
+    91                                  ; =============== xrstor ================================
+    92                                  ; mov rax, 10
+    93                                  ; mov rdx, 0
+    94                                  ; xrstor [backuparea]
+    95                                  
+    96                                  ; =============== Restore GPRs ==========================
+    97 0000004B 9D                      popf
+    98 0000004C 415F                    pop r15
+    99 0000004E 415E                    pop r14
+   100 00000050 415D                    pop r13
+   101 00000052 415C                    pop r12
+   102 00000054 415B                    pop r11
+   103 00000056 415A                    pop r10
+   104 00000058 4159                    pop r9
+   105 0000005A 4158                    pop r8
+   106 0000005C 5F                      pop rdi
+   107 0000005D 5E                      pop rsi
+   108 0000005E 5A                      pop rdx
+   109 0000005F 59                      pop rcx
+   110 00000060 5B                      pop rbx
+   111 00000061 5D                      pop rbp
+   112                                  
+   113 00000062 C3                      ret

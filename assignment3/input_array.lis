@@ -76,7 +76,7 @@
     73 0000004A 4C89E6                  mov rsi, r12
     74 0000004D E8(00000000)            call scanf            ; receive user input
     75                                  
-    76 00000052 4898                    cdqe
+    76 00000052 4898                    cdqe                  ; convert double to quad and extend
     77 00000054 4883F8FF                cmp rax, -1           ; check for CTRL + D
     78 00000058 7409                    je endloop            ; jump to ned of loop if CTRL + D
     79                                  
