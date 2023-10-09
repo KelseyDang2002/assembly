@@ -20,8 +20,8 @@ nasm -f elf64 -l director.lis -o director.o director.asm
 echo "bash: Assembling input_array.asm..."
 nasm -f elf64 -l input_array.lis -o input_array.o input_array.asm
 
-echo "bash: Compiling output_array.cpp..."
-g++ -c -m64 -Wall -fno-pie -no-pie -std=c++17 -o output_array.o output_array.cpp
+echo "bash: Compiling output_array.c..."
+gcc -c -m64 -Wall -fno-pie -no-pie -std=c17 -o output_array.o output_array.c
 
 echo "bash: Compiling challenge_sort.asm..."
 nasm -f elf64 -l director.lis -o challenge_sort.o challenge_sort.asm

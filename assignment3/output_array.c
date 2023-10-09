@@ -21,33 +21,19 @@
 //   Operating System: Tuffix VM on Windows 10 computer
 
 // Purpose
-//   This is the driver file that calls director.asm in Sort by Pointers.
+//   This file outputs the elements on the array in Sort by Pointers.
+//   This file gets called by director.asm.
 
 // File Information
-//   Filename: main.cpp
-//   Language: C++
-//   Compile: g++ -c -m64 -Wall -fno-pie -no-pie -std=c++17 -o main.o main.cpp
+//   Filename: output_array.c
+//   Language: C
+//   Compile: gcc -c -m64 -Wall -fno-pie -no-pie -std=c17 -o sortpointers.o sortpointers.c
 //   Link: g++ -m64 -fno-pie -no-pie -std=c++17 -o a.out main.o director.o input_array.o output_array.o sortpointers.o
 
 #include <stdio.h>
-#include <iostream>
 
-using namespace std;
-
-extern "C" unsigned long* director();
-
-int main() {
-  cout << "\nmain: Welcome to Sort by Pointers by Kelsey Dang.\n\n";
-
-  unsigned long* return_array = director();
-  int size_of_array = (int)return_array[0];
-  double** ptr_array = (double**)return_array[1];
-
-  cout << "main: The main function receieved this set of numbers:\n\n";
-  for(int i = 0; i < size_of_array; i++) {
-    printf("main: %16.8lf\n", *(ptr_array[i]));
+void output_array(double* array[], int max_size){
+  for (int i = 0; i < max_size; i++) {
+    printf("output_array: %16.8lf\n", *array[i]);
   }
-
-  cout << "\nmain: Main will keep these and send a zero to the operating system.\n";
-  return 0;
 }

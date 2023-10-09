@@ -1,10 +1,34 @@
-; Author: Kelsey Dang
-; Email: kdangdo2002@csu.fullerton.edu
-; Due Date: 10/1/23
+; Program Name: Sort by Pointers
 ; Subject: CPSC 240-03 Assignment 3 <Sort by Pointers>
-; Filename: director.asm
-; Purpose: This file calls input_array, output_array, and sortpointers in Sort by Pointers.
-; Then director.asm gets called by the main.cpp.
+; This program demonstrates passing an array to a called subprogram and sorting it.
+
+; Copyright (C) 2023 Kelsey Dang
+
+; This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+; License version 3 as published by the Free Software Foundation.  This program is distributed in the hope that it
+; will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+; PARTICULAR PURPOSE.  See the GNU General Public License for more details.  A copy of the GNU General Public
+; License v3 is available here:  <https://www.gnu.org/licenses/>.
+
+; Author Information
+;   Author: Kelsey Dang
+;   Email: kdangdo2002@csu.fullerton.edu
+;
+; Program Information
+;   Program Name: Sort by Pointers
+;   Program Languages: One module in C++, two in x86-64, two in C, one is bash
+;   Due Date: 10/1/23
+;   Operating System: Tuffix VM on Windows 10 computer
+
+; Purpose
+;   This is the director file calls input_array.asm, output_array.c, sortpointers.c in Sort by Pointers.
+;   This file gets called by main.cpp.
+
+; File Information
+;   Filename: director.asm
+;   Language: x86-64 assembly
+;   Compile: nasm -f elf64 -l director.lis -o director.o director.asm
+;   Link: g++ -m64 -fno-pie -no-pie -std=c++17 -o a.out main.o director.o input_array.o output_array.o sortpointers.o
 
 global director
 extern input_array
@@ -116,12 +140,14 @@ mov rsi, sorting_msg
 call printf
 
 ; =============== Call sortpointers =====================
+; remove comments to test baseline
 ; mov rax, 0
 ; mov rdi, array
 ; mov rsi, r14
 ; call sortpointers
 
 ; =============== Call challenge_sort ===================
+; remove comments to test challenge
 mov rax, 0
 mov rdi, array
 mov rsi, r14
