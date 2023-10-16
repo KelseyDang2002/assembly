@@ -163,6 +163,7 @@ call printf
 mov rax, 0
 mov rdi, array
 mov rsi, r14
+mov rdx, r15
 call output_array
 
 ; =============== Print output_end_msg ==================
