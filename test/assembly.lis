@@ -1,0 +1,60 @@
+     1                                  global assembly
+     2                                  extern printf
+     3                                  extern scanf
+     4                                  
+     5                                  segment .data
+     6 00000000 617373656D626C793A-     msg db "assembly: World", 10, 10, 0
+     6 00000009 20576F726C640A0A00 
+     7                                  
+     8 00000012 256C6600                floatform db "%lf", 0
+     9 00000016 257300                  stringform db "%s", 0
+    10                                  
+    11                                  segment .bss
+    12                                  
+    13                                  segment .text
+    14                                  assembly:
+    15                                  
+    16                                  ; ============= Backup GPRs ============================
+    17 00000000 55                      push rbp
+    18 00000001 4889E5                  mov rbp, rsp
+    19 00000004 53                      push rbx
+    20 00000005 51                      push rcx
+    21 00000006 52                      push rdx
+    22 00000007 56                      push rsi
+    23 00000008 57                      push rdi
+    24 00000009 4150                    push r8
+    25 0000000B 4151                    push r9
+    26 0000000D 4152                    push r10
+    27 0000000F 4153                    push r11
+    28 00000011 4154                    push r12
+    29 00000013 4155                    push r13
+    30 00000015 4156                    push r14
+    31 00000017 4157                    push r15
+    32 00000019 9C                      pushf
+    33                                  
+    34                                  ; =============== Print msg =============================
+    35 0000001A B800000000              mov rax, 0
+    36 0000001F 48BF-                   mov rdi, stringform
+    36 00000021 [1600000000000000] 
+    37 00000029 48BE-                   mov rsi, msg
+    37 0000002B [0000000000000000] 
+    38 00000033 E8(00000000)            call printf
+    39                                  
+    40                                  ; =============== Restore GPRs ==========================
+    41 00000038 9D                      popf
+    42 00000039 415F                    pop r15
+    43 0000003B 415E                    pop r14
+    44 0000003D 415D                    pop r13
+    45 0000003F 415C                    pop r12
+    46 00000041 415B                    pop r11
+    47 00000043 415A                    pop r10
+    48 00000045 4159                    pop r9
+    49 00000047 4158                    pop r8
+    50 00000049 5F                      pop rdi
+    51 0000004A 5E                      pop rsi
+    52 0000004B 5A                      pop rdx
+    53 0000004C 59                      pop rcx
+    54 0000004D 5B                      pop rbx
+    55 0000004E 5D                      pop rbp
+    56                                  
+    57 0000004F C3                      ret
