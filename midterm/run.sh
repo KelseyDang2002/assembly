@@ -17,9 +17,11 @@ gcc -c -m64 -Wall -fno-pie -no-pie -std=c17 -o main.o main.c
 echo "bash: Assembling manager.asm..."
 nasm -f elf64 -l manager.lis -o manager.o manager.asm
 
-echo "bash: ..."
+echo "bash: Assembling input_array.asm..."
 
-echo "bash: ..."
+echo "bash: Assembling output_array.asm..."
+
+echo "bash: Assembling sum_array.asm..."
 
 echo "bash: Linking the _ created object files..."
 gcc -m64 -fno-pie -no-pie -std=c17 -o a.out main.o manager.o

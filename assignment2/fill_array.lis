@@ -47,7 +47,7 @@
     46 00000024 0FAE2425[00000000]      xsave [backuparea]
     47                                  
     48                                  ; =============== Backup r14 and r15 ====================
-    49 0000002C 58                      pop rax
+    49 0000002C 58                      pop rax               ; fixed a seg fault
     50 0000002D 4989FE                  mov r14, rdi          ; r14 is the array
     51 00000030 4989F7                  mov r15, rsi          ; r15 is the number of cells
     52 00000033 41BD00000000            mov r13, 0            ; r13 is the starting index 0
@@ -63,11 +63,11 @@
     62 00000041 B800000000              mov rax, 0
     63 00000046 48BF-                   mov rdi, floatform    ; %lf
     63 00000048 [0D00000000000000] 
-    64 00000050 6A00                    push qword 0
+    64 00000050 6A00                    push qword 0          ; push 0 before calling scanf or seg fault
     65 00000052 4889E6                  mov rsi, rsp
     66 00000055 E8(00000000)            call scanf
     67                                  
-    68 0000005A 4898                    cdqe
+    68 0000005A 4898                    cdqe                  ; convert doubleword to quadword for rax
     69 0000005C 4883F8FF                cmp rax, -1           ; check for CTRL + D
     70 00000060 740A                    je endloop            ; jump to end of loop if CTRL + D
     71                                  

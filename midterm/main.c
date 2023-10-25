@@ -1,5 +1,5 @@
 // Program Name: ---
-// Subject: CPSC 240-03 Assignment 3 <--->
+// Subject: CPSC 240-03 <Midterm>
 // This program demonstrates passing an array to a called subprogram and sorting it.
 
 // Copyright (C) 2023 Kelsey Dang

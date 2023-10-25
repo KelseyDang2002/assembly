@@ -30,11 +30,11 @@
 ;   Compile: nasm -f elf64 -l director.lis -o director.o director.asm
 ;   Link: g++ -m64 -fno-pie -no-pie -std=c++17 -o a.out main.o director.o input_array.o output_array.o sortpointers.o
 
-global manager
+extern input_array
 extern printf
+extern scanf
 
 segment .data
-test_msg db "manager: World!", 10, 0
 
 floatform db "%lf", 0
 stringform db "%s", 0
@@ -44,7 +44,7 @@ align 64
 backuparea resb 832
 
 segment .text
-manager:
+input_array:
 
 ; ============= Backup GPRs ============================
 push rbp
@@ -65,10 +65,6 @@ push r15
 pushf
 
 ; Block
-mov rax, 0
-mov rdi, stringform
-mov rsi, test_msg
-call printf
 
 ; =============== Restore GPRs ==========================
 popf
