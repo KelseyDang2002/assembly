@@ -93,7 +93,7 @@
     92                                  
     93 00000064 4898                    cdqe                  ; convert double to quad and extend
     94 00000066 4883F8FF                cmp rax, -1           ; check for CTRL + D
-    95 0000006A 7409                    je endloop            ; jump to ned of loop if CTRL + D
+    95 0000006A 7409                    je endloop            ; jump to end of loop if CTRL + D
     96                                  
     97 0000006C 4F8924EE                mov [r14+8*r13], r12
     98 00000070 49FFC5                  inc r13               ; increment r13 (i++)

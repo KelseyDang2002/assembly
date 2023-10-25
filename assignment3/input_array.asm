@@ -92,7 +92,7 @@ call scanf            ; receive user input
 
 cdqe                  ; convert double to quad and extend
 cmp rax, -1           ; check for CTRL + D
-je endloop            ; jump to ned of loop if CTRL + D
+je endloop            ; jump to end of loop if CTRL + D
 
 mov [r14+8*r13], r12
 inc r13               ; increment r13 (i++)

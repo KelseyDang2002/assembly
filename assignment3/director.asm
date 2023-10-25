@@ -41,7 +41,7 @@ max_size equ 10
 segment .data
 welcome_msg db "director: This program will sort all of your doubles.", 10, 0
 
-instruction_msg1 db "director: Please enter flocating point numbers seperated by white space.", 10, 0
+instruction_msg1 db "director: Please enter floating point numbers seperated by white space.", 10, 0
 
 instruction_msg2 db "director: After the last numeric input, enter at least one more WS followed by CTRL + D:", 10, 0
 

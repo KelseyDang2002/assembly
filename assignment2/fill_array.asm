@@ -46,7 +46,7 @@ mov rdx, 0
 xsave [backuparea]
 
 ; =============== Backup r14 and r15 ====================
-pop rax
+pop rax               ; fixed a seg fault
 mov r14, rdi          ; r14 is the array
 mov r15, rsi          ; r15 is the number of cells
 mov r13, 0            ; r13 is the starting index 0
@@ -61,11 +61,11 @@ je endloop            ; end the loop
 ; =============== Receive input from user ===============
 mov rax, 0
 mov rdi, floatform    ; %lf
-push qword 0
+push qword 0          ; push 0 before calling scanf or seg fault
 mov rsi, rsp
 call scanf
 
-cdqe
+cdqe                  ; convert doubleword to quadword for rax
 cmp rax, -1           ; check for CTRL + D
 je endloop            ; jump to end of loop if CTRL + D
 
