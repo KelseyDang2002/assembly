@@ -34,6 +34,7 @@ extern output_array
 extern printf
 
 segment .data
+output_data db "%lf ", 0
 
 floatform db "%lf", 0
 stringform db "%s", 0
@@ -63,7 +64,28 @@ push r14
 push r15
 pushf
 
-; Block
+; Backup r14 and r15
+mov r14, rdi
+mov r15, rsi
+mov r13, 0
+
+; Print data of array
+xor r13, r13
+
+beginloop:
+cmp r13, r15
+je endloop
+
+movsd xmm0, [r14+8*r13]
+mov rax, 1
+mov rdi, output_data
+call printf
+
+inc r13
+jmp beginloop
+
+endloop:
+mov rax, r13
 
 ; =============== Restore GPRs ==========================
 popf

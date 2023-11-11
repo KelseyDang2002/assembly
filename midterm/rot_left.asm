@@ -30,11 +30,12 @@
 ;   Compile: nasm -f elf64 -l director.lis -o director.o director.asm
 ;   Link: g++ -m64 -fno-pie -no-pie -std=c++17 -o a.out main.o director.o input_array.o output_array.o sortpointers.o
 
-extern input_array
+global rot_left
 extern printf
-extern scanf
 
 segment .data
+debug_msg db "rot_left: test call", 10, 0
+
 floatform db "%lf", 0
 stringform db "%s", 0
 
@@ -43,7 +44,7 @@ align 64
 backuparea resb 832
 
 segment .text
-input_array:
+rot_left:
 
 ; ============= Backup GPRs ============================
 push rbp
@@ -63,37 +64,16 @@ push r14
 push r15
 pushf
 
+; Print debug_msg
+mov rax, 0
+mov rdi, stringform
+mov rsi, debug_msg
+call printf
+
 ; Backup r14 and r15
-pop rax
 mov r14, rdi
 mov r15, rsi
 mov r13, 0
-
-; Input array portion
-xor r13, r13
-
-beginloop:
-cmp r13, r15
-je endloop
-
-; Receive input from user + check for CTRL + D
-mov rax, 0
-mov rdi, floatform
-push qword 0
-mov rsi, rsp
-call scanf
-
-cdqe
-cmp rax, -1
-je endloop
-
-pop rbx
-mov [r14+8*r13], rbx
-inc r13
-jmp beginloop
-
-endloop:
-mov rax, r13
 
 ; =============== Restore GPRs ==========================
 popf

@@ -1,5 +1,5 @@
      1                                  ; Program Name: ---
-     2                                  ; Subject: CPSC 240-03 Assignment 3 <--->
+     2                                  ; Subject: CPSC 240-03 <Midterm>
      3                                  ; This program demonstrates passing an array to a called subprogram and sorting it.
      4                                  
      5                                  ; Copyright (C) 2023 Kelsey Dang
@@ -31,64 +31,270 @@
     31                                  ;   Link: g++ -m64 -fno-pie -no-pie -std=c++17 -o a.out main.o director.o input_array.o output_array.o sortpointers.o
     32                                  
     33                                  global manager
-    34                                  extern printf
-    35                                  
-    36                                  segment .data
-    37 00000000 6D616E616765723A20-     test_msg db "manager: World!", 10, 0
-    37 00000009 576F726C64210A00   
-    38                                  
-    39 00000011 256C6600                floatform db "%lf", 0
-    40 00000015 257300                  stringform db "%s", 0
-    41                                  
-    42                                  segment .bss
+    34                                  extern input_array
+    35                                  extern output_array
+    36                                  extern rot_left
+    37                                  extern sum_array
+    38                                  extern printf
+    39                                  max_size equ 10
+    40                                  
+    41                                  segment .data
+    42 00000000 6D616E616765723A20-     prompt_msg1 db "manager: Please enter floating point numbers separated by WS.", 10, 0
+    42 00000009 506C6561736520656E-
+    42 00000012 74657220666C6F6174-
+    42 0000001B 696E6720706F696E74-
+    42 00000024 206E756D6265727320-
+    42 0000002D 736570617261746564-
+    42 00000036 2062792057532E0A00 
     43                                  
-    44                                  segment .text
-    45                                  manager:
-    46                                  
-    47                                  ; ============= Backup GPRs ============================
-    48 00000000 55                      push rbp
-    49 00000001 4889E5                  mov rbp, rsp
-    50 00000004 53                      push rbx
-    51 00000005 51                      push rcx
-    52 00000006 52                      push rdx
-    53 00000007 56                      push rsi
-    54 00000008 57                      push rdi
-    55 00000009 4150                    push r8
-    56 0000000B 4151                    push r9
-    57 0000000D 4152                    push r10
-    58 0000000F 4153                    push r11
-    59 00000011 4154                    push r12
-    60 00000013 4155                    push r13
-    61 00000015 4156                    push r14
-    62 00000017 4157                    push r15
-    63 00000019 9C                      pushf
+    44 0000003F 6D616E616765723A20-     prompt_msg2 db "manager: After the last valid input enter one more WS followed by CTRL + D:", 10, 0
+    44 00000048 416674657220746865-
+    44 00000051 206C6173742076616C-
+    44 0000005A 696420696E70757420-
+    44 00000063 656E746572206F6E65-
+    44 0000006C 206D6F726520575320-
+    44 00000075 666F6C6C6F77656420-
+    44 0000007E 6279204354524C202B-
+    44 00000087 20443A0A00         
+    45                                  
+    46 0000008C 0A6D616E616765723A-     array_msg db 10, "manager: Here is the array: ", 0
+    46 00000095 204865726520697320-
+    46 0000009E 746865206172726179-
+    46 000000A7 3A2000             
+    47                                  
+    48 000000AA 0A0A6D616E61676572-     rot_left_call_msg1 db 10, 10, "manager: Function rot_left was called 1 time.", 10, 0
+    48 000000B3 3A2046756E6374696F-
+    48 000000BC 6E20726F745F6C6566-
+    48 000000C5 74207761732063616C-
+    48 000000CE 6C656420312074696D-
+    48 000000D7 652E0A00           
+    49                                  
+    50 000000DB 0A0A6D616E61676572-     rot_left_call_msg3 db 10, 10, "manager: Function rot_left was called 3 times consequtively.", 10, 0
+    50 000000E4 3A2046756E6374696F-
+    50 000000ED 6E20726F745F6C6566-
+    50 000000F6 74207761732063616C-
+    50 000000FF 6C656420332074696D-
+    50 00000108 657320636F6E736571-
+    50 00000111 75746976656C792E0A-
+    50 0000011A 00                 
+    51                                  
+    52 0000011B 0A0A6D616E61676572-     rot_left_call_msg2 db 10, 10, "manager: Function rot_left was called 2 times consequtively.", 10, 0
+    52 00000124 3A2046756E6374696F-
+    52 0000012D 6E20726F745F6C6566-
+    52 00000136 74207761732063616C-
+    52 0000013F 6C656420322074696D-
+    52 00000148 657320636F6E736571-
+    52 00000151 75746976656C792E0A-
+    52 0000015A 00                 
+    53                                  
+    54 0000015B 256C6600                floatform db "%lf", 0
+    55 0000015F 257300                  stringform db "%s", 0
+    56                                  
+    57                                  segment .bss
+    58                                  align 64
+    59 00000000 <res 00000340>          backuparea resb 832
+    60 00000340 <res 00000050>          array resq max_size
+    61                                  
+    62                                  segment .text
+    63                                  manager:
     64                                  
-    65                                  ; Block
-    66 0000001A B800000000              mov rax, 0
-    67 0000001F 48BF-                   mov rdi, stringform
-    67 00000021 [1500000000000000] 
-    68 00000029 48BE-                   mov rsi, test_msg
-    68 0000002B [0000000000000000] 
-    69 00000033 E8(00000000)            call printf
-    70                                  
-    71                                  ; =============== Restore GPRs ==========================
-    72 00000038 9D                      popf
-    73 00000039 415F                    pop r15
-    74 0000003B 415E                    pop r14
-    75 0000003D 415D                    pop r13
-    76 0000003F 415C                    pop r12
-    77 00000041 415B                    pop r11
-    78 00000043 415A                    pop r10
-    79 00000045 4159                    pop r9
-    80 00000047 4158                    pop r8
-    81 00000049 5F                      pop rdi
-    82 0000004A 5E                      pop rsi
-    83 0000004B 5A                      pop rdx
-    84 0000004C 59                      pop rcx
-    85 0000004D 5B                      pop rbx
-    86 0000004E 5D                      pop rbp
-    87                                  
-    88                                  ; =============== Sendback to main ======================
-    89                                  ; mov rax, sendback
-    90                                  
-    91 0000004F C3                      ret
+    65                                  ; ============= Backup GPRs ============================
+    66 00000000 55                      push rbp
+    67 00000001 4889E5                  mov rbp, rsp
+    68 00000004 53                      push rbx
+    69 00000005 51                      push rcx
+    70 00000006 52                      push rdx
+    71 00000007 56                      push rsi
+    72 00000008 57                      push rdi
+    73 00000009 4150                    push r8
+    74 0000000B 4151                    push r9
+    75 0000000D 4152                    push r10
+    76 0000000F 4153                    push r11
+    77 00000011 4154                    push r12
+    78 00000013 4155                    push r13
+    79 00000015 4156                    push r14
+    80 00000017 4157                    push r15
+    81 00000019 9C                      pushf
+    82                                  
+    83                                  ; Print prompt_msg1
+    84 0000001A B800000000              mov rax, 0
+    85 0000001F 48BF-                   mov rdi, stringform
+    85 00000021 [5F01000000000000] 
+    86 00000029 48BE-                   mov rsi, prompt_msg1
+    86 0000002B [0000000000000000] 
+    87 00000033 E8(00000000)            call printf
+    88                                  
+    89                                  ; Print prompt_msg2
+    90 00000038 B800000000              mov rax, 0
+    91 0000003D 48BF-                   mov rdi, stringform
+    91 0000003F [5F01000000000000] 
+    92 00000047 48BE-                   mov rsi, prompt_msg2
+    92 00000049 [3F00000000000000] 
+    93 00000051 E8(00000000)            call printf
+    94                                  
+    95                                  ; Call input_array
+    96 00000056 B800000000              mov rax, 0
+    97 0000005B 48BF-                   mov rdi, array
+    97 0000005D [4003000000000000] 
+    98 00000065 BE0A000000              mov rsi, max_size
+    99 0000006A E8(00000000)            call input_array
+   100 0000006F 4989C6                  mov r14, rax
+   101                                  
+   102                                  ; Print array_msg
+   103 00000072 B800000000              mov rax, 0
+   104 00000077 48BF-                   mov rdi, stringform
+   104 00000079 [5F01000000000000] 
+   105 00000081 48BE-                   mov rsi, array_msg
+   105 00000083 [8C00000000000000] 
+   106 0000008B E8(00000000)            call printf
+   107                                  
+   108                                  ; Call output_array
+   109 00000090 B800000000              mov rax, 0
+   110 00000095 48BF-                   mov rdi, array
+   110 00000097 [4003000000000000] 
+   111 0000009F 4C89F6                  mov rsi, r14
+   112 000000A2 E8(00000000)            call output_array
+   113                                  
+   114                                  ; ===================== Call rot_left 1 time =====================================
+   115                                  
+   116                                  ; Print rot_left_call_msg1
+   117 000000A7 B800000000              mov rax, 0
+   118 000000AC 48BF-                   mov rdi, stringform
+   118 000000AE [5F01000000000000] 
+   119 000000B6 48BE-                   mov rsi, rot_left_call_msg1
+   119 000000B8 [AA00000000000000] 
+   120 000000C0 E8(00000000)            call printf
+   121                                  
+   122                                  ; Call rot_left
+   123 000000C5 B800000000              mov rax, 0
+   124 000000CA 48BF-                   mov rdi, array
+   124 000000CC [4003000000000000] 
+   125 000000D4 4C89F6                  mov rsi, r14
+   126 000000D7 E8(00000000)            call rot_left
+   127                                  
+   128                                  ; Print array_msg
+   129 000000DC B800000000              mov rax, 0
+   130 000000E1 48BF-                   mov rdi, stringform
+   130 000000E3 [5F01000000000000] 
+   131 000000EB 48BE-                   mov rsi, array_msg
+   131 000000ED [8C00000000000000] 
+   132 000000F5 E8(00000000)            call printf
+   133                                  
+   134                                  ; Call output_array
+   135 000000FA B800000000              mov rax, 0
+   136 000000FF 48BF-                   mov rdi, array
+   136 00000101 [4003000000000000] 
+   137 00000109 4C89F6                  mov rsi, r14
+   138 0000010C E8(00000000)            call output_array
+   139                                  
+   140                                  ; ====================== Call rot_left 3 times =========================================
+   141                                  
+   142                                  ; Print rot_left_call_msg3
+   143 00000111 B800000000              mov rax, 0
+   144 00000116 48BF-                   mov rdi, stringform
+   144 00000118 [5F01000000000000] 
+   145 00000120 48BE-                   mov rsi, rot_left_call_msg3
+   145 00000122 [DB00000000000000] 
+   146 0000012A E8(00000000)            call printf
+   147                                  
+   148                                  ; Call rot_left
+   149 0000012F B800000000              mov rax, 0
+   150 00000134 48BF-                   mov rdi, array
+   150 00000136 [4003000000000000] 
+   151 0000013E 4C89F6                  mov rsi, r14
+   152 00000141 E8(00000000)            call rot_left
+   153                                  ; Call rot_left
+   154 00000146 B800000000              mov rax, 0
+   155 0000014B 48BF-                   mov rdi, array
+   155 0000014D [4003000000000000] 
+   156 00000155 4C89F6                  mov rsi, r14
+   157 00000158 E8(00000000)            call rot_left
+   158                                  ; Call rot_left
+   159 0000015D B800000000              mov rax, 0
+   160 00000162 48BF-                   mov rdi, array
+   160 00000164 [4003000000000000] 
+   161 0000016C 4C89F6                  mov rsi, r14
+   162 0000016F E8(00000000)            call rot_left
+   163                                  
+   164                                  ; Print array_msg
+   165 00000174 B800000000              mov rax, 0
+   166 00000179 48BF-                   mov rdi, stringform
+   166 0000017B [5F01000000000000] 
+   167 00000183 48BE-                   mov rsi, array_msg
+   167 00000185 [8C00000000000000] 
+   168 0000018D E8(00000000)            call printf
+   169                                  
+   170                                  ; Call output_array
+   171 00000192 B800000000              mov rax, 0
+   172 00000197 48BF-                   mov rdi, array
+   172 00000199 [4003000000000000] 
+   173 000001A1 4C89F6                  mov rsi, r14
+   174 000001A4 E8(00000000)            call output_array
+   175                                  
+   176                                  ; ===================== Call rot_left 2 times ==========================================
+   177                                  
+   178                                  ; Print rot_left_call_msg2
+   179 000001A9 B800000000              mov rax, 0
+   180 000001AE 48BF-                   mov rdi, stringform
+   180 000001B0 [5F01000000000000] 
+   181 000001B8 48BE-                   mov rsi, rot_left_call_msg2
+   181 000001BA [1B01000000000000] 
+   182 000001C2 E8(00000000)            call printf
+   183                                  
+   184                                  ; Call rot_left
+   185 000001C7 B800000000              mov rax, 0
+   186 000001CC 48BF-                   mov rdi, array
+   186 000001CE [4003000000000000] 
+   187 000001D6 4C89F6                  mov rsi, r14
+   188 000001D9 E8(00000000)            call rot_left
+   189                                  ; Call rot_left
+   190 000001DE B800000000              mov rax, 0
+   191 000001E3 48BF-                   mov rdi, array
+   191 000001E5 [4003000000000000] 
+   192 000001ED 4C89F6                  mov rsi, r14
+   193 000001F0 E8(00000000)            call rot_left
+   194                                  
+   195                                  ; Print array_msg
+   196 000001F5 B800000000              mov rax, 0
+   197 000001FA 48BF-                   mov rdi, stringform
+   197 000001FC [5F01000000000000] 
+   198 00000204 48BE-                   mov rsi, array_msg
+   198 00000206 [8C00000000000000] 
+   199 0000020E E8(00000000)            call printf
+   200                                  
+   201                                  ; Call output_array
+   202 00000213 B800000000              mov rax, 0
+   203 00000218 48BF-                   mov rdi, array
+   203 0000021A [4003000000000000] 
+   204 00000222 4C89F6                  mov rsi, r14
+   205 00000225 E8(00000000)            call output_array
+   206                                  
+   207                                  ; ===================== Call sum_array ==========================================
+   208 0000022A B800000000              mov rax, 0
+   209 0000022F 48BF-                   mov rdi, array
+   209 00000231 [4003000000000000] 
+   210 00000239 4C89F6                  mov rsi, r14
+   211 0000023C E8(00000000)            call sum_array
+   212 00000241 F20F110424              movsd [rsp], xmm0
+   213                                  
+   214                                  ; =============== Return execution to driver ============
+   215 00000246 F20F100424              movsd xmm0, [rsp]
+   216                                  
+   217                                  ; =============== Restore GPRs ==========================
+   218 0000024B 9D                      popf
+   219 0000024C 415F                    pop r15
+   220 0000024E 415E                    pop r14
+   221 00000250 415D                    pop r13
+   222 00000252 415C                    pop r12
+   223 00000254 415B                    pop r11
+   224 00000256 415A                    pop r10
+   225 00000258 4159                    pop r9
+   226 0000025A 4158                    pop r8
+   227 0000025C 5F                      pop rdi
+   228 0000025D 5E                      pop rsi
+   229 0000025E 5A                      pop rdx
+   230 0000025F 59                      pop rcx
+   231 00000260 5B                      pop rbx
+   232 00000261 5D                      pop rbp
+   233                                  
+   234 00000262 C3                      ret

@@ -18,13 +18,19 @@ echo "bash: Assembling manager.asm..."
 nasm -f elf64 -l manager.lis -o manager.o manager.asm
 
 echo "bash: Assembling input_array.asm..."
+nasm -f elf64 -l input_array.lis -o input_array.o input_array.asm
 
 echo "bash: Assembling output_array.asm..."
+nasm -f elf64 -l input_array.lis -o output_array.o output_array.asm
+
+echo "bash: Assembling rot_left.asm..."
+nasm -f elf64 -l rot_left.lis -o rot_left.o rot_left.asm
 
 echo "bash: Assembling sum_array.asm..."
+nasm -f elf64 -l sum_array.lis -o sum_array.o sum_array.asm
 
-echo "bash: Linking the _ created object files..."
-gcc -m64 -fno-pie -no-pie -std=c17 -o a.out main.o manager.o
+echo "bash: Linking the 6 created object files..."
+gcc -m64 -fno-pie -no-pie -std=c17 -o a.out main.o manager.o input_array.o output_array.o rot_left.o sum_array.o
 
 echo "bash: Running program..."
 ./a.out

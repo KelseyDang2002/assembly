@@ -34,7 +34,9 @@
 extern double manager();
 
 int main(int argc, char* argv[]) {
-  printf("main: Hello, \n");
-  manager();
+  printf("\nmain: Welcome to My Array by Kelsey Dang\n\n");
+  double return_code = manager();
+  printf("\n\nmain: The main received this number: %lf and will study it.\n", return_code);
+  printf("main: Zero will be returned to the opertaing system.\n\n");
   return 0;
 }

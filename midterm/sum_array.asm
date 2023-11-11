@@ -34,7 +34,6 @@ extern sum_array
 extern printf
 
 segment .data
-
 floatform db "%lf", 0
 stringform db "%s", 0
 
@@ -63,7 +62,25 @@ push r14
 push r15
 pushf
 
-; Block
+; Backup r14 and r15
+mov r14, rdi
+mov r15, rsi
+mov r13, 0
+
+; Sum of elements in array
+xor r13, r13
+
+beginloop:
+cmp r13, r15
+je endloop
+
+addsd xmm15, [r14+8*r13]
+
+inc r13
+jmp beginloop
+
+endloop:
+movsd xmm0, xmm15
 
 ; =============== Restore GPRs ==========================
 popf

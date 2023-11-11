@@ -31,10 +31,25 @@
 ;   Link: g++ -m64 -fno-pie -no-pie -std=c++17 -o a.out main.o director.o input_array.o output_array.o sortpointers.o
 
 global manager
+extern input_array
+extern output_array
+extern rot_left
+extern sum_array
 extern printf
+max_size equ 10
 
 segment .data
-test_msg db "manager: World!", 10, 0
+prompt_msg1 db "manager: Please enter floating point numbers separated by WS.", 10, 0
+
+prompt_msg2 db "manager: After the last valid input enter one more WS followed by CTRL + D:", 10, 0
+
+array_msg db 10, "manager: Here is the array: ", 0
+
+rot_left_call_msg1 db 10, 10, "manager: Function rot_left was called 1 time.", 10, 0
+
+rot_left_call_msg3 db 10, 10, "manager: Function rot_left was called 3 times consequtively.", 10, 0
+
+rot_left_call_msg2 db 10, 10, "manager: Function rot_left was called 2 times consequtively.", 10, 0
 
 floatform db "%lf", 0
 stringform db "%s", 0
@@ -42,6 +57,7 @@ stringform db "%s", 0
 segment .bss
 align 64
 backuparea resb 832
+array resq max_size
 
 segment .text
 manager:
@@ -64,11 +80,139 @@ push r14
 push r15
 pushf
 
-; Block
+; Print prompt_msg1
 mov rax, 0
 mov rdi, stringform
-mov rsi, test_msg
+mov rsi, prompt_msg1
 call printf
+
+; Print prompt_msg2
+mov rax, 0
+mov rdi, stringform
+mov rsi, prompt_msg2
+call printf
+
+; Call input_array
+mov rax, 0
+mov rdi, array
+mov rsi, max_size
+call input_array
+mov r14, rax
+
+; Print array_msg
+mov rax, 0
+mov rdi, stringform
+mov rsi, array_msg
+call printf
+
+; Call output_array
+mov rax, 0
+mov rdi, array
+mov rsi, r14
+call output_array
+
+; ===================== Call rot_left 1 time =====================================
+
+; Print rot_left_call_msg1
+mov rax, 0
+mov rdi, stringform
+mov rsi, rot_left_call_msg1
+call printf
+
+; Call rot_left
+mov rax, 0
+mov rdi, array
+mov rsi, r14
+call rot_left
+
+; Print array_msg
+mov rax, 0
+mov rdi, stringform
+mov rsi, array_msg
+call printf
+
+; Call output_array
+mov rax, 0
+mov rdi, array
+mov rsi, r14
+call output_array
+
+; ====================== Call rot_left 3 times =========================================
+
+; Print rot_left_call_msg3
+mov rax, 0
+mov rdi, stringform
+mov rsi, rot_left_call_msg3
+call printf
+
+; Call rot_left
+mov rax, 0
+mov rdi, array
+mov rsi, r14
+call rot_left
+; Call rot_left
+mov rax, 0
+mov rdi, array
+mov rsi, r14
+call rot_left
+; Call rot_left
+mov rax, 0
+mov rdi, array
+mov rsi, r14
+call rot_left
+
+; Print array_msg
+mov rax, 0
+mov rdi, stringform
+mov rsi, array_msg
+call printf
+
+; Call output_array
+mov rax, 0
+mov rdi, array
+mov rsi, r14
+call output_array
+
+; ===================== Call rot_left 2 times ==========================================
+
+; Print rot_left_call_msg2
+mov rax, 0
+mov rdi, stringform
+mov rsi, rot_left_call_msg2
+call printf
+
+; Call rot_left
+mov rax, 0
+mov rdi, array
+mov rsi, r14
+call rot_left
+; Call rot_left
+mov rax, 0
+mov rdi, array
+mov rsi, r14
+call rot_left
+
+; Print array_msg
+mov rax, 0
+mov rdi, stringform
+mov rsi, array_msg
+call printf
+
+; Call output_array
+mov rax, 0
+mov rdi, array
+mov rsi, r14
+call output_array
+
+; ===================== Call sum_array ==========================================
+mov rax, 0
+mov rdi, array
+mov rsi, r14
+call sum_array
+movsd [rsp], xmm0
+
+; =============== Return execution to driver ============
+movsd xmm0, [rsp]
 
 ; =============== Restore GPRs ==========================
 popf
