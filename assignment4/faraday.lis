@@ -30,210 +30,379 @@
     30                                  ;   Compile: nasm -f elf64 -l director.lis -o director.o director.asm
     31                                  ;   Link: g++ -m64 -fno-pie -no-pie -std=c++17 -o a.out main.o director.o input_array.o output_array.o sortpointers.o
     32                                  
-    33                                  extern faraday
-    34                                  extern printf
-    35                                  
-    36                                  segment .data
-    37 00000000 666172616461793A20-     prompt_name db "faraday: Please enter your name: ", 0
-    37 00000009 506C6561736520656E-
-    37 00000012 74657220796F757220-
-    37 0000001B 6E616D653A2000     
-    38 00000022 0A666172616461793A-     prompt_title db 10, "faraday: Please enter your title or profession: ", 0
-    38 0000002B 20506C656173652065-
-    38 00000034 6E74657220796F7572-
-    38 0000003D 207469746C65206F72-
-    38 00000046 2070726F6665737369-
-    38 0000004F 6F6E3A2000         
-    39                                  
-    40 00000054 0A666172616461793A-     welcome_msg db 10, "faraday: We always welcome a %s to our electrical lab.", 10, 0
-    40 0000005D 20576520616C776179-
-    40 00000066 732077656C636F6D65-
-    40 0000006F 206120257320746F20-
-    40 00000078 6F757220656C656374-
-    40 00000081 726963616C206C6162-
-    40 0000008A 2E0A00             
+    33                                  global faraday
+    34                                  extern isfloat
+    35                                  extern fgets
+    36                                  extern strlen
+    37                                  extern atof
+    38                                  extern stdin
+    39                                  extern printf
+    40                                  max_size equ 60
     41                                  
-    42 0000008D 0A666172616461793A-     prompt_volts db 10, "faraday: Please enter the voltage of the electrical system at your site (volts): ", 0
-    42 00000096 20506C656173652065-
-    42 0000009F 6E7465722074686520-
-    42 000000A8 766F6C74616765206F-
-    42 000000B1 662074686520656C65-
-    42 000000BA 6374726963616C2073-
-    42 000000C3 797374656D20617420-
-    42 000000CC 796F75722073697465-
-    42 000000D5 2028766F6C7473293A-
-    42 000000DE 2000               
-    43 000000E0 0A666172616461793A-     prompt_ohms db 10, "faraday: Please enter the electrical resistence in the system at your site (ohms): ", 0
-    43 000000E9 20506C656173652065-
-    43 000000F2 6E7465722074686520-
-    43 000000FB 656C65637472696361-
-    43 00000104 6C2072657369737465-
-    43 0000010D 6E636520696E207468-
-    43 00000116 652073797374656D20-
-    43 0000011F 617420796F75722073-
-    43 00000128 69746520286F686D73-
-    43 00000131 293A2000           
-    44 00000135 0A666172616461793A-     prompt_seconds db 10, "faraday: Please enter the time your system was operating (seconds): ", 0
-    44 0000013E 20506C656173652065-
-    44 00000147 6E7465722074686520-
-    44 00000150 74696D6520796F7572-
-    44 00000159 2073797374656D2077-
-    44 00000162 6173206F7065726174-
-    44 0000016B 696E6720287365636F-
-    44 00000174 6E6473293A2000     
+    42                                  segment .data
+    43 00000000 666172616461793A20-     prompt_name db "faraday: Please enter your name: ", 0
+    43 00000009 506C6561736520656E-
+    43 00000012 74657220796F757220-
+    43 0000001B 6E616D653A2000     
+    44 00000022 666172616461793A20-     prompt_title db "faraday: Please enter your title or profession: ", 0
+    44 0000002B 506C6561736520656E-
+    44 00000034 74657220796F757220-
+    44 0000003D 7469746C65206F7220-
+    44 00000046 70726F66657373696F-
+    44 0000004F 6E3A2000           
     45                                  
-    46 0000017B 0A0A66617261646179-     thankyou_msg_1 db 10, 10, "faraday: Thank you %s. ", 0
-    46 00000184 3A205468616E6B2079-
-    46 0000018D 6F752025732E2000   
-    47 00000195 5765206174204D616A-     thankyou_msg_2 db "We at Majestic are pleased to inform you that your system performed %lf joules of work.", 10, 0
-    47 0000019E 657374696320617265-
-    47 000001A7 20706C656173656420-
-    47 000001B0 746F20696E666F726D-
-    47 000001B9 20796F752074686174-
-    47 000001C2 20796F757220737973-
-    47 000001CB 74656D20706572666F-
-    47 000001D4 726D656420256C6620-
-    47 000001DD 6A6F756C6573206F66-
-    47 000001E6 20776F726B2E0A00   
-    48                                  
-    49 000001EE 0A666172616461793A-     congrats_msg_1 db 10, "faraday: Congratulations %s. Come back any time and make use of our software.", 10, 0
-    49 000001F7 20436F6E6772617475-
-    49 00000200 6C6174696F6E732025-
-    49 00000209 732E20436F6D652062-
-    49 00000212 61636B20616E792074-
-    49 0000021B 696D6520616E64206D-
-    49 00000224 616B6520757365206F-
-    49 0000022D 66206F757220736F66-
-    49 00000236 74776172652E0A00   
-    50 0000023E 45766572796F6E6520-     congrats_msg_2 db "Everyone with title %s is welcome to use our programs at a reduced price.", 10, 0
-    50 00000247 77697468207469746C-
-    50 00000250 652025732069732077-
-    50 00000259 656C636F6D6520746F-
-    50 00000262 20757365206F757220-
-    50 0000026B 70726F6772616D7320-
-    50 00000274 617420612072656475-
-    50 0000027D 636564207072696365-
-    50 00000286 2E0A00             
+    46 00000053 666172616461793A20-     welcome_msg db "faraday: We always welcome a %s to our electrical lab.", 10, 0
+    46 0000005C 576520616C77617973-
+    46 00000065 2077656C636F6D6520-
+    46 0000006E 6120257320746F206F-
+    46 00000077 757220656C65637472-
+    46 00000080 6963616C206C61622E-
+    46 00000089 0A00               
+    47                                  
+    48 0000008B 0A666172616461793A-     prompt_volts db 10, "faraday: Please enter the voltage of the electrical system at your site (volts): ", 0
+    48 00000094 20506C656173652065-
+    48 0000009D 6E7465722074686520-
+    48 000000A6 766F6C74616765206F-
+    48 000000AF 662074686520656C65-
+    48 000000B8 6374726963616C2073-
+    48 000000C1 797374656D20617420-
+    48 000000CA 796F75722073697465-
+    48 000000D3 2028766F6C7473293A-
+    48 000000DC 2000               
+    49 000000DE 666172616461793A20-     prompt_ohms db "faraday: Please enter the electrical resistence in the system at your site (ohms): ", 0
+    49 000000E7 506C6561736520656E-
+    49 000000F0 746572207468652065-
+    49 000000F9 6C656374726963616C-
+    49 00000102 20726573697374656E-
+    49 0000010B 636520696E20746865-
+    49 00000114 2073797374656D2061-
+    49 0000011D 7420796F7572207369-
+    49 00000126 746520286F686D7329-
+    49 0000012F 3A2000             
+    50 00000132 666172616461793A20-     prompt_seconds db "faraday: Please enter the time your system was operating (seconds): ", 0
+    50 0000013B 506C6561736520656E-
+    50 00000144 746572207468652074-
+    50 0000014D 696D6520796F757220-
+    50 00000156 73797374656D207761-
+    50 0000015F 73206F706572617469-
+    50 00000168 6E6720287365636F6E-
+    50 00000171 6473293A2000       
     51                                  
-    52 00000289 256C6600                floatform db "%lf", 0
-    53 0000028D 257300                  stringform db "%s", 0
+    52 00000177 0A0A66617261646179-     thankyou_msg_1 db 10, 10, "faraday: Thank you %s. ", 0
+    52 00000180 3A205468616E6B2079-
+    52 00000189 6F752025732E2000   
+    53 00000191 5765206174204D616A-     thankyou_msg_2 db "We at Majestic are pleased to inform you that your system performed %lf joules of work.", 10, 0
+    53 0000019A 657374696320617265-
+    53 000001A3 20706C656173656420-
+    53 000001AC 746F20696E666F726D-
+    53 000001B5 20796F752074686174-
+    53 000001BE 20796F757220737973-
+    53 000001C7 74656D20706572666F-
+    53 000001D0 726D656420256C6620-
+    53 000001D9 6A6F756C6573206F66-
+    53 000001E2 20776F726B2E0A00   
     54                                  
-    55                                  segment .bss
-    56                                  
-    57                                  segment .text
-    58                                  faraday:
+    55 000001EA 0A666172616461793A-     congrats_msg_1 db 10, "faraday: Congratulations %s. Come back any time and make use of our software.", 10, 0
+    55 000001F3 20436F6E6772617475-
+    55 000001FC 6C6174696F6E732025-
+    55 00000205 732E20436F6D652062-
+    55 0000020E 61636B20616E792074-
+    55 00000217 696D6520616E64206D-
+    55 00000220 616B6520757365206F-
+    55 00000229 66206F757220736F66-
+    55 00000232 74776172652E0A00   
+    56 0000023A 45766572796F6E6520-     congrats_msg_2 db "Everyone with title %s is welcome to use our programs at a reduced price.", 10, 0
+    56 00000243 77697468207469746C-
+    56 0000024C 652025732069732077-
+    56 00000255 656C636F6D6520746F-
+    56 0000025E 20757365206F757220-
+    56 00000267 70726F6772616D7320-
+    56 00000270 617420612072656475-
+    56 00000279 636564207072696365-
+    56 00000282 2E0A00             
+    57                                  
+    58 00000285 666172616461793A20-     invalid_msg db "faraday: Invalid input. Please try again.", 10, 0
+    58 0000028E 496E76616C69642069-
+    58 00000297 6E7075742E20506C65-
+    58 000002A0 617365207472792061-
+    58 000002A9 6761696E2E0A00     
     59                                  
-    60                                  ; ============= Backup GPRs ============================
-    61 00000000 55                      push rbp
-    62 00000001 4889E5                  mov rbp, rsp
-    63 00000004 53                      push rbx
-    64 00000005 51                      push rcx
-    65 00000006 52                      push rdx
-    66 00000007 56                      push rsi
-    67 00000008 57                      push rdi
-    68 00000009 4150                    push r8
-    69 0000000B 4151                    push r9
-    70 0000000D 4152                    push r10
-    71 0000000F 4153                    push r11
-    72 00000011 4154                    push r12
-    73 00000013 4155                    push r13
-    74 00000015 4156                    push r14
-    75 00000017 4157                    push r15
-    76 00000019 9C                      pushf
-    77                                  
-    78                                  ; =============== Print prompt_name =====================
-    79 0000001A B800000000              mov rax, 0
-    80 0000001F 48BF-                   mov rdi, stringform
-    80 00000021 [8D02000000000000] 
-    81 00000029 48BE-                   mov rsi, prompt_name
-    81 0000002B [0000000000000000] 
-    82 00000033 E8(00000000)            call printf
-    83                                  
-    84                                  ; =============== Print prompt_title ====================
-    85 00000038 B800000000              mov rax, 0
-    86 0000003D 48BF-                   mov rdi, stringform
-    86 0000003F [8D02000000000000] 
-    87 00000047 48BE-                   mov rsi, prompt_title
-    87 00000049 [2200000000000000] 
-    88 00000051 E8(00000000)            call printf
-    89                                  
-    90                                  ; =============== Print welcome_msg =====================
-    91 00000056 B800000000              mov rax, 0
-    92 0000005B 48BF-                   mov rdi, stringform
-    92 0000005D [8D02000000000000] 
-    93 00000065 48BE-                   mov rsi, welcome_msg
-    93 00000067 [5400000000000000] 
-    94 0000006F E8(00000000)            call printf
-    95                                  
-    96                                  ; =============== Print prompt_volts ====================
-    97 00000074 B800000000              mov rax, 0
-    98 00000079 48BF-                   mov rdi, stringform
-    98 0000007B [8D02000000000000] 
-    99 00000083 48BE-                   mov rsi, prompt_volts
-    99 00000085 [8D00000000000000] 
-   100 0000008D E8(00000000)            call printf
-   101                                  
-   102                                  ; =============== Print prompt_ohms =====================
-   103 00000092 B800000000              mov rax, 0
-   104 00000097 48BF-                   mov rdi, stringform
-   104 00000099 [8D02000000000000] 
-   105 000000A1 48BE-                   mov rsi, prompt_ohms
-   105 000000A3 [E000000000000000] 
-   106 000000AB E8(00000000)            call printf
-   107                                  
-   108                                  ; =============== Print prompt_seconds ==================
-   109 000000B0 B800000000              mov rax, 0
-   110 000000B5 48BF-                   mov rdi, stringform
-   110 000000B7 [8D02000000000000] 
-   111 000000BF 48BE-                   mov rsi, prompt_seconds
-   111 000000C1 [3501000000000000] 
-   112 000000C9 E8(00000000)            call printf
-   113                                  
-   114                                  ; =============== Print thankyou_msg_1 ==================
-   115 000000CE B800000000              mov rax, 0
-   116 000000D3 48BF-                   mov rdi, stringform
-   116 000000D5 [8D02000000000000] 
-   117 000000DD 48BE-                   mov rsi, thankyou_msg_1
-   117 000000DF [7B01000000000000] 
-   118 000000E7 E8(00000000)            call printf
-   119                                  
-   120                                  ; =============== Print thankyou_msg_2 ==================
-   121 000000EC B800000000              mov rax, 0
-   122 000000F1 48BF-                   mov rdi, stringform
-   122 000000F3 [8D02000000000000] 
-   123 000000FB 48BE-                   mov rsi, thankyou_msg_2
-   123 000000FD [9501000000000000] 
-   124 00000105 E8(00000000)            call printf
-   125                                  
-   126                                  ; =============== Print congrats_msg_1 ==================
-   127 0000010A B800000000              mov rax, 0
-   128 0000010F 48BF-                   mov rdi, stringform
-   128 00000111 [8D02000000000000] 
-   129 00000119 48BE-                   mov rsi, congrats_msg_1
-   129 0000011B [EE01000000000000] 
-   130 00000123 E8(00000000)            call printf
-   131                                  
-   132                                  ; =============== Print congrats_msg_2 ==================
-   133 00000128 B800000000              mov rax, 0
-   134 0000012D 48BF-                   mov rdi, stringform
-   134 0000012F [8D02000000000000] 
-   135 00000137 48BE-                   mov rsi, congrats_msg_2
-   135 00000139 [3E02000000000000] 
-   136 00000141 E8(00000000)            call printf
+    60 000002B0 256C6600                floatform db "%lf", 0
+    61 000002B4 257300                  stringform db "%s", 0
+    62                                  
+    63                                  segment .bss
+    64 00000000 <res 0000003C>          name_array resb max_size
+    65 0000003C <res 0000003C>          title_array resb max_size
+    66 00000078 <res 0000003C>          voltage_array resb max_size
+    67 000000B4 <res 0000003C>          ohm_array resb max_size
+    68 000000F0 <res 0000003C>          time_array resb max_size
+    69                                  
+    70                                  segment .text
+    71                                  faraday:
+    72                                  
+    73                                  ; ============= Backup GPRs ============================
+    74 00000000 55                      push rbp
+    75 00000001 4889E5                  mov rbp, rsp
+    76 00000004 53                      push rbx
+    77 00000005 51                      push rcx
+    78 00000006 52                      push rdx
+    79 00000007 56                      push rsi
+    80 00000008 57                      push rdi
+    81 00000009 4150                    push r8
+    82 0000000B 4151                    push r9
+    83 0000000D 4152                    push r10
+    84 0000000F 4153                    push r11
+    85 00000011 4154                    push r12
+    86 00000013 4155                    push r13
+    87 00000015 4156                    push r14
+    88 00000017 4157                    push r15
+    89 00000019 9C                      pushf
+    90                                  
+    91                                  ; =============== Print prompt_name =====================
+    92 0000001A B800000000              mov rax, 0
+    93 0000001F 48BF-                   mov rdi, stringform
+    93 00000021 [B402000000000000] 
+    94 00000029 48BE-                   mov rsi, prompt_name
+    94 0000002B [0000000000000000] 
+    95 00000033 E8(00000000)            call printf
+    96                                  
+    97                                  ; =============== Get name from user ====================
+    98 00000038 B800000000              mov rax, 0
+    99 0000003D 48BF-                   mov rdi, name_array
+    99 0000003F [0000000000000000] 
+   100 00000047 BE3C000000              mov rsi, max_size
+   101 0000004C 488B1425[00000000]      mov rdx, [stdin]
+   102 00000054 E8(00000000)            call fgets
+   103                                  
+   104                                  ; remove \n char
+   105 00000059 B800000000              mov rax, 0
+   106 0000005E 48BF-                   mov rdi, name_array
+   106 00000060 [0000000000000000] 
+   107 00000068 E8(00000000)            call strlen
+   108 0000006D C680[FFFFFFFF]00        mov byte[name_array+rax-1], byte 0
+   109                                  
+   110                                  ; =============== Print prompt_title ====================
+   111 00000074 B800000000              mov rax, 0
+   112 00000079 48BF-                   mov rdi, prompt_title
+   112 0000007B [2200000000000000] 
+   113 00000083 48BE-                   mov rsi, stringform
+   113 00000085 [B402000000000000] 
+   114 0000008D E8(00000000)            call printf
+   115                                  
+   116                                  ; =============== Get title from user ===================
+   117 00000092 B800000000              mov rax, 0
+   118 00000097 48BF-                   mov rdi, title_array
+   118 00000099 [3C00000000000000] 
+   119 000000A1 BE3C000000              mov rsi, max_size
+   120 000000A6 488B1425[00000000]      mov rdx, [stdin]
+   121 000000AE E8(00000000)            call fgets
+   122                                  
+   123                                  ; remove \n char
+   124 000000B3 B800000000              mov rax, 0
+   125 000000B8 48BF-                   mov rdi, title_array
+   125 000000BA [3C00000000000000] 
+   126 000000C2 E8(00000000)            call strlen
+   127 000000C7 C680[3B000000]00        mov byte[title_array+rax-1], byte 0
+   128                                  
+   129                                  ; =============== Print welcome_msg =====================
+   130 000000CE B800000000              mov rax, 0
+   131 000000D3 48BF-                   mov rdi, welcome_msg
+   131 000000D5 [5300000000000000] 
+   132 000000DD 48BE-                   mov rsi, title_array
+   132 000000DF [3C00000000000000] 
+   133 000000E7 E8(00000000)            call printf
+   134                                  
+   135                                  ; =============== begin_num =============================
+   136                                  begin_num:
    137                                  
-   138                                  ; =============== Restore GPRs ==========================
-   139 00000146 9D                      popf
-   140 00000147 415F                    pop r15
-   141 00000149 415E                    pop r14
-   142 0000014B 415D                    pop r13
-   143 0000014D 415C                    pop r12
-   144 0000014F 415B                    pop r11
-   145 00000151 415A                    pop r10
-   146 00000153 4159                    pop r9
-   147 00000155 4158                    pop r8
-   148 00000157 5F                      pop rdi
-   149 00000158 5E                      pop rsi
-   150 00000159 5A                      pop rdx
-   151 0000015A 59                      pop rcx
-   152 0000015B 5B                      pop rbx
-   153 0000015C 5D                      pop rbp
+   138                                  ; =============== Print prompt_volts ====================
+   139 000000EC B800000000              mov rax, 0
+   140 000000F1 48BF-                   mov rdi, prompt_volts
+   140 000000F3 [8B00000000000000] 
+   141 000000FB 48BE-                   mov rsi, stringform
+   141 000000FD [B402000000000000] 
+   142 00000105 E8(00000000)            call printf
+   143                                  
+   144                                  ; =============== Get voltage from user =================
+   145 0000010A B800000000              mov rax, 0
+   146 0000010F 48BF-                   mov rdi, voltage_array
+   146 00000111 [7800000000000000] 
+   147 00000119 BE3C000000              mov rsi, max_size
+   148 0000011E 488B1425[00000000]      mov rdx, [stdin]
+   149 00000126 E8(00000000)            call fgets
+   150                                  
+   151                                  ; remove \n char
+   152 0000012B B800000000              mov rax, 0
+   153 00000130 48BF-                   mov rdi, voltage_array
+   153 00000132 [7800000000000000] 
+   154 0000013A E8(00000000)            call strlen
+   155 0000013F C680[77000000]00        mov byte[voltage_array+rax-1], byte 0
+   156                                  
+   157                                  ; check if input is valid
+   158 00000146 B800000000              mov rax, 0
+   159 0000014B 48BF-                   mov rdi, voltage_array
+   159 0000014D [7800000000000000] 
+   160 00000155 E8(00000000)            call isfloat ; rax holds 0 if false and non-0 if true
+   161 0000015A 4883F800                cmp rax, 0
+   162 0000015E 7400                    je invalid_voltage
+   163                                  
+   164                                  invalid_voltage:
+   165 00000160 B800000000              mov rax, 0
+   166 00000165 48BF-                   mov rdi, invalid_msg
+   166 00000167 [8502000000000000] 
+   167 0000016F 48BE-                   mov rsi, stringform
+   167 00000171 [B402000000000000] 
+   168 00000179 E8(00000000)            call printf
+   169 0000017E E969FFFFFF              jmp begin_num
+   170                                  
+   171                                  ; input is valid
+   172 00000183 B800000000              mov rax, 0
+   173 00000188 48BF-                   mov rdi, voltage_array
+   173 0000018A [7800000000000000] 
+   174 00000192 E8(00000000)            call atof ; convert # to xmm0
+   175                                  
+   176                                  ; =============== Print prompt_ohms =====================
+   177 00000197 B800000000              mov rax, 0
+   178 0000019C 48BF-                   mov rdi, prompt_ohms
+   178 0000019E [DE00000000000000] 
+   179 000001A6 48BE-                   mov rsi, stringform
+   179 000001A8 [B402000000000000] 
+   180 000001B0 E8(00000000)            call printf
+   181                                  
+   182                                  ; =============== Get ohm from user =====================
+   183 000001B5 B800000000              mov rax, 0
+   184 000001BA 48BF-                   mov rdi, ohm_array
+   184 000001BC [B400000000000000] 
+   185 000001C4 BE3C000000              mov rsi, max_size
+   186 000001C9 488B1425[00000000]      mov rdx, [stdin]
+   187 000001D1 E8(00000000)            call fgets
+   188                                  
+   189                                  ; remove \n char
+   190 000001D6 B800000000              mov rax, 0
+   191 000001DB 48BF-                   mov rdi, ohm_array
+   191 000001DD [B400000000000000] 
+   192 000001E5 E8(00000000)            call strlen
+   193 000001EA C680[B3000000]00        mov byte[ohm_array+rax-1], byte 0
+   194                                  
+   195                                  ; check if input is valid
+   196 000001F1 B800000000              mov rax, 0
+   197 000001F6 48BF-                   mov rdi, ohm_array
+   197 000001F8 [B400000000000000] 
+   198 00000200 E8(00000000)            call isfloat ; rax holds 0 if false and non-0 if true
+   199 00000205 4883F800                cmp rax, 0
+   200 00000209 7400                    je invalid_ohm
+   201                                  
+   202                                  invalid_ohm:
+   203 0000020B B800000000              mov rax, 0
+   204 00000210 48BF-                   mov rdi, invalid_msg
+   204 00000212 [8502000000000000] 
+   205 0000021A 48BE-                   mov rsi, stringform
+   205 0000021C [B402000000000000] 
+   206 00000224 E8(00000000)            call printf
+   207 00000229 E9BEFEFFFF              jmp begin_num
+   208                                  
+   209                                  ; input is valid
+   210 0000022E B800000000              mov rax, 0
+   211 00000233 48BF-                   mov rdi, ohm_array
+   211 00000235 [B400000000000000] 
+   212 0000023D E8(00000000)            call atof ; convert # to xmm0
+   213                                  
+   214                                  ; =============== Print prompt_seconds ==================
+   215 00000242 B800000000              mov rax, 0
+   216 00000247 48BF-                   mov rdi, prompt_seconds
+   216 00000249 [3201000000000000] 
+   217 00000251 48BE-                   mov rsi, stringform
+   217 00000253 [B402000000000000] 
+   218 0000025B E8(00000000)            call printf
+   219                                  
+   220                                  ; =============== Get time from user ====================
+   221 00000260 B800000000              mov rax, 0
+   222 00000265 48BF-                   mov rdi, time_array
+   222 00000267 [F000000000000000] 
+   223 0000026F BE3C000000              mov rsi, max_size
+   224 00000274 488B1425[00000000]      mov rdx, [stdin]
+   225 0000027C E8(00000000)            call fgets
+   226                                  
+   227                                  ; remove \n char
+   228 00000281 B800000000              mov rax, 0
+   229 00000286 48BF-                   mov rdi, time_array
+   229 00000288 [F000000000000000] 
+   230 00000290 E8(00000000)            call strlen
+   231 00000295 C680[EF000000]00        mov byte[time_array+rax-1], byte 0
+   232                                  
+   233                                  ; check if input is valid
+   234 0000029C B800000000              mov rax, 0
+   235 000002A1 48BF-                   mov rdi, time_array
+   235 000002A3 [F000000000000000] 
+   236 000002AB E8(00000000)            call isfloat ; rax holds 0 if false and non-0 if true
+   237 000002B0 4883F800                cmp rax, 0
+   238 000002B4 7400                    je invalid_time
+   239                                  
+   240                                  invalid_time:
+   241 000002B6 B800000000              mov rax, 0
+   242 000002BB 48BF-                   mov rdi, invalid_msg
+   242 000002BD [8502000000000000] 
+   243 000002C5 48BE-                   mov rsi, stringform
+   243 000002C7 [B402000000000000] 
+   244 000002CF E8(00000000)            call printf
+   245 000002D4 E913FEFFFF              jmp begin_num
+   246                                  
+   247                                  ; input is valid
+   248 000002D9 B800000000              mov rax, 0
+   249 000002DE 48BF-                   mov rdi, time_array
+   249 000002E0 [F000000000000000] 
+   250 000002E8 E8(00000000)            call atof ; convert # to xmm0
+   251                                  
+   252                                  ; =============== Quit ==================================
+   253                                  quit:
+   254                                  
+   255                                  ; =============== Print thankyou_msg_1 ==================
+   256 000002ED B800000000              mov rax, 0
+   257 000002F2 48BF-                   mov rdi, thankyou_msg_1
+   257 000002F4 [7701000000000000] 
+   258 000002FC 48BE-                   mov rsi, title_array
+   258 000002FE [3C00000000000000] 
+   259 00000306 E8(00000000)            call printf
+   260                                  
+   261                                  ; =============== Print thankyou_msg_2 ==================
+   262 0000030B B800000000              mov rax, 0
+   263 00000310 48BF-                   mov rdi, thankyou_msg_2
+   263 00000312 [9101000000000000] 
+   264 0000031A 48BE-                   mov rsi, stringform
+   264 0000031C [B402000000000000] 
+   265 00000324 E8(00000000)            call printf
+   266                                  
+   267                                  ; =============== Print congrats_msg_1 ==================
+   268 00000329 B800000000              mov rax, 0
+   269 0000032E 48BF-                   mov rdi, congrats_msg_1
+   269 00000330 [EA01000000000000] 
+   270 00000338 48BE-                   mov rsi, name_array
+   270 0000033A [0000000000000000] 
+   271 00000342 E8(00000000)            call printf
+   272                                  
+   273                                  ; =============== Print congrats_msg_2 ==================
+   274 00000347 B800000000              mov rax, 0
+   275 0000034C 48BF-                   mov rdi, congrats_msg_2
+   275 0000034E [3A02000000000000] 
+   276 00000356 48BE-                   mov rsi, title_array
+   276 00000358 [3C00000000000000] 
+   277 00000360 E8(00000000)            call printf
+   278                                  
+   279                                  ; =============== Restore GPRs ==========================
+   280 00000365 9D                      popf
+   281 00000366 415F                    pop r15
+   282 00000368 415E                    pop r14
+   283 0000036A 415D                    pop r13
+   284 0000036C 415C                    pop r12
+   285 0000036E 415B                    pop r11
+   286 00000370 415A                    pop r10
+   287 00000372 4159                    pop r9
+   288 00000374 4158                    pop r8
+   289 00000376 5F                      pop rdi
+   290 00000377 5E                      pop rsi
+   291 00000378 5A                      pop rdx
+   292 00000379 59                      pop rcx
+   293 0000037A 5B                      pop rbx
+   294 0000037B 5D                      pop rbp
+   295                                  
+   296 0000037C C3                      ret

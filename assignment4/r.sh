@@ -17,8 +17,11 @@ gcc -c -m64 -Wall -fno-pie -no-pie -std=c17 -o ampere.o ampere.c
 echo "bash: Assembling faraday.asm..."
 nasm -f elf64 -l faraday.lis -o faraday.o faraday.asm
 
-echo "bash: Linking the 2 created object files..."
-gcc -m64 -fno-pie -no-pie -std=c17 -o a.out ampere.o faraday.o
+echo "bash: Assembling isfloat.asm..."
+nasm -f elf64 -l isfloat.lis -o isfloat.o isfloat.asm
+
+echo "bash: Linking the 3 created object files..."
+gcc -m64 -fno-pie -no-pie -std=c17 -o a.out ampere.o faraday.o isfloat.o
 
 echo "bash: Running program..."
 ./a.out
