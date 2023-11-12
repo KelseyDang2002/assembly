@@ -1,6 +1,6 @@
-// Program Name: ---
-// Subject: CPSC 240-03 <Midterm>
-// This program demonstrates passing an array to a called subprogram and sorting it.
+// Program Name: Strings
+// Subject: CPSC 240-03 <String>
+// This program demonstrates string operations with fgets.
 
 // Copyright (C) 2023 Kelsey Dang
 
@@ -15,19 +15,19 @@
 //   Email: kdangdo2002@csu.fullerton.edu
 
 // Program Information
-//   Program Name: ---
-//   Program Languages: ---
-//   Due Date: 10/25/23
+//   Program Name: Strings
+//   Program Languages: C, Assembly X86-64, bash
+//   Due Date: 11/12/23
 //   Operating System: Tuffix VM on Windows 10 computer
 
 // Purpose
-//   This is the driver file that calls director.asm in Sort by Pointers.
+//   This is the driver file that calls faraday.asm in Strings.
 
 // File Information
-//   Filename: ---
-//   Language: ---
-//   Compile: g++ -c -m64 -Wall -fno-pie -no-pie -std=c++17 -o main.o main.cpp
-//   Link: g++ -m64 -fno-pie -no-pie -std=c++17 -o a.out main.o director.o input_array.o output_array.o sortpointers.o
+//   Filename: ampere.c
+//   Language: C
+//   Compile: gcc -c -m64 -Wall -fno-pie -no-pie -std=c17 -o ampere.o ampere.c
+//   Link: gcc -m64 -fno-pie -no-pie -std=c17 -o a.out ampere.o faraday.o isfloat.o
 
 #include <stdio.h>
 
@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
   printf("\nampere: Welcome to Majestic Power Systems, LLC\n");
   printf("ampere: Project Director, Sharon Winners, Senior Software Engineer.\n\n");
   double return_code = faraday();
-  printf("\nampere: The main function receieved this number %lf", return_code);
+  printf("\nampere: The main function receieved this number %.2lf", return_code);
   printf(" and will keep it for future study.\n");
   printf("ampere: A zero will be returned to the operating system. Bye.\n\n");
   return 0;

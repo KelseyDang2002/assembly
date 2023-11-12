@@ -1,6 +1,6 @@
-; Program Name: ---
-; Subject: CPSC 240-03 <Midterm>
-; This program demonstrates passing an array to a called subprogram and sorting it.
+; Program Name: Strings
+; Subject: CPSC 240-03 <Strings>
+; This program demonstrates string operations with fgets.
 
 ; Copyright (C) 2023 Kelsey Dang
 
@@ -15,20 +15,20 @@
 ;   Email: kdangdo2002@csu.fullerton.edu
 ;
 ; Program Information
-;   Program Name: ---
-;   Program Languages: ---
+;   Program Name: Strings
+;   Program Languages: C, Assembly X86-64, bash
 ;   Due Date: 11/12/23
 ;   Operating System: Tuffix VM on Windows 10 computer
 
 ; Purpose
-;   This is the director file calls input_array.asm, output_array.c, sortpointers.c in Sort by Pointers.
-;   This file gets called by main.cpp.
+;   This is the faraday file calls isfloat.asm in Strings.
+;   This file gets called by ampere.c.
 
 ; File Information
-;   Filename: ---
-;   Language: x86-64 assembly
-;   Compile: nasm -f elf64 -l director.lis -o director.o director.asm
-;   Link: g++ -m64 -fno-pie -no-pie -std=c++17 -o a.out main.o director.o input_array.o output_array.o sortpointers.o
+;   Filename: faraday.asm
+;   Language: Assembly X86-64
+;   Compile: nasm -f elf64 -l faraday.lis -o faraday.o faraday.asm
+;   Link: gcc -m64 -fno-pie -no-pie -std=c17 -o a.out ampere.o faraday.o isfloat.o
 
 global faraday
 extern isfloat
@@ -43,19 +43,20 @@ segment .data
 prompt_name db "faraday: Please enter your name: ", 0
 prompt_title db "faraday: Please enter your title or profession: ", 0
 
-welcome_msg db "faraday: We always welcome a %s to our electrical lab.", 10, 0
+welcome_msg db "faraday: We always welcome a(n) %s to our electrical lab.", 10, 0
 
 prompt_volts db 10, "faraday: Please enter the voltage of the electrical system at your site (volts): ", 0
-prompt_ohms db "faraday: Please enter the electrical resistence in the system at your site (ohms): ", 0
+prompt_ohms db "faraday: Please enter the electrical resistance in the system at your site (ohms): ", 0
 prompt_seconds db "faraday: Please enter the time your system was operating (seconds): ", 0
 
-thankyou_msg_1 db 10, 10, "faraday: Thank you %s. ", 0
-thankyou_msg_2 db "We at Majestic are pleased to inform you that your system performed %lf joules of work.", 10, 0
+thankyou_msg_1 db 10, "faraday: Thank you %s. ", 0
+thankyou_msg_2 db "We at Majestic are pleased to inform you that your system performed %.2lf joules of work.", 10, 0
 
 congrats_msg_1 db 10, "faraday: Congratulations %s. Come back any time and make use of our software.", 10, 0
 congrats_msg_2 db "Everyone with title %s is welcome to use our programs at a reduced price.", 10, 0
 
 invalid_msg db "faraday: Invalid input. Please try again.", 10, 0
+debug_msg db "faraday: Float entered: %lf", 10, 0
 
 floatform db "%lf", 0
 stringform db "%s", 0
@@ -142,36 +143,37 @@ mov rsi, stringform
 call printf
 
 ; =============== Get voltage from user =================
-mov rax, 0
-mov rdi, voltage_array
-mov rsi, max_size
-mov rdx, [stdin]
-call fgets
+voltage_input:
+  mov rax, 0
+  mov rdi, voltage_array
+  mov rsi, max_size
+  mov rdx, [stdin]
+  call fgets
 
-; remove \n char
-mov rax, 0
-mov rdi, voltage_array
-call strlen
-mov byte[voltage_array+rax-1], byte 0
+  ; remove \n char
+  mov rax, 0
+  mov rdi, voltage_array
+  call strlen
+  mov byte[voltage_array+rax-1], byte 0
 
-; check if input is valid
-mov rax, 0
-mov rdi, voltage_array
-call isfloat ; rax holds 0 if false and non-0 if true
-cmp rax, 0
-je invalid_voltage
+  ; check if input is valid
+  mov rax, 0
+  mov rdi, voltage_array
+  call isfloat          ; rax holds 0 if false and non-0 if true
+  cmp rax, 0
+  je invalid
 
-invalid_voltage:
-mov rax, 0
-mov rdi, invalid_msg
-mov rsi, stringform
-call printf
-jmp begin_num
+  ; input is valid
+  mov rax, 0
+  mov rdi, voltage_array
+  call atof             ; convert # to xmm0
+  movsd xmm12, xmm0
 
-; input is valid
-mov rax, 0
-mov rdi, voltage_array
-call atof ; convert # to xmm0
+  ; print input
+  ; mov rax, 1
+  ; mov rdi, debug_msg
+  ; movsd xmm0, xmm12
+  ; call printf
 
 ; =============== Print prompt_ohms =====================
 mov rax, 0
@@ -180,36 +182,37 @@ mov rsi, stringform
 call printf
 
 ; =============== Get ohm from user =====================
-mov rax, 0
-mov rdi, ohm_array
-mov rsi, max_size
-mov rdx, [stdin]
-call fgets
+ohm_input:
+  mov rax, 0
+  mov rdi, ohm_array
+  mov rsi, max_size
+  mov rdx, [stdin]
+  call fgets
 
-; remove \n char
-mov rax, 0
-mov rdi, ohm_array
-call strlen
-mov byte[ohm_array+rax-1], byte 0
+  ; remove \n char
+  mov rax, 0
+  mov rdi, ohm_array
+  call strlen
+  mov byte[ohm_array+rax-1], byte 0
 
-; check if input is valid
-mov rax, 0
-mov rdi, ohm_array
-call isfloat ; rax holds 0 if false and non-0 if true
-cmp rax, 0
-je invalid_ohm
+  ; check if input is valid
+  mov rax, 0
+  mov rdi, ohm_array
+  call isfloat          ; rax holds 0 if false and non-0 if true
+  cmp rax, 0
+  je invalid
 
-invalid_ohm:
-mov rax, 0
-mov rdi, invalid_msg
-mov rsi, stringform
-call printf
-jmp begin_num
+  ; input is valid
+  mov rax, 0
+  mov rdi, ohm_array
+  call atof             ; convert # to xmm0
+  movsd xmm13, xmm0
 
-; input is valid
-mov rax, 0
-mov rdi, ohm_array
-call atof ; convert # to xmm0
+  ; print input
+  ; mov rax, 1
+  ; mov rdi, debug_msg
+  ; movsd xmm0, xmm13
+  ; call printf
 
 ; =============== Print prompt_seconds ==================
 mov rax, 0
@@ -218,39 +221,63 @@ mov rsi, stringform
 call printf
 
 ; =============== Get time from user ====================
-mov rax, 0
-mov rdi, time_array
-mov rsi, max_size
-mov rdx, [stdin]
-call fgets
+time_input:
+  mov rax, 0
+  mov rdi, time_array
+  mov rsi, max_size
+  mov rdx, [stdin]
+  call fgets
 
-; remove \n char
-mov rax, 0
-mov rdi, time_array
-call strlen
-mov byte[time_array+rax-1], byte 0
+  ; remove \n char
+  mov rax, 0
+  mov rdi, time_array
+  call strlen
+  mov byte[time_array+rax-1], byte 0
 
-; check if input is valid
-mov rax, 0
-mov rdi, time_array
-call isfloat ; rax holds 0 if false and non-0 if true
-cmp rax, 0
-je invalid_time
+  ; check if input is valid
+  mov rax, 0
+  mov rdi, time_array
+  call isfloat          ; rax holds 0 if false and non-0 if true
+  cmp rax, 0
+  je invalid
 
-invalid_time:
+  ; input is valid
+  mov rax, 0
+  mov rdi, time_array
+  call atof             ; convert # to xmm0
+  movsd xmm14, xmm0
+
+  ; print input
+  ; mov rax, 1
+  ; mov rdi, debug_msg
+  ; movsd xmm0, xmm14
+  ; call printf
+
+; =============== Jump to continue if valid =============
+jmp continue
+
+; =============== Invalid input =========================
+invalid:
 mov rax, 0
 mov rdi, invalid_msg
 mov rsi, stringform
 call printf
 jmp begin_num
 
-; input is valid
-mov rax, 0
-mov rdi, time_array
-call atof ; convert # to xmm0
+; =============== Continue ==============================
+continue:
 
-; =============== Quit ==================================
-quit:
+; =============== Calculate joules ======================
+; =============== W = (V^2) * T / R =====================
+; xmm12 = voltage
+; xmm13 = ohm
+; xmm14 = time
+movsd xmm15, xmm12      ; copy voltage (xmm12) into xmm15
+mulsd xmm15, xmm12      ; voltage (xmm15) * voltage (xmm12) = V^2
+
+mulsd xmm15, xmm14      ; V^2 (xmm15) * T (xmm14)
+
+divsd xmm15, xmm13      ; [(V^2) * T] / R (xmm13) = W (joules)
 
 ; =============== Print thankyou_msg_1 ==================
 mov rax, 0
@@ -259,9 +286,10 @@ mov rsi, title_array
 call printf
 
 ; =============== Print thankyou_msg_2 ==================
-mov rax, 0
+mov rax, 1
 mov rdi, thankyou_msg_2
 mov rsi, stringform
+movsd xmm0, xmm15
 call printf
 
 ; =============== Print congrats_msg_1 ==================
@@ -275,6 +303,9 @@ mov rax, 0
 mov rdi, congrats_msg_2
 mov rsi, title_array
 call printf
+
+; =============== Send joules to main ===================
+movsd xmm0, xmm15
 
 ; =============== Restore GPRs ==========================
 popf
