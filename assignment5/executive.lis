@@ -1,0 +1,215 @@
+     1                                  ; Program Name: Strings
+     2                                  ; Subject: CPSC 240-03 <Strings>
+     3                                  ; This program demonstrates string operations with fgets.
+     4                                  
+     5                                  ; Copyright (C) 2023 Kelsey Dang
+     6                                  
+     7                                  ; This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+     8                                  ; License version 3 as published by the Free Software Foundation.  This program is distributed in the hope that it
+     9                                  ; will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+    10                                  ; PARTICULAR PURPOSE.  See the GNU General Public License for more details.  A copy of the GNU General Public
+    11                                  ; License v3 is available here:  <https://www.gnu.org/licenses/>.
+    12                                  
+    13                                  ; Author Information
+    14                                  ;   Author: Kelsey Dang
+    15                                  ;   Email: kdangdo2002@csu.fullerton.edu
+    16                                  ;
+    17                                  ; Program Information
+    18                                  ;   Program Name: Strings
+    19                                  ;   Program Languages: C, Assembly X86-64, bash
+    20                                  ;   Due Date: 11/12/23
+    21                                  ;   Operating System: Tuffix VM on Windows 10 computer
+    22                                  
+    23                                  ; Purpose
+    24                                  ;   This is the faraday file calls isfloat.asm in Strings.
+    25                                  ;   This file gets called by ampere.c.
+    26                                  
+    27                                  ; File Information
+    28                                  ;   Filename: faraday.asm
+    29                                  ;   Language: Assembly X86-64
+    30                                  ;   Compile: nasm -f elf64 -l faraday.lis -o faraday.o faraday.asm
+    31                                  ;   Link: gcc -m64 -fno-pie -no-pie -std=c17 -o a.out ampere.o faraday.o isfloat.o
+    32                                  
+    33                                  global executive
+    34                                  extern fgets
+    35                                  extern strlen
+    36                                  extern atof
+    37                                  extern stdin
+    38                                  extern printf
+    39                                  max_size equ 60
+    40                                  
+    41                                  segment .data
+    42 00000000 657865637574697665-     prompt_name db "executive: Please enter your name: ", 0
+    42 00000009 3A20506C6561736520-
+    42 00000012 656E74657220796F75-
+    42 0000001B 72206E616D653A2000 
+    43 00000024 657865637574697665-     prompt_title db "executive: Please enter your title: ", 0
+    43 0000002D 3A20506C6561736520-
+    43 00000036 656E74657220796F75-
+    43 0000003F 72207469746C653A20-
+    43 00000048 00                 
+    44 00000049 657865637574697665-     welcome_msg db "executive: Nice to meet you %s %s.", 10, 0
+    44 00000052 3A204E69636520746F-
+    44 0000005B 206D65657420796F75-
+    44 00000064 2025732025732E0A00 
+    45                                  
+    46 0000006D 657865637574697665-     desc_msg db "executive: This program will generate 64-bit IEEE float numbers.", 10, 0
+    46 00000076 3A2054686973207072-
+    46 0000007F 6F6772616D2077696C-
+    46 00000088 6C2067656E65726174-
+    46 00000091 652036342D62697420-
+    46 0000009A 4945454520666C6F61-
+    46 000000A3 74206E756D62657273-
+    46 000000AC 2E0A00             
+    47 000000AF 657865637574697665-     prompt_numbers db "executive: How many numbers do you want? Today's limit is 100 per customer: ", 0
+    47 000000B8 3A20486F77206D616E-
+    47 000000C1 79206E756D62657273-
+    47 000000CA 20646F20796F752077-
+    47 000000D3 616E743F20546F6461-
+    47 000000DC 792773206C696D6974-
+    47 000000E5 206973203130302070-
+    47 000000EE 657220637573746F6D-
+    47 000000F7 65723A2000         
+    48 000000FC 657865637574697665-     array_msg db "executive: Your numbers have been stored in an array. Here is that array.", 10, 0
+    48 00000105 3A20596F7572206E75-
+    48 0000010E 6D6265727320686176-
+    48 00000117 65206265656E207374-
+    48 00000120 6F72656420696E2061-
+    48 00000129 6E2061727261792E20-
+    48 00000132 486572652069732074-
+    48 0000013B 686174206172726179-
+    48 00000144 2E0A00             
+    49                                  
+    50 00000147 657865637574697665-     normalize_msg_1 db "executive: The array will now be normalized to the range 1.0 to 2.0.", 10, 0
+    50 00000150 3A2054686520617272-
+    50 00000159 61792077696C6C206E-
+    50 00000162 6F77206265206E6F72-
+    50 0000016B 6D616C697A65642074-
+    50 00000174 6F207468652072616E-
+    50 0000017D 676520312E3020746F-
+    50 00000186 20322E302E0A00     
+    51 0000018D 657865637574697665-     normalize_msg_2 db "executive: Here is the noramlized array.", 10, 0
+    51 00000196 3A2048657265206973-
+    51 0000019F 20746865206E6F7261-
+    51 000001A8 6D6C697A6564206172-
+    51 000001B1 7261792E0A00       
+    52                                  
+    53 000001B7 657865637574697665-     goodbye_msg db "executive: Good-bye %s. You are welcome any time.", 10, 0
+    53 000001C0 3A20476F6F642D6279-
+    53 000001C9 652025732E20596F75-
+    53 000001D2 206172652077656C63-
+    53 000001DB 6F6D6520616E792074-
+    53 000001E4 696D652E0A00       
+    54                                  
+    55 000001EA 256C6600                floatform db "%lf", 0
+    56 000001EE 257300                  stringform db "%s", 0
+    57                                  
+    58                                  segment .bss
+    59 00000000 <res 0000003C>          name_array resb max_size
+    60 0000003C <res 0000003C>          title_array resb max_size
+    61                                  
+    62                                  segment .text
+    63                                  executive:
+    64                                  
+    65                                  ; ============= Backup GPRs ============================
+    66 00000000 55                      push rbp
+    67 00000001 4889E5                  mov rbp, rsp
+    68 00000004 53                      push rbx
+    69 00000005 51                      push rcx
+    70 00000006 52                      push rdx
+    71 00000007 56                      push rsi
+    72 00000008 57                      push rdi
+    73 00000009 4150                    push r8
+    74 0000000B 4151                    push r9
+    75 0000000D 4152                    push r10
+    76 0000000F 4153                    push r11
+    77 00000011 4154                    push r12
+    78 00000013 4155                    push r13
+    79 00000015 4156                    push r14
+    80 00000017 4157                    push r15
+    81 00000019 9C                      pushf
+    82                                  
+    83                                  ; =============== Print prompt_name =====================
+    84 0000001A B800000000              mov rax, 0
+    85 0000001F 48BF-                   mov rdi, prompt_name
+    85 00000021 [0000000000000000] 
+    86 00000029 48BE-                   mov rsi, stringform
+    86 0000002B [EE01000000000000] 
+    87 00000033 E8(00000000)            call printf
+    88                                  
+    89                                  ; =============== Get name from user ====================
+    90 00000038 B800000000              mov rax, 0
+    91 0000003D 48BF-                   mov rdi, name_array
+    91 0000003F [0000000000000000] 
+    92 00000047 BE3C000000              mov rsi, max_size
+    93 0000004C 488B1425[00000000]      mov rdx, [stdin]
+    94 00000054 E8(00000000)            call fgets
+    95                                  
+    96                                  ; remove \n char
+    97 00000059 B800000000              mov rax, 0
+    98 0000005E 48BF-                   mov rdi, name_array
+    98 00000060 [0000000000000000] 
+    99 00000068 E8(00000000)            call strlen
+   100 0000006D C680[FFFFFFFF]00        mov byte[name_array+rax-1], byte 0
+   101                                  
+   102                                  ; =============== Print prompt_title ====================
+   103 00000074 B800000000              mov rax, 0
+   104 00000079 48BF-                   mov rdi, prompt_title
+   104 0000007B [2400000000000000] 
+   105 00000083 48BE-                   mov rsi, stringform
+   105 00000085 [EE01000000000000] 
+   106 0000008D E8(00000000)            call printf
+   107                                  
+   108                                  ; =============== Get title from user ===================
+   109 00000092 B800000000              mov rax, 0
+   110 00000097 48BF-                   mov rdi, title_array
+   110 00000099 [3C00000000000000] 
+   111 000000A1 BE3C000000              mov rsi, max_size
+   112 000000A6 488B1425[00000000]      mov rdx, [stdin]
+   113 000000AE E8(00000000)            call fgets
+   114                                  
+   115                                  ; remove \n char
+   116 000000B3 B800000000              mov rax, 0
+   117 000000B8 48BF-                   mov rdi, title_array
+   117 000000BA [3C00000000000000] 
+   118 000000C2 E8(00000000)            call strlen
+   119 000000C7 C680[3B000000]00        mov byte[title_array+rax-1], byte 0
+   120                                  
+   121                                  ; =============== Print welcome_msg =====================
+   122 000000CE B800000000              mov rax, 0
+   123 000000D3 48BF-                   mov rdi, welcome_msg
+   123 000000D5 [4900000000000000] 
+   124 000000DD 48BE-                   mov rsi, title_array
+   124 000000DF [3C00000000000000] 
+   125 000000E7 48BA-                   mov rdx, name_array
+   125 000000E9 [0000000000000000] 
+   126 000000F1 E8(00000000)            call printf
+   127                                  
+   128                                  ; =============== Print desc_msg ========================
+   129 000000F6 B800000000              mov rax, 0
+   130 000000FB 48BF-                   mov rdi, desc_msg
+   130 000000FD [6D00000000000000] 
+   131 00000105 48BE-                   mov rsi, stringform
+   131 00000107 [EE01000000000000] 
+   132 0000010F E8(00000000)            call printf
+   133                                  
+   134                                  ; ===============
+   135                                  
+   136                                  ; =============== Restore GPRs ==========================
+   137 00000114 9D                      popf
+   138 00000115 415F                    pop r15
+   139 00000117 415E                    pop r14
+   140 00000119 415D                    pop r13
+   141 0000011B 415C                    pop r12
+   142 0000011D 415B                    pop r11
+   143 0000011F 415A                    pop r10
+   144 00000121 4159                    pop r9
+   145 00000123 4158                    pop r8
+   146 00000125 5F                      pop rdi
+   147 00000126 5E                      pop rsi
+   148 00000127 5A                      pop rdx
+   149 00000128 59                      pop rcx
+   150 00000129 5B                      pop rbx
+   151 0000012A 5D                      pop rbp
+   152                                  
+   153 0000012B C3                      ret
