@@ -1,0 +1,61 @@
+     1                                  global manager
+     2                                  extern printf
+     3                                  extern scanf
+     4                                  max_size equ 60
+     5                                  
+     6                                  segment .data
+     7 00000000 6D616E616765723A20-     test_msg db "manager: World!", 10, 0
+     7 00000009 576F726C64210A00   
+     8                                  
+     9 00000011 256C6600                floatform db "%lf", 0
+    10 00000015 257300                  stringform db "%s", 0
+    11                                  
+    12                                  segment .bss
+    13                                  
+    14                                  segment .text
+    15                                  manager:
+    16                                  
+    17                                  ; ============= Backup GPRs ============================
+    18 00000000 55                      push rbp
+    19 00000001 4889E5                  mov rbp, rsp
+    20 00000004 53                      push rbx
+    21 00000005 51                      push rcx
+    22 00000006 52                      push rdx
+    23 00000007 56                      push rsi
+    24 00000008 57                      push rdi
+    25 00000009 4150                    push r8
+    26 0000000B 4151                    push r9
+    27 0000000D 4152                    push r10
+    28 0000000F 4153                    push r11
+    29 00000011 4154                    push r12
+    30 00000013 4155                    push r13
+    31 00000015 4156                    push r14
+    32 00000017 4157                    push r15
+    33 00000019 9C                      pushf
+    34                                  
+    35                                  ; test block
+    36 0000001A B800000000              mov rax, 0
+    37 0000001F 48BF-                   mov rdi, test_msg
+    37 00000021 [0000000000000000] 
+    38 00000029 48BE-                   mov rsi, stringform
+    38 0000002B [1500000000000000] 
+    39 00000033 E8(00000000)            call printf
+    40                                  
+    41                                  ; =============== Restore GPRs ==========================
+    42 00000038 9D                      popf
+    43 00000039 415F                    pop r15
+    44 0000003B 415E                    pop r14
+    45 0000003D 415D                    pop r13
+    46 0000003F 415C                    pop r12
+    47 00000041 415B                    pop r11
+    48 00000043 415A                    pop r10
+    49 00000045 4159                    pop r9
+    50 00000047 4158                    pop r8
+    51 00000049 5F                      pop rdi
+    52 0000004A 5E                      pop rsi
+    53 0000004B 5A                      pop rdx
+    54 0000004C 59                      pop rcx
+    55 0000004D 5B                      pop rbx
+    56 0000004E 5D                      pop rbp
+    57                                  
+    58 0000004F C3                      ret
