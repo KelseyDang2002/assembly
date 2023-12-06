@@ -31,10 +31,14 @@
 
 #include <stdio.h>
 
-extern double manager();
+extern char * manager();
 
 int main(int argc, char* argv[]) {
-  printf("\nmain: Hello, \n");
-  double return_code = manager();
+  printf("\nmain: Welcome to Array Management System\n");
+  printf("main: This product is maintained by Kelsey Dang at kdangdo2002@csu.fullerton.edu\n\n");
+  char * return_code = manager();
+  printf("\nmain: The main function received %s and will keep it for a while.\n", return_code);
+  printf("main: Please condider buying more software from our suite of commercial programs.\n");
+  printf("main: A zero will be returned to the operating system. Bye.\n\n");
   return 0;
 }

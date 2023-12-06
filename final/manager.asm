@@ -30,12 +30,25 @@
 ;   Link:
 
 global manager
+extern input_array
+extern output_array
+extern fgets
+extern strlen
+extern atoi
+extern stdin
+extern stdout
 extern printf
 extern scanf
-max_size equ 60
+max_size equ 25
 
 segment .data
-test_msg db "manager: World!", 10, 0
+care_msg db "manager: We will take care of all your array needs.", 10, 0
+prompt_input db "manager: Please input how many numbers you want. The limit is 100: ", 0
+prompt_delay db "manager: What is the delay time you prefer (seconds)? ", 0
+prompt_frequency db "manager: What is the maximum frequency of your cpu (GHz)? ", 0
+array_msg db "manager: Here are the values in the array.", 10, 10, 0
+display_msg db 10, "manager: The numbers of the array have been displayed.", 10, 0
+thankyou_msg db "manager: Thank you for using Array Management System.", 10, 0
 
 floatform db "%lf", 0
 stringform db "%s", 0
@@ -43,6 +56,11 @@ stringform db "%s", 0
 segment .bss
 align 64
 backuparea resb 832
+num_array resb max_size
+random_num_array resb max_size
+
+delay_array resb max_size
+frequency_array resb max_size
 
 segment .text
 manager:
@@ -70,16 +88,120 @@ mov rax, 7
 mov rdx, 0
 xsave [backuparea]
 
-; test block
+; =============== Print care_msg ========================
 mov rax, 0
-mov rdi, test_msg
-mov rsi, stringform
+mov rdi, care_msg
+call printf
+
+; =============== Print prompt_input ====================
+mov rax, 0
+mov rdi, prompt_input
+call printf
+
+; =============== Receive count =========================
+mov rax, 0
+mov rdi, num_array
+mov rsi, max_size
+mov rdx, [stdin]
+call fgets
+
+; remove \n char
+mov rax, 0
+mov rdi, num_array
+call strlen
+mov byte[num_array+rax-1], byte 0
+
+; convert num_array to integer
+mov rax, 0
+mov rdi, num_array
+call atoi
+mov r15, rax
+
+; =============== Call input_array ======================
+mov rax, 0
+mov rdi, random_num_array
+mov rsi, r15
+call input_array
+
+; =============== Print prompt_delay ====================
+mov rax, 0
+mov rdi, prompt_delay
+call printf
+
+; get user input
+mov rax, 0
+mov rdi, delay_array
+mov rsi, max_size
+mov rdx, [stdin]
+call fgets
+
+; remove \n char
+mov rax, 0
+mov rdi, delay_array
+call strlen
+mov byte[delay_array+rax-1], byte 0
+
+; convert num_array to integer
+mov rax, 0
+mov rdi, delay_array
+call atoi
+mov r11, rax
+
+; =============== Print prompt_frequency ================
+mov rax, 0
+mov rdi, prompt_frequency
+call printf
+
+; get user input
+mov rax, 0
+mov rdi, frequency_array
+mov rsi, max_size
+mov rdx, [stdin]
+call fgets
+
+; remove \n char
+mov rax, 0
+mov rdi, frequency_array
+call strlen
+mov byte[frequency_array+rax-1], byte 0
+
+; convert num_array to integer
+mov rax, 0
+mov rdi, frequency_array
+call atoi
+mov r12, rax
+
+; =============== frequency * delay =====================
+imul r12, r11
+
+; =============== Print array_msg =======================
+mov rax, 0
+mov rdi, array_msg
+call printf
+
+; =============== Call output_array =====================
+mov rax, 0
+mov rdi, random_num_array
+mov rsi, r15
+mov rdx, rcx
+call output_array
+
+; =============== Print display_msg =====================
+mov rax, 0
+mov rdi, display_msg
+call printf
+
+; =============== Print thankyou_msg ====================
+mov rax, 0
+mov rdi, thankyou_msg
 call printf
 
 ; =============== xrstor ================================
 mov rax, 7
 mov rdx, 0
 xrstor [backuparea]
+
+mov rax, num_array
 
 ; =============== Restore GPRs ==========================
 popf

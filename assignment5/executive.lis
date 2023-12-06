@@ -1,6 +1,6 @@
-     1                                  ; Program Name: Strings
+     1                                  ; Program Name: Random Numbers
      2                                  ; Subject: CPSC 240-03 <Strings>
-     3                                  ; This program demonstrates string operations with fgets.
+     3                                  ; This program demonstrates non-deterministic random number generation.
      4                                  
      5                                  ; Copyright (C) 2023 Kelsey Dang
      6                                  
@@ -15,20 +15,20 @@
     15                                  ;   Email: kdangdo2002@csu.fullerton.edu
     16                                  ;
     17                                  ; Program Information
-    18                                  ;   Program Name: Strings
+    18                                  ;   Program Name: Random Numbers
     19                                  ;   Program Languages: C, Assembly X86-64, bash
-    20                                  ;   Due Date: 11/12/23
+    20                                  ;   Due Date: ---
     21                                  ;   Operating System: Tuffix VM on Windows 10 computer
     22                                  
     23                                  ; Purpose
-    24                                  ;   This is the faraday file calls isfloat.asm in Strings.
-    25                                  ;   This file gets called by ampere.c.
+    24                                  ;   This file calls fill_random_array.asm, show_array.asm, and isnan.asm.
+    25                                  ;   This file gets called by main.c.
     26                                  
     27                                  ; File Information
-    28                                  ;   Filename: faraday.asm
+    28                                  ;   Filename: executive.asm
     29                                  ;   Language: Assembly X86-64
-    30                                  ;   Compile: nasm -f elf64 -l faraday.lis -o faraday.o faraday.asm
-    31                                  ;   Link: gcc -m64 -fno-pie -no-pie -std=c17 -o a.out ampere.o faraday.o isfloat.o
+    30                                  ;   Compile: nasm -f elf64 -l executive.lis -o executive.o executive.asm
+    31                                  ;   Link: gcc -m64 -fno-pie -no-pie -std=c17 -o a.out main.o executive.o fill_random_array.o show_array.o isnan.o
     32                                  
     33                                  global executive
     34                                  extern fill_random_array

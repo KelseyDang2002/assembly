@@ -17,17 +17,14 @@ gcc -c -m64 -Wall -fno-pie -no-pie -std=c17 -o main.o main.c
 echo "bash: Assembling manager.asm..."
 nasm -f elf64 -l manager.lis -o manager.o manager.asm
 
-# echo "bash: Assembling fill_random_array.asm..."
-# nasm -f elf64 -l fill_random_array.lis -o fill_random_array.o fill_random_array.asm
+echo "bash: Assembling input_array.asm..."
+nasm -f elf64 -l input_array.lis -o input_array.o input_array.asm
 
-# echo "bash: Assembling show_array.asm..."
-# nasm -f elf64 -l show_array.lis -o show_array.o show_array.asm
-
-# echo "bash: Assembling isnan.asm..."
-# nasm -f elf64 -l isnan.lis -o isnan.o isnan.asm
+echo "bash: Assembling output_array.asm..."
+nasm -f elf64 -l output_array.lis -o output_array.o output_array.asm
 
 echo "bash: Linking the 5 created object files..."
-gcc -m64 -fno-pie -no-pie -std=c17 -o a.out main.o manager.o
+gcc -m64 -fno-pie -no-pie -std=c17 -o a.out main.o manager.o input_array.o output_array.o
 
 echo "bash: Running program..."
 ./a.out
