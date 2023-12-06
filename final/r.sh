@@ -14,7 +14,7 @@ echo "bash: This is program <Final>"
 echo "bash: Compiling main.c..."
 gcc -c -m64 -Wall -fno-pie -no-pie -std=c17 -o main.o main.c
 
-echo "bash: Assembling executive.asm..."
+echo "bash: Assembling manager.asm..."
 nasm -f elf64 -l manager.lis -o manager.o manager.asm
 
 # echo "bash: Assembling fill_random_array.asm..."

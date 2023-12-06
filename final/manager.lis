@@ -1,61 +1,92 @@
-     1                                  global manager
-     2                                  extern printf
-     3                                  extern scanf
-     4                                  max_size equ 60
-     5                                  
-     6                                  segment .data
-     7 00000000 6D616E616765723A20-     test_msg db "manager: World!", 10, 0
-     7 00000009 576F726C64210A00   
-     8                                  
-     9 00000011 256C6600                floatform db "%lf", 0
-    10 00000015 257300                  stringform db "%s", 0
-    11                                  
-    12                                  segment .bss
-    13                                  
-    14                                  segment .text
-    15                                  manager:
-    16                                  
-    17                                  ; ============= Backup GPRs ============================
-    18 00000000 55                      push rbp
-    19 00000001 4889E5                  mov rbp, rsp
-    20 00000004 53                      push rbx
-    21 00000005 51                      push rcx
-    22 00000006 52                      push rdx
-    23 00000007 56                      push rsi
-    24 00000008 57                      push rdi
-    25 00000009 4150                    push r8
-    26 0000000B 4151                    push r9
-    27 0000000D 4152                    push r10
-    28 0000000F 4153                    push r11
-    29 00000011 4154                    push r12
-    30 00000013 4155                    push r13
-    31 00000015 4156                    push r14
-    32 00000017 4157                    push r15
-    33 00000019 9C                      pushf
-    34                                  
-    35                                  ; test block
-    36 0000001A B800000000              mov rax, 0
-    37 0000001F 48BF-                   mov rdi, test_msg
-    37 00000021 [0000000000000000] 
-    38 00000029 48BE-                   mov rsi, stringform
-    38 0000002B [1500000000000000] 
-    39 00000033 E8(00000000)            call printf
-    40                                  
-    41                                  ; =============== Restore GPRs ==========================
-    42 00000038 9D                      popf
-    43 00000039 415F                    pop r15
-    44 0000003B 415E                    pop r14
-    45 0000003D 415D                    pop r13
-    46 0000003F 415C                    pop r12
-    47 00000041 415B                    pop r11
-    48 00000043 415A                    pop r10
-    49 00000045 4159                    pop r9
-    50 00000047 4158                    pop r8
-    51 00000049 5F                      pop rdi
-    52 0000004A 5E                      pop rsi
-    53 0000004B 5A                      pop rdx
-    54 0000004C 59                      pop rcx
-    55 0000004D 5B                      pop rbx
-    56 0000004E 5D                      pop rbp
-    57                                  
-    58 0000004F C3                      ret
+     1                                  ; Program Name: Final
+     2                                  ; Subject: CPSC 240-03 <Final>
+     3                                  ; This program is for the Final Program Exam.
+     4                                  ;
+     5                                  ; Copyright (C) 2023 Kelsey Dang
+     6                                  ;
+     7                                  ; This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+     8                                  ; License version 3 as published by the Free Software Foundation.  This program is distributed in the hope that it
+     9                                  ; will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+    10                                  ; PARTICULAR PURPOSE.  See the GNU General Public License for more details.  A copy of the GNU General Public
+    11                                  ; License v3 is available here:  <https://www.gnu.org/licenses/>.
+    12                                  ;
+    13                                  ; Author Information
+    14                                  ;   Author: Kelsey Dang
+    15                                  ;   Email: kdangdo2002@csu.fullerton.edu
+    16                                  ;
+    17                                  ; Program Information
+    18                                  ;   Program Name: Final
+    19                                  ;   Program Languages: C, Assembly X86-64, bash
+    20                                  ;   Due Date: 12/6/23
+    21                                  ;   Operating System: Tuffix VM on Windows 10 computer
+    22                                  ;
+    23                                  ; Purpose
+    24                                  ;   ---
+    25                                  ;
+    26                                  ; File Information
+    27                                  ;   Filename: manager.asm
+    28                                  ;   Language: Assembly X86-64
+    29                                  ;   Compile: nasm -f elf64 -l manager.lis -o manager.o manager.asm
+    30                                  ;   Link:
+    31                                  
+    32                                  global manager
+    33                                  extern printf
+    34                                  extern scanf
+    35                                  max_size equ 60
+    36                                  
+    37                                  segment .data
+    38 00000000 6D616E616765723A20-     test_msg db "manager: World!", 10, 0
+    38 00000009 576F726C64210A00   
+    39                                  
+    40 00000011 256C6600                floatform db "%lf", 0
+    41 00000015 257300                  stringform db "%s", 0
+    42                                  
+    43                                  segment .bss
+    44                                  
+    45                                  segment .text
+    46                                  manager:
+    47                                  
+    48                                  ; ============= Backup GPRs ============================
+    49 00000000 55                      push rbp
+    50 00000001 4889E5                  mov rbp, rsp
+    51 00000004 53                      push rbx
+    52 00000005 51                      push rcx
+    53 00000006 52                      push rdx
+    54 00000007 56                      push rsi
+    55 00000008 57                      push rdi
+    56 00000009 4150                    push r8
+    57 0000000B 4151                    push r9
+    58 0000000D 4152                    push r10
+    59 0000000F 4153                    push r11
+    60 00000011 4154                    push r12
+    61 00000013 4155                    push r13
+    62 00000015 4156                    push r14
+    63 00000017 4157                    push r15
+    64 00000019 9C                      pushf
+    65                                  
+    66                                  ; test block
+    67 0000001A B800000000              mov rax, 0
+    68 0000001F 48BF-                   mov rdi, test_msg
+    68 00000021 [0000000000000000] 
+    69 00000029 48BE-                   mov rsi, stringform
+    69 0000002B [1500000000000000] 
+    70 00000033 E8(00000000)            call printf
+    71                                  
+    72                                  ; =============== Restore GPRs ==========================
+    73 00000038 9D                      popf
+    74 00000039 415F                    pop r15
+    75 0000003B 415E                    pop r14
+    76 0000003D 415D                    pop r13
+    77 0000003F 415C                    pop r12
+    78 00000041 415B                    pop r11
+    79 00000043 415A                    pop r10
+    80 00000045 4159                    pop r9
+    81 00000047 4158                    pop r8
+    82 00000049 5F                      pop rdi
+    83 0000004A 5E                      pop rsi
+    84 0000004B 5A                      pop rdx
+    85 0000004C 59                      pop rcx
+    86 0000004D 5B                      pop rbx
+    87 0000004E 5D                      pop rbp
+    88                                  
+    89 0000004F C3                      ret
