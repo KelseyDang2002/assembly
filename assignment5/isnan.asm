@@ -1,6 +1,6 @@
-; Program Name: Strings
+; Program Name: Random Numbers
 ; Subject: CPSC 240-03 <Strings>
-; This program demonstrates string operations with fgets.
+; This program demonstrates non-deterministic random number generation.
 
 ; Copyright (C) 2023 Kelsey Dang
 
@@ -15,20 +15,19 @@
 ;   Email: kdangdo2002@csu.fullerton.edu
 ;
 ; Program Information
-;   Program Name: Strings
+;   Program Name: Random Numbers
 ;   Program Languages: C, Assembly X86-64, bash
-;   Due Date: 11/12/23
+;   Due Date: ---
 ;   Operating System: Tuffix VM on Windows 10 computer
 
 ; Purpose
-;   This is the faraday file calls isfloat.asm in Strings.
-;   This file gets called by ampere.c.
+;   This file gets called by executive.asm and normalizes the array between the range 1.0 and 2.0.
 
 ; File Information
-;   Filename: faraday.asm
+;   Filename: isnan.asm
 ;   Language: Assembly X86-64
-;   Compile: nasm -f elf64 -l faraday.lis -o faraday.o faraday.asm
-;   Link: gcc -m64 -fno-pie -no-pie -std=c17 -o a.out ampere.o faraday.o isfloat.o
+;   Compile: nasm -f elf64 -l isnan.lis -o isnan.o isnan.asm
+;   Link: gcc -m64 -fno-pie -no-pie -std=c17 -o a.out main.o executive.o fill_random_array.o show_array.o isnan.o
 
 global isnan
 extern rdrand

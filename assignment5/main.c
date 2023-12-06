@@ -1,6 +1,6 @@
 // Program Name: Random Numbers
 // Subject: CPSC 240-03 <Random Numbers>
-// This program demonstrates non-deterministec random number generation.
+// This program demonstrates non-deterministic random number generation.
 
 // Copyright (C) 2023 Kelsey Dang
 
@@ -17,7 +17,7 @@
 // Program Information
 //   Program Name: Random Numbers
 //   Program Languages: C, Assembly X86-64, bash
-//   Due Date: 11/26/23
+//   Due Date: ---
 //   Operating System: Tuffix VM on Windows 10 computer
 
 // Purpose
@@ -27,7 +27,7 @@
 //   Filename: main.c
 //   Language: C
 //   Compile: gcc -c -m64 -Wall -fno-pie -no-pie -std=c17 -o main.o main.c
-//   Link:
+//   Link: gcc -m64 -fno-pie -no-pie -std=c17 -o a.out main.o executive.o fill_random_array.o show_array.o isnan.o
 
 #include <stdio.h>
 
