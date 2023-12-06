@@ -41,6 +41,8 @@ floatform db "%lf", 0
 stringform db "%s", 0
 
 segment .bss
+align 64
+backuparea resb 832
 
 segment .text
 manager:
@@ -63,11 +65,21 @@ push r14
 push r15
 pushf
 
+; =============== xsave =================================
+mov rax, 7
+mov rdx, 0
+xsave [backuparea]
+
 ; test block
 mov rax, 0
 mov rdi, test_msg
 mov rsi, stringform
 call printf
+
+; =============== xrstor ================================
+mov rax, 7
+mov rdx, 0
+xrstor [backuparea]
 
 ; =============== Restore GPRs ==========================
 popf
