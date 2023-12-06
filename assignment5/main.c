@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
   printf("\nmain: Welcome to Random Products, LLC.\n");
   printf("main: This software is maintained by Alfred Findelstein\n\n");
   char * return_code = executive();
-  printf("\nmain: Oh, %lf. We hope you enjoy your arrays. Do come again.\n", return_code);
+  printf("\nmain: Oh, %s. We hope you enjoy your arrays. Do come again.\n", return_code);
   printf("main: A zero will be returned to the operating system.\n\n");
   return 0;
 }

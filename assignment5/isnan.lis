@@ -1,0 +1,111 @@
+     1                                  ; Program Name: Strings
+     2                                  ; Subject: CPSC 240-03 <Strings>
+     3                                  ; This program demonstrates string operations with fgets.
+     4                                  
+     5                                  ; Copyright (C) 2023 Kelsey Dang
+     6                                  
+     7                                  ; This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+     8                                  ; License version 3 as published by the Free Software Foundation.  This program is distributed in the hope that it
+     9                                  ; will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+    10                                  ; PARTICULAR PURPOSE.  See the GNU General Public License for more details.  A copy of the GNU General Public
+    11                                  ; License v3 is available here:  <https://www.gnu.org/licenses/>.
+    12                                  
+    13                                  ; Author Information
+    14                                  ;   Author: Kelsey Dang
+    15                                  ;   Email: kdangdo2002@csu.fullerton.edu
+    16                                  ;
+    17                                  ; Program Information
+    18                                  ;   Program Name: Strings
+    19                                  ;   Program Languages: C, Assembly X86-64, bash
+    20                                  ;   Due Date: 11/12/23
+    21                                  ;   Operating System: Tuffix VM on Windows 10 computer
+    22                                  
+    23                                  ; Purpose
+    24                                  ;   This is the faraday file calls isfloat.asm in Strings.
+    25                                  ;   This file gets called by ampere.c.
+    26                                  
+    27                                  ; File Information
+    28                                  ;   Filename: faraday.asm
+    29                                  ;   Language: Assembly X86-64
+    30                                  ;   Compile: nasm -f elf64 -l faraday.lis -o faraday.o faraday.asm
+    31                                  ;   Link: gcc -m64 -fno-pie -no-pie -std=c17 -o a.out ampere.o faraday.o isfloat.o
+    32                                  
+    33                                  global isnan
+    34                                  extern rdrand
+    35                                  
+    36                                  segment .data
+    37                                  
+    38                                  segment .bss
+    39                                  align 64
+    40 00000000 <res 00000340>          backuparea resb 832
+    41                                  
+    42                                  segment .text
+    43                                  isnan:
+    44                                  
+    45                                  ; ============= Backup GPRs ============================
+    46 00000000 55                      push rbp
+    47 00000001 4889E5                  mov rbp, rsp
+    48 00000004 53                      push rbx
+    49 00000005 51                      push rcx
+    50 00000006 52                      push rdx
+    51 00000007 56                      push rsi
+    52 00000008 57                      push rdi
+    53 00000009 4150                    push r8
+    54 0000000B 4151                    push r9
+    55 0000000D 4152                    push r10
+    56 0000000F 4153                    push r11
+    57 00000011 4154                    push r12
+    58 00000013 4155                    push r13
+    59 00000015 4156                    push r14
+    60 00000017 4157                    push r15
+    61 00000019 9C                      pushf
+    62                                  
+    63                                  ; =============== xsave =================================
+    64 0000001A B807000000              mov rax, 7
+    65 0000001F BA00000000              mov rdx, 0
+    66 00000024 0FAE2425[00000000]      xsave [backuparea]
+    67                                  
+    68                                  ; =============== isnan =================================
+    69 0000002C 4D31ED                  xor r13, r13            ; index starting at 0
+    70 0000002F 4989FE                  mov r14, rdi            ; num_array
+    71 00000032 4989F7                  mov r15, rsi            ; size of num_array
+    72                                  
+    73                                  beginloop:
+    74 00000035 4D39FD                    cmp r13, r15          ; if index reaches size of num_array
+    75 00000038 7D22                      jge endloop           ; jump to end of loop
+    76                                  
+    77 0000003A 4F8B24EE                  mov r12, [r14+8*r13]
+    78 0000003E 49C1E40C                  shl r12, 12           ; shift hex number right 3 places left
+    79 00000042 49C1EC0C                  shr r12, 12           ; shift hex number right 3 places right
+    80 00000046 48B8000000000000F0-       mov rax, 0x3FF0000000000000
+    80 0000004F 3F                 
+    81 00000050 4909C4                    or r12, rax           ; mask the hex number
+    82 00000053 4F8924EE                  mov [r14+8*r13], r12  ; move normalized number into array (r14)
+    83 00000057 49FFC5                    inc r13
+    84 0000005A EBD9                      jmp beginloop
+    85                                  
+    86                                  endloop:
+    87                                  
+    88                                  ; =============== xrstor ================================
+    89 0000005C B807000000              mov rax, 7
+    90 00000061 BA00000000              mov rdx, 0
+    91 00000066 0FAE2C25[00000000]      xrstor [backuparea]
+    92                                  
+    93                                  ; =============== Restore GPRs ==========================
+    94 0000006E 9D                      popf
+    95 0000006F 415F                    pop r15
+    96 00000071 415E                    pop r14
+    97 00000073 415D                    pop r13
+    98 00000075 415C                    pop r12
+    99 00000077 415B                    pop r11
+   100 00000079 415A                    pop r10
+   101 0000007B 4159                    pop r9
+   102 0000007D 4158                    pop r8
+   103 0000007F 5F                      pop rdi
+   104 00000080 5E                      pop rsi
+   105 00000081 5A                      pop rdx
+   106 00000082 59                      pop rcx
+   107 00000083 5B                      pop rbx
+   108 00000084 5D                      pop rbp
+   109                                  
+   110 00000085 C3                      ret
